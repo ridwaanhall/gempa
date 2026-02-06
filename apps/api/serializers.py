@@ -55,9 +55,9 @@ class PropertiesSerializer(serializers.Serializer):
     tsunami = IndonesianBooleanField()
     id_event = serializers.CharField()
     korban_kerusakan = serializers.CharField()
-    depth = serializers.CharField()
-    mag = serializers.CharField()
-    date = serializers.CharField()
+    depth = serializers.IntegerField()
+    mag = serializers.FloatField()
+    date = serializers.DateField(input_formats=["%d-%m-%Y", "%Y/%m/%d"])
     sumber = serializers.CharField()
     dirasakan = serializers.CharField()
 
