@@ -33,6 +33,10 @@ BMKG_REALTIME_URL = config('BMKG_REALTIME_URL', default=f"{BMKG_API_BASE}/live30
 BMKG_TSUNAMI_URL = config('BMKG_TSUNAMI_URL', default=f"{BMKG_API_BASE}/last30tsunamievent.xml",)
 BMKG_FELT_URL = config('BMKG_FELT_URL', default=f"{BMKG_API_BASE}/last30feltevent.xml",)
 BMKG_M5_URL = config('BMKG_M5_URL', default=f"{BMKG_API_BASE}/last30event.xml",)
+BMKG_MON3_URL = config(
+    'BMKG_MON3_URL',
+    default=f"{BMKG_API_BASE}/3mgempaQL.json",
+)
 
 if DEBUG:
     ALLOWED_HOSTS = []

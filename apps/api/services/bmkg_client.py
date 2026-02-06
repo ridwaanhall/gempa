@@ -24,6 +24,7 @@ class BmkgEndpoints:
     tsunami_url: str
     felt_url: str
     m5_url: str
+    mon3_url: str
 
 
 class BmkgClient:
@@ -63,6 +64,10 @@ class BmkgClient:
         """Return recent M5+ earthquake alerts converted from XML to JSON."""
         xml_text = self._get_text(self._endpoints.m5_url)
         return self._parse_m5_xml(xml_text)
+
+    def get_mon3(self):
+        """Return monitoring feed for M3+ earthquakes (JSON)."""
+        return self._get_json(self._endpoints.mon3_url)
 
     def _get_json(self, url: str) -> dict[str, Any]:
         cache_busted_url = self._with_cache_buster(url)

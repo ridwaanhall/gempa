@@ -7,6 +7,33 @@ class IndonesianBooleanField(serializers.BooleanField):
     FALSE_VALUES = serializers.BooleanField.FALSE_VALUES | {"tidak"}
 
 
+# mon3
+class Mon3GeometrySerializer(serializers.Serializer):
+    type = serializers.CharField()
+    coordinates = serializers.ListField(child=serializers.FloatField())
+
+
+class Mon3PropertiesSerializer(serializers.Serializer):
+    status = serializers.CharField()
+    depth = serializers.FloatField()
+    place = serializers.CharField()
+    mag = serializers.FloatField()
+    time = serializers.DateTimeField(input_formats=["%Y-%m-%d %H:%M:%S.%f"])
+    id = serializers.CharField()
+    fase = serializers.IntegerField()
+
+
+class Mon3FeatureSerializer(serializers.Serializer):
+    geometry = Mon3GeometrySerializer()
+    type = serializers.CharField()
+    properties = Mon3PropertiesSerializer()
+
+
+class Mon3CatalogSerializer(serializers.Serializer):
+    type = serializers.CharField()
+    features = Mon3FeatureSerializer(many=True)
+
+
 # m5
 class M5PointSerializer(serializers.Serializer):
     coordinates = serializers.CharField()

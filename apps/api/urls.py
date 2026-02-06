@@ -9,4 +9,5 @@ urlpatterns = [
 	path("tsunami/", views.TsunamiAlertView.as_view(), name="earthquake-tsunami"),
 	path("felt/", views.FeltAlertView.as_view(), name="earthquake-felt"),
 	path("m5/", views.M5AlertView.as_view(), name="earthquake-m5"),
+	path("mon3/", views.Mon3View.as_view(), name="earthquake-mon3"),
 ]

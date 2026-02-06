@@ -37,6 +37,7 @@ _bmkg_endpoints = bmkg_client.BmkgEndpoints(
 	tsunami_url=settings.BMKG_TSUNAMI_URL,
 	felt_url=settings.BMKG_FELT_URL,
 	m5_url=settings.BMKG_M5_URL,
+	mon3_url=settings.BMKG_MON3_URL,
 )
 _client = bmkg_client.BmkgClient(endpoints=_bmkg_endpoints)
 
@@ -81,3 +82,10 @@ class M5AlertView(ValidatedRemoteView):
 
 	serializer_class = serializers.M5AlertSerializer
 	fetcher = _client.get_m5
+
+
+class Mon3View(ValidatedRemoteView):
+	"""Expose monitoring feed for M3+ earthquakes (GeoJSON)."""
+
+	serializer_class = serializers.Mon3CatalogSerializer
+	fetcher = _client.get_mon3
