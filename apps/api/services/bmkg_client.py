@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from typing import Any, TypedDict
+from dataclasses import dataclass
+from typing import Any, TypedDict, cast
+from urllib.parse import urlencode, urlsplit, urlunsplit, parse_qsl
 
 import requests
 from requests import Response, Session
-
-DATAGEMPA_URL = "https://bmkg-content-inatews.storage.googleapis.com/datagempa.json?t=1770383949414"
-KATALOG_GEMPA_URL = "https://bmkg-content-inatews.storage.googleapis.com/katalog_gempa.json?t=1770383949414"
+from time import time
 
 
 class PointDict(TypedDict):
@@ -79,25 +79,36 @@ class BmkgClientError(Exception):
     """Raised when the BMKG API cannot be reached or returns invalid data."""
 
 
-class BmkgClient:
-    """Lightweight client for retrieving BMKG earthquake data."""
+@dataclass(slots=True, frozen=True)
+class BmkgEndpoints:
+    """Endpoint configuration for the BMKG client."""
 
-    def __init__(self, session: Session | None = None, timeout: float = 8.0) -> None:
+    alert_url: str
+    catalog_url: str
+
+
+class BmkgClient:
+    """Lightweight, typed client for retrieving BMKG earthquake data."""
+
+    def __init__(self, endpoints: BmkgEndpoints, session: Session | None = None, timeout: float = 8.0) -> None:
+        self._endpoints = endpoints
         self._session: Session = session or requests.Session()
         self._timeout = timeout
-        self._session.headers.setdefault("User-Agent", "gempa-api/1.0")
+        self._session.headers.setdefault("User-Agent", "ridwaanhall-com/1.0")
 
     def get_alert(self) -> AlertDict:
         """Return the most recent felt earthquake alert."""
-        return self._get_json(DATAGEMPA_URL)
+        return cast(AlertDict, self._get_json(self._endpoints.alert_url))
 
     def get_catalog(self) -> CatalogDict:
         """Return the catalog of recent earthquakes."""
-        return self._get_json(KATALOG_GEMPA_URL)
+        return cast(CatalogDict, self._get_json(self._endpoints.catalog_url))
 
     def _get_json(self, url: str) -> dict[str, Any]:
+        cache_busted_url = self._with_cache_buster(url)
+
         try:
-            response: Response = self._session.get(url, timeout=self._timeout)
+            response: Response = self._session.get(cache_busted_url, timeout=self._timeout)
             response.raise_for_status()
         except requests.RequestException as exc:  # pragma: no cover - network exceptions
             raise BmkgClientError(f"Failed to fetch data from {url}") from exc
@@ -109,17 +120,24 @@ class BmkgClient:
 
         return data
 
+    def _with_cache_buster(self, url: str) -> str:
+        """Append a timestamp query param so BMKG responses are not cached."""
+        split_url = urlsplit(url)
+        query_params = dict(parse_qsl(split_url.query))
+        query_params["t"] = str(int(time() * 1000))
+        new_query = urlencode(query_params)
+        return urlunsplit((split_url.scheme, split_url.netloc, split_url.path, new_query, split_url.fragment))
+
 
 __all__ = [
     "AlertDict",
     "BmkgClient",
     "BmkgClientError",
+    "BmkgEndpoints",
     "CatalogDict",
-    "DATAGEMPA_URL",
     "FeatureDict",
     "GeometryDict",
     "InfoDict",
-    "KATALOG_GEMPA_URL",
     "PointDict",
     "PropertiesDict",
 ]
