@@ -1,6 +1,13 @@
 from rest_framework import serializers
 
 
+class IndonesianBooleanField(serializers.BooleanField):
+    """Boolean field that treats 'Ya'/'Tidak' (case-insensitive) as True/False."""
+
+    TRUE_VALUES = serializers.BooleanField.TRUE_VALUES | {"ya"}
+    FALSE_VALUES = serializers.BooleanField.FALSE_VALUES | {"tidak"}
+
+
 # latest
 class PointSerializer(serializers.Serializer):
     coordinates = serializers.CharField()
@@ -45,7 +52,7 @@ class PropertiesSerializer(serializers.Serializer):
     lokasi = serializers.CharField()
     ot_utc = serializers.TimeField()
     pusat_gempa = serializers.CharField()
-    tsunami = serializers.BooleanField()
+    tsunami = IndonesianBooleanField()
     id_event = serializers.CharField()
     korban_kerusakan = serializers.CharField()
     depth = serializers.CharField()
