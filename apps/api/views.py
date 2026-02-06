@@ -8,8 +8,8 @@ from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 
-from apps.api.serializers import CatalogSerializer, EarthquakeAlertSerializer, RealtimeCatalogSerializer, TsunamiAlertSerializer
-from apps.api.services.bmkg_client import BmkgClient, BmkgClientError, BmkgEndpoints
+from . import serializers
+from .services import bmkg_client
 
 
 class ValidatedRemoteView(APIView):
@@ -22,7 +22,7 @@ class ValidatedRemoteView(APIView):
 	def get(self, request, *args, **kwargs) -> Response:  # type: ignore[override]
 		try:
 			payload: dict[str, Any] = self.fetcher()
-		except BmkgClientError as exc:
+		except bmkg_client.BmkgClientError as exc:
 			return Response({"detail": str(exc)}, status=status.HTTP_502_BAD_GATEWAY)
 
 		serializer = self.serializer_class(data=payload)
@@ -30,38 +30,38 @@ class ValidatedRemoteView(APIView):
 		return Response(serializer.data)
 
 
-_bmkg_endpoints = BmkgEndpoints(
+_bmkg_endpoints = bmkg_client.BmkgEndpoints(
 	alert_url=settings.BMKG_ALERT_URL,
 	catalog_url=settings.BMKG_CATALOG_URL,
 	realtime_url=settings.BMKG_REALTIME_URL,
 	tsunami_url=settings.BMKG_TSUNAMI_URL,
 )
-_client = BmkgClient(endpoints=_bmkg_endpoints)
+_client = bmkg_client.BmkgClient(endpoints=_bmkg_endpoints)
 
 
 class EarthquakeAlertView(ValidatedRemoteView):
 	"""Expose the latest felt earthquake alert from BMKG."""
 
-	serializer_class = EarthquakeAlertSerializer
+	serializer_class = serializers.EarthquakeAlertSerializer
 	fetcher = _client.get_alert
 
 
 class EarthquakeCatalogView(ValidatedRemoteView):
 	"""Expose the earthquake catalog from BMKG."""
 
-	serializer_class = CatalogSerializer
+	serializer_class = serializers.CatalogSerializer
 	fetcher = _client.get_catalog
 
 
 class EarthquakeRealtimeView(ValidatedRemoteView):
 	"""Expose realtime earthquakes parsed from BMKG XML feed."""
 
-	serializer_class = RealtimeCatalogSerializer
+	serializer_class = serializers.RealtimeCatalogSerializer
 	fetcher = _client.get_realtime
 
 
 class TsunamiAlertView(ValidatedRemoteView):
 	"""Expose recent tsunami alerts parsed from BMKG XML feed."""
 
-	serializer_class = TsunamiAlertSerializer
+	serializer_class = serializers.TsunamiAlertSerializer
 	fetcher = _client.get_tsunami

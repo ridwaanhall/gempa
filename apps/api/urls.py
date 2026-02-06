@@ -1,10 +1,10 @@
 from django.urls import path
 
-from apps.api.views import EarthquakeAlertView, EarthquakeCatalogView, EarthquakeRealtimeView, TsunamiAlertView
-
+from . import views
+    
 urlpatterns = [
-	path("latest/", EarthquakeAlertView.as_view(), name="earthquake-latest"),
-	path("catalog/", EarthquakeCatalogView.as_view(), name="earthquake-catalog"),
-	path("realtime/", EarthquakeRealtimeView.as_view(), name="earthquake-realtime"),
-	path("tsunami/", TsunamiAlertView.as_view(), name="earthquake-tsunami"),
+	path("latest/", views.EarthquakeAlertView.as_view(), name="earthquake-latest"),
+	path("catalog/", views.EarthquakeCatalogView.as_view(), name="earthquake-catalog"),
+	path("realtime/", views.EarthquakeRealtimeView.as_view(), name="earthquake-realtime"),
+	path("tsunami/", views.TsunamiAlertView.as_view(), name="earthquake-tsunami"),
 ]
