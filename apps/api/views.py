@@ -43,6 +43,7 @@ _bmkg_endpoints = bmkg_client.BmkgEndpoints(
 	global_url=settings.BMKG_GLOBAL_URL,
 	faults_global_url=settings.BMKG_FAULTS_GLOBAL_URL,
 	faults_indo_url=settings.BMKG_FAULTS_INDO_URL,
+	history_url_template=settings.BMKG_HISTORY_URL_TEMPLATE,
 )
 _client = bmkg_client.BmkgClient(endpoints=_bmkg_endpoints)
 
@@ -129,3 +130,20 @@ class FaultsIndoView(ValidatedRemoteView):
 
 	serializer_class = serializers.FaultCatalogSerializer
 	fetcher = _client.get_faults_indo
+
+
+class EarthquakeHistoryView(APIView):
+	"""Expose per-event history for realtime events."""
+
+	serializer_class = serializers.HistoryResponseSerializer
+	http_method_names = ["get"]
+
+	def get(self, request, eventid: str, *args, **kwargs) -> Response:  # type: ignore[override]
+		try:
+			payload: dict[str, Any] = _client.get_history(eventid)
+		except bmkg_client.BmkgClientError as exc:
+			return Response({"detail": str(exc)}, status=status.HTTP_502_BAD_GATEWAY)
+
+		serializer = self.serializer_class(data=payload)
+		serializer.is_valid(raise_exception=True)
+		return Response(serializer.data)
