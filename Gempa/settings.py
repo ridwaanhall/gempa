@@ -26,7 +26,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-BMKG_API_BASE = config('BMKG_API', default='https://bmkg-content-inatews.storage.googleapis.com')
+BMKG_API_BASE = config('BMKG_API')
 BMKG_ALERT_URL = config('BMKG_ALERT_URL', default=f"{BMKG_API_BASE}/datagempa.json")
 BMKG_CATALOG_URL = config('BMKG_CATALOG_URL', default=f"{BMKG_API_BASE}/katalog_gempa.json")
 
