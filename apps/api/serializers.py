@@ -1,0 +1,67 @@
+from rest_framework import serializers
+
+
+class PointSerializer(serializers.Serializer):
+    coordinates = serializers.CharField()
+
+
+class InfoSerializer(serializers.Serializer):
+    event = serializers.CharField()
+    date = serializers.CharField()
+    time = serializers.CharField()
+    point = PointSerializer()
+    latitude = serializers.CharField()
+    longitude = serializers.CharField()
+    magnitude = serializers.CharField()
+    depth = serializers.CharField()
+    area = serializers.CharField()
+    eventid = serializers.CharField()
+    potential = serializers.CharField()
+    subject = serializers.CharField()
+    headline = serializers.CharField()
+    description = serializers.CharField()
+    instruction = serializers.CharField()
+    shakemap = serializers.CharField()
+    felt = serializers.CharField()
+    timesent = serializers.CharField()
+
+
+class EarthquakeAlertSerializer(serializers.Serializer):
+    identifier = serializers.CharField()
+    sender = serializers.CharField()
+    sent = serializers.CharField()
+    status = serializers.CharField()
+    msgType = serializers.CharField()
+    scope = serializers.CharField()
+    code = serializers.CharField()
+    info = InfoSerializer()
+
+
+class GeometrySerializer(serializers.Serializer):
+    type = serializers.CharField()
+    coordinates = serializers.ListField(child=serializers.FloatField())
+
+
+class PropertiesSerializer(serializers.Serializer):
+    lokasi = serializers.CharField()
+    ot_utc = serializers.CharField()
+    pusat_gempa = serializers.CharField()
+    tsunami = serializers.CharField()
+    id_event = serializers.CharField()
+    korban_kerusakan = serializers.CharField()
+    depth = serializers.CharField()
+    mag = serializers.CharField()
+    date = serializers.CharField()
+    sumber = serializers.CharField()
+    dirasakan = serializers.CharField()
+
+
+class FeatureSerializer(serializers.Serializer):
+    geometry = GeometrySerializer()
+    type = serializers.CharField()
+    properties = PropertiesSerializer()
+
+
+class CatalogSerializer(serializers.Serializer):
+    type = serializers.CharField()
+    features = FeatureSerializer(many=True)
