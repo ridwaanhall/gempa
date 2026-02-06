@@ -1,95 +1,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, TypedDict, cast
+from typing import Any
 from urllib.parse import urlencode, urlsplit, urlunsplit, parse_qsl
 
 import requests
 from requests import Response, Session
 from time import time
 import xml.etree.ElementTree as ET
-
-
-class PointDict(TypedDict):
-    coordinates: str
-
-
-class InfoDict(TypedDict):
-    event: str
-    date: str
-    time: str
-    point: PointDict
-    latitude: str
-    longitude: str
-    magnitude: float
-    depth: str
-    area: str
-    eventid: int
-    potential: str
-    subject: str
-    headline: str
-    description: str
-    instruction: str
-    shakemap: str
-    felt: str
-    timesent: str
-
-
-class AlertDict(TypedDict):
-    identifier: str
-    sender: str
-    sent: str
-    status: str
-    msgType: str
-    scope: str
-    code: str
-    info: InfoDict
-
-
-class GeometryDict(TypedDict):
-    type: str
-    coordinates: list[str]
-
-
-class PropertiesDict(TypedDict):
-    lokasi: str
-    ot_utc: str
-    pusat_gempa: str
-    tsunami: bool
-    id_event: str
-    korban_kerusakan: str
-    depth: int
-    mag: float
-    date: str
-    sumber: str
-    dirasakan: str
-
-
-class FeatureDict(TypedDict):
-    geometry: GeometryDict
-    type: str
-    properties: PropertiesDict
-
-
-class CatalogDict(TypedDict):
-    type: str
-    features: list[FeatureDict]
-
-
-class RealtimeEventDict(TypedDict):
-    eventid: str
-    status: str
-    datetime: str
-    latitude: float
-    longitude: float
-    depth: int
-    mag: float
-    fokal: str
-    area: str
-
-
-class RealtimeCatalogDict(TypedDict):
-    events: list[RealtimeEventDict]
 
 
 class BmkgClientError(Exception):
@@ -114,15 +32,15 @@ class BmkgClient:
         self._timeout = timeout
         self._session.headers.setdefault("User-Agent", "ridwaanhall-com/1.0")
 
-    def get_alert(self) -> AlertDict:
+    def get_alert(self):
         """Return the most recent felt earthquake alert."""
-        return cast(AlertDict, self._get_json(self._endpoints.alert_url))
+        return self._get_json(self._endpoints.alert_url)
 
-    def get_catalog(self) -> CatalogDict:
+    def get_catalog(self):
         """Return the catalog of recent earthquakes."""
-        return cast(CatalogDict, self._get_json(self._endpoints.catalog_url))
+        return self._get_json(self._endpoints.catalog_url)
 
-    def get_realtime(self) -> RealtimeCatalogDict:
+    def get_realtime(self):
         """Return realtime earthquakes converted from XML to JSON."""
         xml_text = self._get_text(self._endpoints.realtime_url)
         events = self._parse_realtime_xml(xml_text)
@@ -155,13 +73,13 @@ class BmkgClient:
 
         return response.text
 
-    def _parse_realtime_xml(self, xml_text: str) -> list[RealtimeEventDict]:
+    def _parse_realtime_xml(self, xml_text: str) -> list[dict[str, Any]]:
         try:
             root = ET.fromstring(xml_text)
         except ET.ParseError as exc:
             raise BmkgClientError("Invalid realtime earthquake data format") from exc
 
-        events: list[RealtimeEventDict] = []
+        events: list[dict[str, Any]] = []
         for gempa in root.findall("gempa"):
             events.append(
                 {
@@ -189,16 +107,7 @@ class BmkgClient:
 
 
 __all__ = [
-    "AlertDict",
     "BmkgClient",
     "BmkgClientError",
     "BmkgEndpoints",
-    "CatalogDict",
-    "FeatureDict",
-    "GeometryDict",
-    "InfoDict",
-    "PointDict",
-    "PropertiesDict",
-    "RealtimeCatalogDict",
-    "RealtimeEventDict",
 ]
