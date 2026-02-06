@@ -13,7 +13,9 @@ class PointSerializer(serializers.Serializer):
 
 class InfoSerializer(serializers.Serializer):
     event = serializers.CharField()
-    date = serializers.CharField()
+    date = serializers.DateField(
+        input_formats=["%d-%m-%y"]
+    )
     time = serializers.CharField()
     point = PointSerializer()
     latitude = serializers.CharField()
