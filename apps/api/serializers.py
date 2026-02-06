@@ -1,9 +1,9 @@
 from rest_framework import serializers
 
 
+# latest
 class PointSerializer(serializers.Serializer):
     coordinates = serializers.CharField()
-
 
 class InfoSerializer(serializers.Serializer):
     event = serializers.CharField()
@@ -25,7 +25,6 @@ class InfoSerializer(serializers.Serializer):
     felt = serializers.CharField()
     timesent = serializers.CharField()
 
-
 class EarthquakeAlertSerializer(serializers.Serializer):
     identifier = serializers.CharField()
     sender = serializers.CharField()
@@ -37,16 +36,16 @@ class EarthquakeAlertSerializer(serializers.Serializer):
     info = InfoSerializer()
 
 
+# catalog
 class GeometrySerializer(serializers.Serializer):
     type = serializers.CharField()
     coordinates = serializers.ListField(child=serializers.FloatField())
 
-
 class PropertiesSerializer(serializers.Serializer):
     lokasi = serializers.CharField()
-    ot_utc = serializers.CharField()
+    ot_utc = serializers.TimeField()
     pusat_gempa = serializers.CharField()
-    tsunami = serializers.CharField()
+    tsunami = serializers.BooleanField()
     id_event = serializers.CharField()
     korban_kerusakan = serializers.CharField()
     depth = serializers.CharField()
@@ -55,18 +54,17 @@ class PropertiesSerializer(serializers.Serializer):
     sumber = serializers.CharField()
     dirasakan = serializers.CharField()
 
-
 class FeatureSerializer(serializers.Serializer):
     geometry = GeometrySerializer()
     type = serializers.CharField()
     properties = PropertiesSerializer()
-
 
 class CatalogSerializer(serializers.Serializer):
     type = serializers.CharField()
     features = FeatureSerializer(many=True)
 
 
+# realtime
 class RealtimeEventSerializer(serializers.Serializer):
     eventid = serializers.CharField()
     status = serializers.CharField()
@@ -77,7 +75,6 @@ class RealtimeEventSerializer(serializers.Serializer):
     mag = serializers.CharField()
     fokal = serializers.CharField()
     area = serializers.CharField()
-
 
 class RealtimeCatalogSerializer(serializers.Serializer):
     events = RealtimeEventSerializer(many=True)
