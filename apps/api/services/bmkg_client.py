@@ -21,10 +21,10 @@ class InfoDict(TypedDict):
     point: PointDict
     latitude: str
     longitude: str
-    magnitude: str
+    magnitude: float
     depth: str
     area: str
-    eventid: str
+    eventid: int
     potential: str
     subject: str
     headline: str
@@ -55,11 +55,11 @@ class PropertiesDict(TypedDict):
     lokasi: str
     ot_utc: str
     pusat_gempa: str
-    tsunami: str
+    tsunami: bool
     id_event: str
     korban_kerusakan: str
-    depth: str
-    mag: str
+    depth: int
+    mag: float
     date: str
     sumber: str
     dirasakan: str
@@ -79,11 +79,11 @@ class CatalogDict(TypedDict):
 class RealtimeEventDict(TypedDict):
     eventid: str
     status: str
-    waktu: str
-    lintang: str
-    bujur: str
-    dalam: str
-    mag: str
+    datetime: str
+    latitude: float
+    longitude: float
+    depth: int
+    mag: float
     fokal: str
     area: str
 
@@ -167,11 +167,11 @@ class BmkgClient:
                 {
                     "eventid": (gempa.findtext("eventid") or "").strip(),
                     "status": (gempa.findtext("status") or "").strip(),
-                    "waktu": (gempa.findtext("waktu") or "").strip(),
-                    "lintang": (gempa.findtext("lintang") or "").strip(),
-                    "bujur": (gempa.findtext("bujur") or "").strip(),
-                    "dalam": (gempa.findtext("dalam") or "").strip(),
-                    "mag": (gempa.findtext("mag") or "").strip(),
+                    "datetime": (gempa.findtext("waktu") or "").strip(),
+                    "latitude": float(gempa.findtext("lintang") or 0.0),
+                    "longitude": float(gempa.findtext("bujur") or 0.0),
+                    "depth": int(gempa.findtext("dalam") or 0),
+                    "mag": float(gempa.findtext("mag") or 0.0),
                     "fokal": (gempa.findtext("fokal") or "").strip(),
                     "area": (gempa.findtext("area") or "").strip(),
                 }

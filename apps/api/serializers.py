@@ -1,9 +1,8 @@
 from rest_framework import serializers
 
-
+# custom fields
 class IndonesianBooleanField(serializers.BooleanField):
     """Boolean field that treats 'Ya'/'Tidak' (case-insensitive) as True/False."""
-
     TRUE_VALUES = serializers.BooleanField.TRUE_VALUES | {"ya"}
     FALSE_VALUES = serializers.BooleanField.FALSE_VALUES | {"tidak"}
 
@@ -75,10 +74,13 @@ class CatalogSerializer(serializers.Serializer):
 class RealtimeEventSerializer(serializers.Serializer):
     eventid = serializers.CharField()
     status = serializers.CharField()
-    datetime = serializers.CharField()
-    latitude = serializers.FloatField()
-    longitude = serializers.FloatField()
-    depth = serializers.IntegerField()
+    datetime = serializers.DateTimeField(
+        source="waktu",
+        input_formats=["%Y/%m/%d %H:%M:%S.%f"]
+    )
+    latitude = serializers.FloatField(source="lintang")
+    longitude = serializers.FloatField(source="bujur")
+    depth = serializers.IntegerField(source="dalam")
     mag = serializers.FloatField()
     fokal = serializers.CharField()
     area = serializers.CharField()
