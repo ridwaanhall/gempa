@@ -304,7 +304,7 @@ class FeatureSerializer(serializers.Serializer):
     type = serializers.CharField()
     properties = PropertiesSerializer()
 
-class CatalogSerializer(serializers.Serializer):
+class DamageSerializer(serializers.Serializer):
     type = serializers.CharField()
     features = FeatureSerializer(many=True)
 

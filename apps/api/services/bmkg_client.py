@@ -45,8 +45,8 @@ class BmkgClient:
         """Return the most recent felt earthquake alert."""
         return self._get_json(self._endpoints.alert_url)
 
-    def get_catalog(self):
-        """Return the catalog of recent earthquakes."""
+    def get_damage(self):
+        """Return the damage of recent earthquakes."""
         return self._get_json(self._endpoints.catalog_url)
 
     def get_realtime(self):

@@ -54,11 +54,11 @@ class EarthquakeAlertView(ValidatedRemoteView):
 	fetcher = _client.get_alert
 
 
-class EarthquakeCatalogView(ValidatedRemoteView):
-	"""Expose the earthquake catalog from BMKG."""
+class EarthquakeDamageView(ValidatedRemoteView):
+	"""Expose the earthquake damage from BMKG."""
 
-	serializer_class = serializers.CatalogSerializer
-	fetcher = _client.get_catalog
+	serializer_class = serializers.DamageSerializer
+	fetcher = _client.get_damage
 
 
 class EarthquakeRealtimeView(ValidatedRemoteView):

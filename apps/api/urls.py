@@ -4,7 +4,7 @@ from . import views
     
 urlpatterns = [
 	path("latest/", views.EarthquakeAlertView.as_view(), name="earthquake-latest"),
-	path("catalog/", views.EarthquakeCatalogView.as_view(), name="earthquake-catalog"),
+	path("damage/", views.EarthquakeDamageView.as_view(), name="earthquake-damage"),
 	path("realtime/", views.EarthquakeRealtimeView.as_view(), name="earthquake-realtime"),
 	path("tsunami/", views.TsunamiAlertView.as_view(), name="earthquake-tsunami"),
 	path("felt/", views.FeltAlertView.as_view(), name="earthquake-felt"),
