@@ -135,12 +135,12 @@ class BmkgClient:
             response: Response = self._session.get(cache_busted_url, timeout=self._timeout)
             response.raise_for_status()
         except requests.RequestException as exc:  # pragma: no cover - network exceptions
-            raise BmkgClientError(f"Failed to fetch data from {url}") from exc
+            raise BmkgClientError("Failed to fetch earthquake data") from exc
 
         try:
             data: dict[str, Any] = response.json()
         except ValueError as exc:  # pragma: no cover - invalid json
-            raise BmkgClientError(f"Invalid JSON returned by {url}") from exc
+            raise BmkgClientError("Invalid earthquake data format") from exc
 
         return data
 
@@ -151,7 +151,7 @@ class BmkgClient:
             response: Response = self._session.get(cache_busted_url, timeout=self._timeout)
             response.raise_for_status()
         except requests.RequestException as exc:  # pragma: no cover
-            raise BmkgClientError(f"Failed to fetch data from {url}") from exc
+            raise BmkgClientError("Failed to fetch realtime earthquake data") from exc
 
         return response.text
 
@@ -159,7 +159,7 @@ class BmkgClient:
         try:
             root = ET.fromstring(xml_text)
         except ET.ParseError as exc:
-            raise BmkgClientError("Invalid XML returned by realtime endpoint") from exc
+            raise BmkgClientError("Invalid realtime earthquake data format") from exc
 
         events: list[RealtimeEventDict] = []
         for gempa in root.findall("gempa"):
