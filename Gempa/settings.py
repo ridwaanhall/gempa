@@ -30,6 +30,10 @@ BMKG_API_BASE = config('BMKG_API')
 BMKG_ALERT_URL = config('BMKG_ALERT_URL', default=f"{BMKG_API_BASE}/datagempa.json")
 BMKG_CATALOG_URL = config('BMKG_CATALOG_URL', default=f"{BMKG_API_BASE}/katalog_gempa.json")
 BMKG_REALTIME_URL = config('BMKG_REALTIME_URL', default=f"{BMKG_API_BASE}/live30event.xml")
+BMKG_TSUNAMI_URL = config(
+    'BMKG_TSUNAMI_URL',
+    default="https://bmkg-content-inatews.storage.googleapis.com/last30tsunamievent.xml",
+)
 
 if DEBUG:
     ALLOWED_HOSTS = []
