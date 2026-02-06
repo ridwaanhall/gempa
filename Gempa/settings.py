@@ -37,6 +37,10 @@ BMKG_MON3_URL = config(
     'BMKG_MON3_URL',
     default=f"{BMKG_API_BASE}/3mgempaQL.json",
 )
+BMKG_YR5_URL = config(
+    'BMKG_YR5_URL',
+    default=f"{BMKG_API_BASE}/histori.json",
+)
 
 if DEBUG:
     ALLOWED_HOSTS = []

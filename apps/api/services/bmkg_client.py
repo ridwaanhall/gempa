@@ -25,6 +25,7 @@ class BmkgEndpoints:
     felt_url: str
     m5_url: str
     mon3_url: str
+    yr5_url: str
 
 
 class BmkgClient:
@@ -68,6 +69,10 @@ class BmkgClient:
     def get_mon3(self):
         """Return monitoring feed for M3+ earthquakes (JSON)."""
         return self._get_json(self._endpoints.mon3_url)
+
+    def get_yr5(self):
+        """Return 5-year historical earthquakes (GeoJSON)."""
+        return self._get_json(self._endpoints.yr5_url)
 
     def _get_json(self, url: str) -> dict[str, Any]:
         cache_busted_url = self._with_cache_buster(url)

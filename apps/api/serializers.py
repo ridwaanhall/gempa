@@ -7,11 +7,34 @@ class IndonesianBooleanField(serializers.BooleanField):
     FALSE_VALUES = serializers.BooleanField.FALSE_VALUES | {"tidak"}
 
 
+# yr5
+class Yr5GeometrySerializer(serializers.Serializer):
+    type = serializers.CharField()
+    coordinates = serializers.ListField(child=serializers.FloatField())
+
+class Yr5PropertiesSerializer(serializers.Serializer):
+    status = serializers.CharField()
+    depth = serializers.FloatField()
+    place = serializers.CharField()
+    mag = serializers.FloatField()
+    time = serializers.DateTimeField(input_formats=["%Y-%m-%d %H:%M:%S.%f"])
+    id = serializers.CharField()
+    fase = serializers.IntegerField()
+
+class Yr5FeatureSerializer(serializers.Serializer):
+    geometry = Yr5GeometrySerializer()
+    type = serializers.CharField()
+    properties = Yr5PropertiesSerializer()
+
+class Yr5CatalogSerializer(serializers.Serializer):
+    type = serializers.CharField()
+    features = Yr5FeatureSerializer(many=True)
+
+
 # mon3
 class Mon3GeometrySerializer(serializers.Serializer):
     type = serializers.CharField()
     coordinates = serializers.ListField(child=serializers.FloatField())
-
 
 class Mon3PropertiesSerializer(serializers.Serializer):
     status = serializers.CharField()
@@ -22,12 +45,10 @@ class Mon3PropertiesSerializer(serializers.Serializer):
     id = serializers.CharField()
     fase = serializers.IntegerField()
 
-
 class Mon3FeatureSerializer(serializers.Serializer):
     geometry = Mon3GeometrySerializer()
     type = serializers.CharField()
     properties = Mon3PropertiesSerializer()
-
 
 class Mon3CatalogSerializer(serializers.Serializer):
     type = serializers.CharField()
