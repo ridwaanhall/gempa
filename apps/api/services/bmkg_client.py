@@ -30,6 +30,7 @@ class BmkgEndpoints:
     global_url: str
     faults_global_url: str
     faults_indo_url: str
+    history_url_template: str
 
 
 class BmkgClient:
@@ -96,6 +97,13 @@ class BmkgClient:
     def get_faults_indo(self):
         """Return Indonesian faults GeoJSON."""
         return self._get_json(self._endpoints.faults_indo_url)
+
+    def get_history(self, eventid: str):
+        """Return history of a realtime event given its eventid."""
+        url = self._endpoints.history_url_template.format(eventid=eventid)
+        text = self._get_text(url)
+        records = self._parse_history_text(text)
+        return {"eventid": eventid, "records": records}
 
     def _get_json(self, url: str) -> dict[str, Any]:
         cache_busted_url = self._with_cache_buster(url)
@@ -376,6 +384,54 @@ class BmkgClient:
             "code": get_text(root, "code"),
             "info": infos,
         }
+
+    def _parse_history_text(self, text: str) -> list[dict[str, Any]]:
+        def to_float(value: str) -> float | None:
+            value = value.strip()
+            if not value:
+                return None
+            try:
+                return float(value)
+            except ValueError:
+                return None
+
+        def to_int(value: str) -> int | None:
+            value = value.strip()
+            if not value:
+                return None
+            try:
+                return int(value)
+            except ValueError:
+                return None
+
+        records: list[dict[str, Any]] = []
+        for line in text.splitlines():
+            stripped = line.strip()
+            if not stripped or stripped.startswith("#"):
+                continue
+
+            parts = [part.strip() for part in stripped.split("|")]
+            if len(parts) < 10:
+                continue
+
+            timestamp, ot_minutes, lat, lon, depth, phase_count, mag_type, magnitude, mag_count, status = parts[:10]
+
+            records.append(
+                {
+                    "timestamp": timestamp,
+                    "ot_minutes": to_float(ot_minutes),
+                    "latitude": to_float(lat),
+                    "longitude": to_float(lon),
+                    "depth": to_float(depth),
+                    "phase_count": to_int(phase_count),
+                    "mag_type": mag_type,
+                    "magnitude": to_float(magnitude),
+                    "mag_count": to_int(mag_count),
+                    "status": status,
+                }
+            )
+
+        return records
 
     def _strip_namespaces(self, root: ET.Element) -> None:
         """Remove XML namespaces to simplify parsing."""

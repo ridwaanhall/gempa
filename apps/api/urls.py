@@ -3,9 +3,13 @@ from django.urls import path
 from . import views
     
 urlpatterns = [
+    # realtime
+	path("realtime/", views.EarthquakeRealtimeView.as_view(), name="earthquake-realtime"),
+	path("realtime/<str:eventid>/history/", views.EarthquakeHistoryView.as_view(), name="earthquake-history"),
+
+    # alerts
 	path("latest/", views.EarthquakeAlertView.as_view(), name="earthquake-latest"),
 	path("damage/", views.EarthquakeDamageView.as_view(), name="earthquake-damage"),
-	path("realtime/", views.EarthquakeRealtimeView.as_view(), name="earthquake-realtime"),
 	path("tsunami/", views.TsunamiAlertView.as_view(), name="earthquake-tsunami"),
 	path("felt/", views.FeltAlertView.as_view(), name="earthquake-felt"),
 	path("m5/", views.M5AlertView.as_view(), name="earthquake-m5"),

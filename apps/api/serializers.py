@@ -24,6 +24,25 @@ class FaultCatalogSerializer(serializers.Serializer):
     features = FaultFeatureSerializer(many=True)
 
 
+# history
+class HistoryRecordSerializer(serializers.Serializer):
+    timestamp = serializers.DateTimeField(input_formats=["%Y-%m-%d %H:%M:%S"])
+    ot_minutes = serializers.FloatField(allow_null=True, required=False)
+    latitude = serializers.FloatField(allow_null=True, required=False)
+    longitude = serializers.FloatField(allow_null=True, required=False)
+    depth = serializers.FloatField(allow_null=True, required=False)
+    phase_count = serializers.IntegerField(allow_null=True, required=False)
+    mag_type = serializers.CharField(allow_blank=True, required=False)
+    magnitude = serializers.FloatField(allow_null=True, required=False)
+    mag_count = serializers.IntegerField(allow_null=True, required=False)
+    status = serializers.CharField(allow_blank=True, required=False)
+
+
+class HistoryResponseSerializer(serializers.Serializer):
+    eventid = serializers.CharField()
+    records = HistoryRecordSerializer(many=True)
+
+
 # global sensors
 class GlobalGeometrySerializer(serializers.Serializer):
     type = serializers.CharField()
