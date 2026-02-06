@@ -69,15 +69,15 @@ BMKG_GLOBAL_URL = config(
 )
 BMKG_FAULTS_GLOBAL_URL = config(
     'BMKG_FAULTS_GLOBAL_URL',
-    default="https://bmkg-content-inatews.storage.googleapis.com/fault_indo_world.geojson",
+    default=f"{BMKG_API_BASE}/fault_indo_world.geojson",
 )
 BMKG_FAULTS_INDO_URL = config(
     'BMKG_FAULTS_INDO_URL',
-    default="https://bmkg-content-inatews.storage.googleapis.com/indo_faults_lines.geojson",
+    default=f"{BMKG_API_BASE}/indo_faults_lines.geojson",
 )
 BMKG_HISTORY_URL_TEMPLATE = config(
     'BMKG_HISTORY_URL_TEMPLATE',
-    default="https://bmkg-content-inatews.storage.googleapis.com/history.{eventid}.txt",
+    default=f"{BMKG_API_BASE}/history.{{eventid}}.txt",
 )
 
 if DEBUG:
