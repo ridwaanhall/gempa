@@ -36,6 +36,7 @@ _bmkg_endpoints = bmkg_client.BmkgEndpoints(
 	realtime_url=settings.BMKG_REALTIME_URL,
 	tsunami_url=settings.BMKG_TSUNAMI_URL,
 	felt_url=settings.BMKG_FELT_URL,
+	m5_url=settings.BMKG_M5_URL,
 )
 _client = bmkg_client.BmkgClient(endpoints=_bmkg_endpoints)
 
@@ -73,3 +74,10 @@ class FeltAlertView(ValidatedRemoteView):
 
 	serializer_class = serializers.FeltAlertSerializer
 	fetcher = _client.get_felt
+
+
+class M5AlertView(ValidatedRemoteView):
+	"""Expose recent M5+ earthquake alerts parsed from BMKG XML feed."""
+
+	serializer_class = serializers.M5AlertSerializer
+	fetcher = _client.get_m5

@@ -7,10 +7,43 @@ class IndonesianBooleanField(serializers.BooleanField):
     FALSE_VALUES = serializers.BooleanField.FALSE_VALUES | {"tidak"}
 
 
+# m5
+class M5PointSerializer(serializers.Serializer):
+    coordinates = serializers.CharField()
+
+class M5InfoSerializer(serializers.Serializer):
+    event = serializers.CharField()
+    date = serializers.DateField(input_formats=["%d-%m-%y", "%d-%m-%Y"])
+    time = serializers.CharField()
+    point = M5PointSerializer()
+    latitude = serializers.CharField()
+    longitude = serializers.CharField()
+    magnitude = serializers.FloatField(allow_null=True, required=False)
+    depth = serializers.CharField()
+    area = serializers.CharField()
+    eventid = serializers.IntegerField()
+    potential = serializers.CharField()
+    subject = serializers.CharField()
+    headline = serializers.CharField()
+    description = serializers.CharField()
+    instruction = serializers.CharField()
+    shakemap = serializers.CharField(allow_blank=True, required=False)
+    timesent = serializers.CharField()
+
+class M5AlertSerializer(serializers.Serializer):
+    identifier = serializers.CharField()
+    sender = serializers.CharField()
+    sent = serializers.CharField()
+    status = serializers.CharField()
+    msgType = serializers.CharField()
+    scope = serializers.CharField()
+    code = serializers.CharField()
+    info = M5InfoSerializer(many=True)
+
+
 # felt
 class FeltPointSerializer(serializers.Serializer):
     coordinates = serializers.CharField()
-
 
 class FeltInfoSerializer(serializers.Serializer):
     event = serializers.CharField()
@@ -32,7 +65,6 @@ class FeltInfoSerializer(serializers.Serializer):
     felt = serializers.CharField()
     timesent = serializers.CharField()
 
-
 class FeltAlertSerializer(serializers.Serializer):
     identifier = serializers.CharField()
     sender = serializers.CharField()
@@ -48,14 +80,12 @@ class FeltAlertSerializer(serializers.Serializer):
 class TsunamiPointSerializer(serializers.Serializer):
     coordinates = serializers.CharField(allow_blank=True, required=False)
 
-
 class TsunamiWzAreaSerializer(serializers.Serializer):
     province = serializers.CharField(allow_blank=True, required=False)
     district = serializers.CharField(allow_blank=True, required=False)
     level = serializers.CharField(allow_blank=True, required=False)
     date = serializers.DateField(input_formats=["%d-%m-%Y", "%d-%m-%y"], required=False)
     time = serializers.CharField(allow_blank=True, required=False)
-
 
 class TsunamiObsAreaSerializer(serializers.Serializer):
     location = serializers.CharField(allow_blank=True, required=False)
@@ -64,7 +94,6 @@ class TsunamiObsAreaSerializer(serializers.Serializer):
     height = serializers.FloatField(allow_null=True, required=False)
     date = serializers.DateField(input_formats=["%d-%m-%Y", "%d-%m-%y"], required=False)
     time = serializers.CharField(allow_blank=True, required=False)
-
 
 class TsunamiInfoSerializer(serializers.Serializer):
     event = serializers.CharField()
@@ -92,7 +121,6 @@ class TsunamiInfoSerializer(serializers.Serializer):
     timesent = serializers.CharField()
     wzarea = TsunamiWzAreaSerializer(many=True, required=False)
     obsarea = TsunamiObsAreaSerializer(many=True, required=False)
-
 
 class TsunamiAlertSerializer(serializers.Serializer):
     identifier = serializers.CharField()
