@@ -49,7 +49,7 @@ _client = bmkg_client.BmkgClient(endpoints=_bmkg_endpoints)
 
 
 class EarthquakeAlertView(ValidatedRemoteView):
-	"""Expose the latest felt earthquake alert from BMKG."""
+	"""Expose the latest felt earthquake alert (gempa dirasakan) from BMKG InaTEWS."""
 
 	serializer_class = serializers.EarthquakeAlertSerializer
 	fetcher = _client.get_alert
@@ -63,28 +63,28 @@ class EarthquakeDamageView(ValidatedRemoteView):
 
 
 class EarthquakeRealtimeView(ValidatedRemoteView):
-	"""Expose realtime earthquakes parsed from BMKG XML feed."""
+	"""Expose real-time earthquake events (JSON)."""
 
 	serializer_class = serializers.RealtimeCatalogSerializer
 	fetcher = _client.get_realtime
 
 
 class TsunamiAlertView(ValidatedRemoteView):
-	"""Expose recent tsunami alerts parsed from BMKG XML feed."""
+	"""Expose recent tsunami alerts."""
 
 	serializer_class = serializers.TsunamiAlertSerializer
 	fetcher = _client.get_tsunami
 
 
 class FeltAlertView(ValidatedRemoteView):
-	"""Expose recent felt earthquake alerts parsed from BMKG XML feed."""
+	"""Expose recent felt earthquake alerts."""
 
 	serializer_class = serializers.FeltAlertSerializer
 	fetcher = _client.get_felt
 
 
 class M5AlertView(ValidatedRemoteView):
-	"""Expose recent M5+ earthquake alerts parsed from BMKG XML feed."""
+	"""Expose recent M5+ earthquake alerts."""
 
 	serializer_class = serializers.M5AlertSerializer
 	fetcher = _client.get_m5
@@ -119,7 +119,7 @@ class GlobalSensorView(ValidatedRemoteView):
 
 
 class FaultsGlobalView(ValidatedRemoteView):
-	"""Expose global/Indo faults GeoJSON."""
+	"""Expose global-Indo faults GeoJSON."""
 
 	serializer_class = serializers.FaultCatalogSerializer
 	fetcher = _client.get_faults_global
