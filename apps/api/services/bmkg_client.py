@@ -28,6 +28,8 @@ class BmkgEndpoints:
     yr5_url: str
     seismic_url: str
     global_url: str
+    faults_global_url: str
+    faults_indo_url: str
 
 
 class BmkgClient:
@@ -86,6 +88,14 @@ class BmkgClient:
         if isinstance(data, list):
             return {"features": data}
         raise BmkgClientError("Invalid global sensor data format")
+
+    def get_faults_global(self):
+        """Return global/Indo faults GeoJSON."""
+        return self._get_json(self._endpoints.faults_global_url)
+
+    def get_faults_indo(self):
+        """Return Indonesian faults GeoJSON."""
+        return self._get_json(self._endpoints.faults_indo_url)
 
     def _get_json(self, url: str) -> dict[str, Any]:
         cache_busted_url = self._with_cache_buster(url)

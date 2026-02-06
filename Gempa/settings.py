@@ -67,6 +67,14 @@ BMKG_GLOBAL_URL = config(
     'BMKG_GLOBAL_URL',
     default=f"{BMKG_API_BASE}/sensor_global.json",
 )
+BMKG_FAULTS_GLOBAL_URL = config(
+    'BMKG_FAULTS_GLOBAL_URL',
+    default=f"{BMKG_API_BASE}/fault_indo_world.geojson",
+)
+BMKG_FAULTS_INDO_URL = config(
+    'BMKG_FAULTS_INDO_URL',
+    default=f"{BMKG_API_BASE}/indo_faults_lines.geojson",
+)
 
 if DEBUG:
     ALLOWED_HOSTS = []

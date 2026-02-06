@@ -41,6 +41,8 @@ _bmkg_endpoints = bmkg_client.BmkgEndpoints(
 	yr5_url=settings.BMKG_YR5_URL,
 	seismic_url=settings.BMKG_SEISMIC_URL,
 	global_url=settings.BMKG_GLOBAL_URL,
+	faults_global_url=settings.BMKG_FAULTS_GLOBAL_URL,
+	faults_indo_url=settings.BMKG_FAULTS_INDO_URL,
 )
 _client = bmkg_client.BmkgClient(endpoints=_bmkg_endpoints)
 
@@ -113,3 +115,17 @@ class GlobalSensorView(ValidatedRemoteView):
 
 	serializer_class = serializers.GlobalCatalogSerializer
 	fetcher = _client.get_global
+
+
+class FaultsGlobalView(ValidatedRemoteView):
+	"""Expose global/Indo faults GeoJSON."""
+
+	serializer_class = serializers.FaultCatalogSerializer
+	fetcher = _client.get_faults_global
+
+
+class FaultsIndoView(ValidatedRemoteView):
+	"""Expose Indonesian faults GeoJSON."""
+
+	serializer_class = serializers.FaultCatalogSerializer
+	fetcher = _client.get_faults_indo

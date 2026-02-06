@@ -7,6 +7,23 @@ class IndonesianBooleanField(serializers.BooleanField):
     FALSE_VALUES = serializers.BooleanField.FALSE_VALUES | {"tidak"}
 
 
+# faults (shared)
+class FaultGeometrySerializer(serializers.Serializer):
+    type = serializers.CharField()
+    coordinates = serializers.JSONField()
+
+class FaultFeatureSerializer(serializers.Serializer):
+    type = serializers.CharField()
+    properties = serializers.DictField()
+    geometry = FaultGeometrySerializer()
+
+class FaultCatalogSerializer(serializers.Serializer):
+    type = serializers.CharField()
+    name = serializers.CharField(required=False, allow_blank=True)
+    crs = serializers.DictField(required=False)
+    features = FaultFeatureSerializer(many=True)
+
+
 # global sensors
 class GlobalGeometrySerializer(serializers.Serializer):
     type = serializers.CharField()
