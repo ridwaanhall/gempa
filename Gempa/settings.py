@@ -34,6 +34,10 @@ BMKG_TSUNAMI_URL = config(
     'BMKG_TSUNAMI_URL',
     default="https://bmkg-content-inatews.storage.googleapis.com/last30tsunamievent.xml",
 )
+BMKG_FELT_URL = config(
+    'BMKG_FELT_URL',
+    default="https://bmkg-content-inatews.storage.googleapis.com/last30feltevent.xml",
+)
 
 if DEBUG:
     ALLOWED_HOSTS = []

@@ -22,6 +22,7 @@ class BmkgEndpoints:
     catalog_url: str
     realtime_url: str
     tsunami_url: str
+    felt_url: str
 
 
 class BmkgClient:
@@ -51,6 +52,11 @@ class BmkgClient:
         """Return recent tsunami alerts converted from XML to JSON."""
         xml_text = self._get_text(self._endpoints.tsunami_url)
         return self._parse_tsunami_xml(xml_text)
+
+    def get_felt(self):
+        """Return recent felt earthquake alerts converted from XML to JSON."""
+        xml_text = self._get_text(self._endpoints.felt_url)
+        return self._parse_felt_xml(xml_text)
 
     def _get_json(self, url: str) -> dict[str, Any]:
         cache_busted_url = self._with_cache_buster(url)
@@ -102,6 +108,66 @@ class BmkgClient:
             )
 
         return events
+
+    def _parse_felt_xml(self, xml_text: str) -> dict[str, Any]:
+        try:
+            root = ET.fromstring(xml_text)
+        except ET.ParseError as exc:
+            raise BmkgClientError("Invalid felt earthquake data format") from exc
+
+        self._strip_namespaces(root)
+
+        def get_text(node: ET.Element | None, tag: str) -> str:
+            if node is None:
+                return ""
+            child = node.find(tag)
+            return (child.text or "").strip() if child is not None else ""
+
+        def parse_point(node: ET.Element) -> dict[str, str]:
+            point_node = node.find("point")
+            return {"coordinates": get_text(point_node, "coordinates")}
+
+        infos: list[dict[str, Any]] = []
+        for info in root.findall("info"):
+            magnitude_text = get_text(info, "magnitude")
+            try:
+                magnitude_value = float(magnitude_text) if magnitude_text else None
+            except ValueError:
+                magnitude_value = None
+
+            infos.append(
+                {
+                    "event": get_text(info, "event"),
+                    "date": get_text(info, "date"),
+                    "time": get_text(info, "time"),
+                    "point": parse_point(info),
+                    "latitude": get_text(info, "latitude"),
+                    "longitude": get_text(info, "longitude"),
+                    "magnitude": magnitude_value,
+                    "depth": get_text(info, "depth"),
+                    "area": get_text(info, "area"),
+                    "eventid": get_text(info, "eventid"),
+                    "potential": get_text(info, "potential"),
+                    "subject": get_text(info, "subject"),
+                    "headline": get_text(info, "headline"),
+                    "description": get_text(info, "description"),
+                    "instruction": get_text(info, "instruction"),
+                    "shakemap": get_text(info, "shakemap"),
+                    "felt": get_text(info, "felt"),
+                    "timesent": get_text(info, "timesent"),
+                }
+            )
+
+        return {
+            "identifier": get_text(root, "identifier"),
+            "sender": get_text(root, "sender"),
+            "sent": get_text(root, "sent"),
+            "status": get_text(root, "status"),
+            "msgType": get_text(root, "msgType"),
+            "scope": get_text(root, "scope"),
+            "code": get_text(root, "code"),
+            "info": infos,
+        }
 
     def _parse_tsunami_xml(self, xml_text: str) -> dict[str, Any]:
         try:

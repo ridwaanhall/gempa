@@ -7,4 +7,5 @@ urlpatterns = [
 	path("catalog/", views.EarthquakeCatalogView.as_view(), name="earthquake-catalog"),
 	path("realtime/", views.EarthquakeRealtimeView.as_view(), name="earthquake-realtime"),
 	path("tsunami/", views.TsunamiAlertView.as_view(), name="earthquake-tsunami"),
+	path("felt/", views.FeltAlertView.as_view(), name="earthquake-felt"),
 ]

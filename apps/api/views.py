@@ -35,6 +35,7 @@ _bmkg_endpoints = bmkg_client.BmkgEndpoints(
 	catalog_url=settings.BMKG_CATALOG_URL,
 	realtime_url=settings.BMKG_REALTIME_URL,
 	tsunami_url=settings.BMKG_TSUNAMI_URL,
+	felt_url=settings.BMKG_FELT_URL,
 )
 _client = bmkg_client.BmkgClient(endpoints=_bmkg_endpoints)
 
@@ -65,3 +66,10 @@ class TsunamiAlertView(ValidatedRemoteView):
 
 	serializer_class = serializers.TsunamiAlertSerializer
 	fetcher = _client.get_tsunami
+
+
+class FeltAlertView(ValidatedRemoteView):
+	"""Expose recent felt earthquake alerts parsed from BMKG XML feed."""
+
+	serializer_class = serializers.FeltAlertSerializer
+	fetcher = _client.get_felt
