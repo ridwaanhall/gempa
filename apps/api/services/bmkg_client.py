@@ -26,6 +26,8 @@ class BmkgEndpoints:
     m5_url: str
     mon3_url: str
     yr5_url: str
+    seismic_url: str
+    global_url: str
 
 
 class BmkgClient:
@@ -74,6 +76,17 @@ class BmkgClient:
         """Return 5-year historical earthquakes (GeoJSON)."""
         return self._get_json(self._endpoints.yr5_url)
 
+    def get_seismic(self):
+        """Return seismic sensor stations (GeoJSON FeatureCollection)."""
+        return self._get_json(self._endpoints.seismic_url)
+
+    def get_global(self):
+        """Return global sensor stations (list of features)."""
+        data = self._get_json_any(self._endpoints.global_url)
+        if isinstance(data, list):
+            return {"features": data}
+        raise BmkgClientError("Invalid global sensor data format")
+
     def _get_json(self, url: str) -> dict[str, Any]:
         cache_busted_url = self._with_cache_buster(url)
 
@@ -89,6 +102,20 @@ class BmkgClient:
             raise BmkgClientError("Invalid earthquake data format") from exc
 
         return data
+
+    def _get_json_any(self, url: str) -> Any:
+        cache_busted_url = self._with_cache_buster(url)
+
+        try:
+            response: Response = self._session.get(cache_busted_url, timeout=self._timeout)
+            response.raise_for_status()
+        except requests.RequestException as exc:  # pragma: no cover - network exceptions
+            raise BmkgClientError("Failed to fetch earthquake data") from exc
+
+        try:
+            return response.json()
+        except ValueError as exc:  # pragma: no cover - invalid json
+            raise BmkgClientError("Invalid earthquake data format") from exc
 
     def _get_text(self, url: str) -> str:
         cache_busted_url = self._with_cache_buster(url)

@@ -59,6 +59,14 @@ BMKG_YR5_URL = config(
     'BMKG_YR5_URL',
     default=f"{BMKG_API_BASE}/histori.json",
 )
+BMKG_SEISMIC_URL = config(
+    'BMKG_SEISMIC_URL',
+    default=f"{BMKG_API_BASE}/sensor_seismic.json",
+)
+BMKG_GLOBAL_URL = config(
+    'BMKG_GLOBAL_URL',
+    default=f"{BMKG_API_BASE}/sensor_global.json",
+)
 
 if DEBUG:
     ALLOWED_HOSTS = []

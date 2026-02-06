@@ -7,6 +7,52 @@ class IndonesianBooleanField(serializers.BooleanField):
     FALSE_VALUES = serializers.BooleanField.FALSE_VALUES | {"tidak"}
 
 
+# global sensors
+class GlobalGeometrySerializer(serializers.Serializer):
+    type = serializers.CharField()
+    coordinates = serializers.ListField(child=serializers.FloatField())
+
+
+class GlobalPropertiesSerializer(serializers.Serializer):
+    description = serializers.CharField()
+    net = serializers.CharField()
+    sta = serializers.CharField()
+
+
+class GlobalFeatureSerializer(serializers.Serializer):
+    id = serializers.CharField()
+    type = serializers.CharField()
+    geometry = GlobalGeometrySerializer()
+    properties = GlobalPropertiesSerializer()
+
+
+class GlobalCatalogSerializer(serializers.Serializer):
+    features = GlobalFeatureSerializer(many=True)
+
+
+# seismic sensors
+class SeismicGeometrySerializer(serializers.Serializer):
+    type = serializers.CharField()
+    coordinates = serializers.ListField(child=serializers.FloatField())
+
+
+class SeismicPropertiesSerializer(serializers.Serializer):
+    id = serializers.CharField()
+    stakeholder = serializers.CharField()
+    uptbmkg = serializers.CharField()
+
+
+class SeismicFeatureSerializer(serializers.Serializer):
+    type = serializers.CharField()
+    properties = SeismicPropertiesSerializer()
+    geometry = SeismicGeometrySerializer()
+
+
+class SeismicCatalogSerializer(serializers.Serializer):
+    type = serializers.CharField()
+    features = SeismicFeatureSerializer(many=True)
+
+
 # yr5
 class Yr5GeometrySerializer(serializers.Serializer):
     type = serializers.CharField()

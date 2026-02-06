@@ -11,4 +11,6 @@ urlpatterns = [
 	path("m5/", views.M5AlertView.as_view(), name="earthquake-m5"),
 	path("mon3/", views.Mon3View.as_view(), name="earthquake-mon3"),
 	path("yr5/", views.Yr5View.as_view(), name="earthquake-yr5"),
+	path("seismic/", views.SeismicView.as_view(), name="earthquake-seismic"),
+	path("global/", views.GlobalSensorView.as_view(), name="earthquake-global"),
 ]

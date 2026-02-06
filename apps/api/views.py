@@ -39,6 +39,8 @@ _bmkg_endpoints = bmkg_client.BmkgEndpoints(
 	m5_url=settings.BMKG_M5_URL,
 	mon3_url=settings.BMKG_MON3_URL,
 	yr5_url=settings.BMKG_YR5_URL,
+	seismic_url=settings.BMKG_SEISMIC_URL,
+	global_url=settings.BMKG_GLOBAL_URL,
 )
 _client = bmkg_client.BmkgClient(endpoints=_bmkg_endpoints)
 
@@ -97,3 +99,17 @@ class Yr5View(ValidatedRemoteView):
 
 	serializer_class = serializers.Yr5CatalogSerializer
 	fetcher = _client.get_yr5
+
+
+class SeismicView(ValidatedRemoteView):
+	"""Expose seismic sensor stations (GeoJSON FeatureCollection)."""
+
+	serializer_class = serializers.SeismicCatalogSerializer
+	fetcher = _client.get_seismic
+
+
+class GlobalSensorView(ValidatedRemoteView):
+	"""Expose global sensor stations (Feature list)."""
+
+	serializer_class = serializers.GlobalCatalogSerializer
+	fetcher = _client.get_global
