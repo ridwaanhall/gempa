@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 
-from apps.api.serializers import CatalogSerializer, EarthquakeAlertSerializer
+from apps.api.serializers import CatalogSerializer, EarthquakeAlertSerializer, RealtimeCatalogSerializer
 from apps.api.services.bmkg_client import BmkgClient, BmkgClientError, BmkgEndpoints
 
 
@@ -33,6 +33,7 @@ class ValidatedRemoteView(APIView):
 _bmkg_endpoints = BmkgEndpoints(
 	alert_url=settings.BMKG_ALERT_URL,
 	catalog_url=settings.BMKG_CATALOG_URL,
+	realtime_url=settings.BMKG_REALTIME_URL,
 )
 _client = BmkgClient(endpoints=_bmkg_endpoints)
 
@@ -49,3 +50,10 @@ class EarthquakeCatalogView(ValidatedRemoteView):
 
 	serializer_class = CatalogSerializer
 	fetcher = _client.get_catalog
+
+
+class EarthquakeRealtimeView(ValidatedRemoteView):
+	"""Expose realtime earthquakes parsed from BMKG XML feed."""
+
+	serializer_class = RealtimeCatalogSerializer
+	fetcher = _client.get_realtime

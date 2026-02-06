@@ -7,6 +7,7 @@ from urllib.parse import urlencode, urlsplit, urlunsplit, parse_qsl
 import requests
 from requests import Response, Session
 from time import time
+import xml.etree.ElementTree as ET
 
 
 class PointDict(TypedDict):
@@ -75,6 +76,22 @@ class CatalogDict(TypedDict):
     features: list[FeatureDict]
 
 
+class RealtimeEventDict(TypedDict):
+    eventid: str
+    status: str
+    waktu: str
+    lintang: str
+    bujur: str
+    dalam: str
+    mag: str
+    fokal: str
+    area: str
+
+
+class RealtimeCatalogDict(TypedDict):
+    events: list[RealtimeEventDict]
+
+
 class BmkgClientError(Exception):
     """Raised when the BMKG API cannot be reached or returns invalid data."""
 
@@ -85,6 +102,7 @@ class BmkgEndpoints:
 
     alert_url: str
     catalog_url: str
+    realtime_url: str
 
 
 class BmkgClient:
@@ -104,6 +122,12 @@ class BmkgClient:
         """Return the catalog of recent earthquakes."""
         return cast(CatalogDict, self._get_json(self._endpoints.catalog_url))
 
+    def get_realtime(self) -> RealtimeCatalogDict:
+        """Return realtime earthquakes converted from XML to JSON."""
+        xml_text = self._get_text(self._endpoints.realtime_url)
+        events = self._parse_realtime_xml(xml_text)
+        return {"events": events}
+
     def _get_json(self, url: str) -> dict[str, Any]:
         cache_busted_url = self._with_cache_buster(url)
 
@@ -119,6 +143,41 @@ class BmkgClient:
             raise BmkgClientError(f"Invalid JSON returned by {url}") from exc
 
         return data
+
+    def _get_text(self, url: str) -> str:
+        cache_busted_url = self._with_cache_buster(url)
+
+        try:
+            response: Response = self._session.get(cache_busted_url, timeout=self._timeout)
+            response.raise_for_status()
+        except requests.RequestException as exc:  # pragma: no cover
+            raise BmkgClientError(f"Failed to fetch data from {url}") from exc
+
+        return response.text
+
+    def _parse_realtime_xml(self, xml_text: str) -> list[RealtimeEventDict]:
+        try:
+            root = ET.fromstring(xml_text)
+        except ET.ParseError as exc:
+            raise BmkgClientError("Invalid XML returned by realtime endpoint") from exc
+
+        events: list[RealtimeEventDict] = []
+        for gempa in root.findall("gempa"):
+            events.append(
+                {
+                    "eventid": (gempa.findtext("eventid") or "").strip(),
+                    "status": (gempa.findtext("status") or "").strip(),
+                    "waktu": (gempa.findtext("waktu") or "").strip(),
+                    "lintang": (gempa.findtext("lintang") or "").strip(),
+                    "bujur": (gempa.findtext("bujur") or "").strip(),
+                    "dalam": (gempa.findtext("dalam") or "").strip(),
+                    "mag": (gempa.findtext("mag") or "").strip(),
+                    "fokal": (gempa.findtext("fokal") or "").strip(),
+                    "area": (gempa.findtext("area") or "").strip(),
+                }
+            )
+
+        return events
 
     def _with_cache_buster(self, url: str) -> str:
         """Append a timestamp query param so BMKG responses are not cached."""
@@ -140,4 +199,6 @@ __all__ = [
     "InfoDict",
     "PointDict",
     "PropertiesDict",
+    "RealtimeCatalogDict",
+    "RealtimeEventDict",
 ]

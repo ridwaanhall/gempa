@@ -65,3 +65,19 @@ class FeatureSerializer(serializers.Serializer):
 class CatalogSerializer(serializers.Serializer):
     type = serializers.CharField()
     features = FeatureSerializer(many=True)
+
+
+class RealtimeEventSerializer(serializers.Serializer):
+    eventid = serializers.CharField()
+    status = serializers.CharField()
+    waktu = serializers.CharField()
+    lintang = serializers.CharField()
+    bujur = serializers.CharField()
+    dalam = serializers.CharField()
+    mag = serializers.CharField()
+    fokal = serializers.CharField()
+    area = serializers.CharField()
+
+
+class RealtimeCatalogSerializer(serializers.Serializer):
+    events = RealtimeEventSerializer(many=True)
