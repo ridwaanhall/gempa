@@ -4,7 +4,7 @@
 const GempaApp = (() => {
     'use strict';
 
-    const { fetchJSON, magBg, magColor, formatDatetime, datetimeSortKey, setHTML } = GempaUtils;
+    const { fetchJSON, magBg, magColor, formatDatetime, datetimeSortKey, setHTML, dataTableLang } = GempaUtils;
     let rtMap;
 
     async function init() {
@@ -55,13 +55,7 @@ const GempaApp = (() => {
                 order: [[0, 'desc']],
                 info: true,
                 searching: true,
-                language: {
-                    search: 'Cari:',
-                    lengthMenu: 'Tampilkan _MENU_ data',
-                    info: '_START_–_END_ dari _TOTAL_',
-                    paginate: { previous: '‹', next: '›' },
-                    zeroRecords: 'Tidak ada data',
-                },
+                language: dataTableLang,
             });
         } catch (e) {
             document.getElementById('rt-tbody').innerHTML =

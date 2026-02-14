@@ -7,7 +7,9 @@
 (async function () {
     'use strict';
 
-    const { fetchJSON, magColor, magBg, formatDatetime, setText, setHTML, parseCoords, bmkgImageUrls, bmkgImageLabels } = GempaUtils;
+    const { fetchJSON, magColor, magBg, formatDatetime, setText, setHTML, parseCoords, bmkgImageGrid, showNarasiModal, hideModal } = GempaUtils;
+
+    let latestEventId = null;
 
     // ── Latest earthquake ───────────────────────────────────
     try {
@@ -43,25 +45,19 @@
                 GempaMap.quakePopup({ mag, area: info.area, depth: info.depth, time: `${info.date}T${info.time}` }));
         }
 
-        // BMKG analysis images
+        // BMKG analysis images + narasi
         const eventid = info.eventid;
         if (eventid) {
-            const imgs = bmkgImageUrls(eventid);
+            latestEventId = eventid;
             const grid = document.getElementById('latest-images-grid');
             const container = document.getElementById('latest-images');
             if (grid && container) {
-                grid.innerHTML = Object.entries(imgs).map(([key, url]) => `
-                    <div class="group cursor-pointer" onclick="document.getElementById('img-modal-src').src='${url}';document.getElementById('img-modal-title').textContent='${bmkgImageLabels[key]}';document.getElementById('img-modal').classList.remove('hidden')">
-                        <div class="relative overflow-hidden rounded-lg border border-gray-800 bg-gray-900 aspect-video">
-                            <img src="${url}" alt="${bmkgImageLabels[key]}" loading="lazy"
-                                 class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
-                                 onerror="this.parentElement.parentElement.style.display='none'">
-                        </div>
-                        <p class="text-[10px] text-gray-500 mt-1 text-center group-hover:text-gray-300 transition-colors">${bmkgImageLabels[key]}</p>
-                    </div>
-                `).join('');
+                grid.innerHTML = bmkgImageGrid(eventid);
                 container.classList.remove('hidden');
             }
+            // Show narasi button
+            const narasiBtn = document.getElementById('latest-narasi-btn');
+            if (narasiBtn) narasiBtn.classList.remove('hidden');
         }
     } catch (e) {
         setText('latest-area', 'Gagal memuat data');
@@ -202,4 +198,11 @@
 
     await Promise.allSettled(fetches);
     if (statusEl) statusEl.textContent = `${loaded}/${total} layer dimuat ✓`;
+
+    // ── Narasi handler (exposed globally for onclick) ────
+    window.showLatestNarasi = function () {
+        if (latestEventId) {
+            showNarasiModal(latestEventId, 'narasi-modal', 'narasi-title', 'narasi-content');
+        }
+    };
 })();

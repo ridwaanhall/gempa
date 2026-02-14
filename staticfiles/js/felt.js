@@ -1,10 +1,13 @@
 /**
- * Felt earthquakes page — cards + map + detail modal.
+ * Felt earthquakes page — cards + map + detail/narasi modals.
  */
 const GempaFelt = (() => {
     'use strict';
 
-    const { fetchJSON, magBg, magColor, formatDatetime, parseCoords, bmkgImageUrls, bmkgImageLabels } = GempaUtils;
+    const {
+        fetchJSON, magBg, magColor, formatDatetime, parseCoords,
+        bmkgImageGrid, showNarasiModal, hideModal, detailInfoRow,
+    } = GempaUtils;
 
     let infosCache = [];
 
@@ -16,38 +19,19 @@ const GempaFelt = (() => {
         const content = document.getElementById('detail-content');
         title.textContent = `M ${info.magnitude} — ${info.area}`;
 
-        const imgs = bmkgImageUrls(info.eventid);
-        const imgGrid = imgs ? Object.entries(imgs).map(([key, url]) => `
-            <div class="group cursor-pointer" onclick="document.getElementById('img-modal-src').src='${url}';document.getElementById('img-modal-title').textContent='${bmkgImageLabels[key]}';document.getElementById('img-modal').classList.remove('hidden')">
-                <div class="relative overflow-hidden rounded-lg border border-gray-800 bg-gray-950 aspect-video">
-                    <img src="${url}" alt="${bmkgImageLabels[key]}" loading="lazy"
-                         class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
-                         onerror="this.parentElement.parentElement.style.display='none'">
-                </div>
-                <p class="text-[10px] text-gray-500 mt-1 text-center group-hover:text-gray-300 transition-colors">${bmkgImageLabels[key]}</p>
-            </div>
-        `).join('') : '<p class="text-gray-500 text-sm">Tidak ada gambar tersedia</p>';
-
         content.innerHTML = `
-            <div class="grid grid-cols-3 gap-3 text-center mb-4">
-                <div class="bg-gray-800/50 rounded-lg py-2">
-                    <p class="text-[9px] text-gray-600 uppercase">Kedalaman</p>
-                    <p class="text-xs font-semibold text-gray-300">${info.depth}</p>
-                </div>
-                <div class="bg-gray-800/50 rounded-lg py-2">
-                    <p class="text-[9px] text-gray-600 uppercase">Waktu</p>
-                    <p class="text-xs font-semibold text-gray-300">${formatDatetime(`${info.date}T${info.time}`)}</p>
-                </div>
-                <div class="bg-gray-800/50 rounded-lg py-2">
-                    <p class="text-[9px] text-gray-600 uppercase">Koordinat</p>
-                    <p class="text-xs font-semibold text-gray-300">${info.latitude}, ${info.longitude}</p>
-                </div>
-            </div>
+            ${detailInfoRow(info.depth, `${info.date}T${info.time}`, info.latitude, info.longitude)}
             ${info.felt ? `<p class="text-xs text-gray-400 mb-4"><span class="text-gray-600">Dirasakan:</span> ${info.felt}</p>` : ''}
             <p class="text-[10px] text-gray-600 uppercase font-semibold mb-2">Analisis BMKG</p>
-            <div class="grid grid-cols-2 gap-3">${imgGrid}</div>
+            <div class="grid grid-cols-2 gap-3">${bmkgImageGrid(info.eventid)}</div>
         `;
         modal.classList.remove('hidden');
+    }
+
+    function showNarasi(idx) {
+        const info = infosCache[idx];
+        if (!info) return;
+        showNarasiModal(info.eventid, 'narasi-modal', 'narasi-title', 'narasi-content');
     }
 
     async function init() {
@@ -114,10 +98,16 @@ const GempaFelt = (() => {
                                 ⚠ ${info.instruction}
                             </p>
                         ` : ''}
-                        <button onclick="GempaFelt.showDetail(${i})"
-                                class="w-full text-xs text-center py-2 rounded-lg border border-gray-700 text-emerald-400 hover:bg-gray-800 hover:border-emerald-500/30 transition-colors">
-                            Detail & Analisis
-                        </button>
+                        <div class="flex gap-2">
+                            <button onclick="GempaFelt.showDetail(${i})"
+                                    class="flex-1 text-xs text-center py-2 rounded-lg border border-gray-700 text-emerald-400 hover:bg-gray-800 hover:border-emerald-500/30 transition-colors">
+                                Detail & Analisis
+                            </button>
+                            <button onclick="GempaFelt.showNarasi(${i})"
+                                    class="flex-1 text-xs text-center py-2 rounded-lg border border-gray-700 text-sky-400 hover:bg-gray-800 hover:border-sky-500/30 transition-colors">
+                                Narasi BMKG
+                            </button>
+                        </div>
                     </div>
                 `;
             }).join('');
@@ -133,5 +123,5 @@ const GempaFelt = (() => {
     }
 
     document.addEventListener('DOMContentLoaded', init);
-    return { showDetail };
+    return { showDetail, showNarasi };
 })();

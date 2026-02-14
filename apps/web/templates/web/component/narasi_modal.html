@@ -1,0 +1,16 @@
+<!-- Narasi BMKG modal — reusable across felt/m5/tsunami pages -->
+<div id="narasi-modal" class="hidden fixed inset-0 z-[55] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+     onclick="if(event.target===this)GempaUtils.hideModal('narasi-modal')">
+    <div class="relative bg-gray-900 rounded-2xl border border-gray-800 max-w-3xl w-full max-h-[85vh] overflow-y-auto">
+        <div class="sticky top-0 z-10 bg-gray-900/95 backdrop-blur px-6 py-4 border-b border-gray-800 flex items-center justify-between">
+            <h3 id="narasi-title" class="text-sm font-semibold text-white">Narasi BMKG</h3>
+            <button onclick="GempaUtils.hideModal('narasi-modal')"
+                    class="text-gray-400 hover:text-white text-xl transition-colors">&times;</button>
+        </div>
+        <div id="narasi-content" class="p-6
+            [&_h4]:text-white [&_h4]:text-base [&_h4]:font-semibold [&_h4]:mb-2
+            [&_p]:text-gray-300 [&_p]:text-sm [&_p]:leading-relaxed [&_p]:mb-3
+            [&_em]:text-gray-400 [&_strong]:text-white [&_a]:text-emerald-400">
+        </div>
+    </div>
+</div>

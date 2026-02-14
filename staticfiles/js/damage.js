@@ -4,7 +4,7 @@
 (async function () {
     'use strict';
 
-    const { fetchJSON, magBg, magColor, formatDatetime, datetimeSortKey, setText } = GempaUtils;
+    const { fetchJSON, magBg, magColor, formatDatetime, datetimeSortKey, setText, dataTableLang } = GempaUtils;
 
     const map = GempaMap.create('dmg-map');
 
@@ -80,13 +80,7 @@
             order: [[0, 'desc']],
             info: true,
             searching: true,
-            language: {
-                search: 'Cari:',
-                lengthMenu: 'Tampilkan _MENU_ data',
-                info: '_START_–_END_ dari _TOTAL_',
-                paginate: { previous: '‹', next: '›' },
-                zeroRecords: 'Tidak ada data',
-            },
+            language: dataTableLang,
         });
 
     } catch (e) {

@@ -177,6 +177,97 @@ const GempaUtils = (() => {
         intensityLogo: 'Intensitas',
     };
 
+    /**
+     * Build an HTML grid of BMKG analysis images with lightbox click handlers.
+     * Returns HTML string for a 2-col grid, or a "not available" message.
+     */
+    function bmkgImageGrid(eventid) {
+        const imgs = bmkgImageUrls(eventid);
+        if (!imgs) return '<p class="text-gray-500 text-sm">Tidak ada gambar tersedia</p>';
+        return Object.entries(imgs).map(([key, url]) => `
+            <div class="group cursor-pointer" onclick="document.getElementById('img-modal-src').src='${url}';document.getElementById('img-modal-title').textContent='${bmkgImageLabels[key]}';document.getElementById('img-modal').classList.remove('hidden')">
+                <div class="relative overflow-hidden rounded-lg border border-gray-800 bg-gray-950 aspect-video">
+                    <img src="${url}" alt="${bmkgImageLabels[key]}" loading="lazy"
+                         class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+                         onerror="this.parentElement.parentElement.style.display='none'">
+                </div>
+                <p class="text-[10px] text-gray-500 mt-1 text-center group-hover:text-gray-300 transition-colors">${bmkgImageLabels[key]}</p>
+            </div>
+        `).join('');
+    }
+
+    /**
+     * Fetch BMKG narrative (press release) HTML for a given eventid.
+     * Returns the HTML string on success, or null on failure.
+     */
+    async function fetchNarasi(eventid) {
+        try {
+            const res = await fetch(`${BMKG_STORAGE}/${eventid}_narasi.txt`);
+            if (!res.ok) return null;
+            const text = await res.text();
+            return text || null;
+        } catch {
+            return null;
+        }
+    }
+
+    /**
+     * Show narasi content inside a modal element. Fetches the narrative text
+     * from BMKG storage and injects it. Call with the modal element IDs.
+     */
+    async function showNarasiModal(eventid, modalId, titleId, contentId) {
+        const modal = document.getElementById(modalId);
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        document.getElementById(titleId).textContent = `Narasi BMKG — ${eventid}`;
+        setHTML(contentId, '<div class="flex justify-center py-8"><div class="animate-spin w-8 h-8 border-2 border-sky-400 border-t-transparent rounded-full"></div></div>');
+
+        const html = await fetchNarasi(eventid);
+        if (html) {
+            setHTML(contentId, html);
+        } else {
+            setHTML(contentId, '<p class="text-gray-500 text-center py-8">Narasi tidak tersedia untuk event ini</p>');
+        }
+    }
+
+    /** Hide a modal by ID. */
+    function hideModal(id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+    }
+
+    /**
+     * Standard 3-stat info row for detail modals (depth, time, coordinates).
+     */
+    function detailInfoRow(depth, datetime, latitude, longitude) {
+        return `
+            <div class="grid grid-cols-3 gap-3 text-center mb-4">
+                <div class="bg-gray-800/50 rounded-lg py-2">
+                    <p class="text-[9px] text-gray-600 uppercase">Kedalaman</p>
+                    <p class="text-xs font-semibold text-gray-300">${depth}</p>
+                </div>
+                <div class="bg-gray-800/50 rounded-lg py-2">
+                    <p class="text-[9px] text-gray-600 uppercase">Waktu</p>
+                    <p class="text-xs font-semibold text-gray-300">${formatDatetime(datetime)}</p>
+                </div>
+                <div class="bg-gray-800/50 rounded-lg py-2">
+                    <p class="text-[9px] text-gray-600 uppercase">Koordinat</p>
+                    <p class="text-xs font-semibold text-gray-300">${latitude}, ${longitude}</p>
+                </div>
+            </div>`;
+    }
+
+    /**
+     * Standard DataTable language config (Indonesian).
+     */
+    const dataTableLang = {
+        search: 'Cari:',
+        lengthMenu: 'Tampilkan _MENU_ data',
+        info: '_START_–_END_ dari _TOTAL_',
+        paginate: { previous: '‹', next: '›' },
+        zeroRecords: 'Tidak ada data',
+    };
+
     return {
         fetchJSON,
         magColor, magBg, magHex,
@@ -184,6 +275,9 @@ const GempaUtils = (() => {
         setText, setHTML,
         parseCoords,
         tsunamiLevelColor,
-        bmkgImageUrls, bmkgImageLabels,
+        bmkgImageUrls, bmkgImageLabels, bmkgImageGrid,
+        fetchNarasi, showNarasiModal, hideModal,
+        detailInfoRow, dataTableLang,
+        BMKG_STORAGE,
     };
 })();
