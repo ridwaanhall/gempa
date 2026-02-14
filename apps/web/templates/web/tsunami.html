@@ -14,6 +14,30 @@
 <div id="tsunami-cards" class="space-y-4">
     {% include 'web/component/loading.html' with container_id='tsunami-loading' %}
 </div>
+
+<!-- Detail modal -->
+<div id="detail-modal" class="hidden fixed inset-0 z-50 gempa-img-modal bg-black/80 flex items-center justify-center p-4"
+     onclick="if(event.target===this)this.classList.add('hidden')">
+    <div class="relative bg-gray-900 rounded-2xl border border-gray-800 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="sticky top-0 z-10 bg-gray-900/95 backdrop-blur px-6 py-4 border-b border-gray-800 flex items-center justify-between">
+            <h3 id="detail-title" class="text-sm font-semibold text-white"></h3>
+            <button onclick="document.getElementById('detail-modal').classList.add('hidden')"
+                    class="text-gray-400 hover:text-white text-xl transition-colors">&times;</button>
+        </div>
+        <div id="detail-content" class="p-6"></div>
+    </div>
+</div>
+
+<!-- Image lightbox -->
+<div id="img-modal" class="hidden fixed inset-0 z-[60] gempa-img-modal bg-black/80 flex items-center justify-center p-4"
+     onclick="if(event.target===this)this.classList.add('hidden')">
+    <div class="relative max-w-4xl w-full">
+        <button onclick="document.getElementById('img-modal').classList.add('hidden')"
+                class="absolute -top-10 right-0 text-gray-400 hover:text-white text-2xl transition-colors">&times;</button>
+        <p id="img-modal-title" class="text-sm text-gray-400 mb-2 text-center"></p>
+        <img id="img-modal-src" src="" alt="" class="mx-auto" style="max-height:80vh">
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}

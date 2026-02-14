@@ -61,6 +61,12 @@
             <p id="latest-desc" class="text-xs text-gray-500 leading-relaxed hidden"></p>
         </div>
     </div>
+
+    <!-- BMKG Image gallery for latest earthquake -->
+    <div id="latest-images" class="mt-4 hidden">
+        <p class="text-[10px] text-gray-600 uppercase font-semibold mb-2">Detail Analisis BMKG</p>
+        <div id="latest-images-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-3"></div>
+    </div>
 </div>
 
 <!-- Stats row -->
@@ -103,6 +109,18 @@
         </span>
     </div>
 </div>
+
+<!-- Image lightbox modal -->
+<div id="img-modal" class="hidden fixed inset-0 z-50 gempa-img-modal bg-black/80 flex items-center justify-center p-4"
+     onclick="if(event.target===this)this.classList.add('hidden')">
+    <div class="relative max-w-4xl w-full">
+        <button onclick="document.getElementById('img-modal').classList.add('hidden')"
+                class="absolute -top-10 right-0 text-gray-400 hover:text-white text-2xl transition-colors">&times;</button>
+        <p id="img-modal-title" class="text-sm text-gray-400 mb-2 text-center"></p>
+        <img id="img-modal-src" src="" alt="" class="mx-auto" style="max-height:80vh">
+    </div>
+</div>
+
 {% endblock %}
 
 {% block extra_js %}

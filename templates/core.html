@@ -34,24 +34,53 @@
         /* DataTables dark theme */
         table.dataTable { border-collapse: collapse !important; width: 100% !important; }
         .dt-container { color: #d1d5db; font-size: 13px; }
-        .dt-container .dt-layout-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+        .dt-container .dt-layout-row {
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 8px; margin-bottom: 12px;
+        }
         .dt-container .dt-layout-row:last-child { margin-bottom: 0; margin-top: 12px; }
-        .dt-container .dt-search input,
-        .dt-container .dt-length select {
+        /* Search input */
+        .dt-container .dt-search input {
             background: #111827; color: #d1d5db; border: 1px solid #374151;
             border-radius: 8px; padding: 6px 12px; font-size: 13px;
             transition: border-color .15s ease;
         }
-        .dt-container .dt-search input:focus,
+        .dt-container .dt-search input:focus {
+            outline: none; border-color: #10b981; box-shadow: 0 0 0 2px rgba(16,185,129,.15);
+        }
+        /* Length select: force appearance so the value is always visible */
+        .dt-container .dt-length select {
+            background: #111827; color: #d1d5db; border: 1px solid #374151;
+            border-radius: 8px; padding: 6px 12px; font-size: 13px;
+            transition: border-color .15s ease;
+            -webkit-appearance: auto; appearance: auto;
+            min-width: 64px; cursor: pointer;
+        }
         .dt-container .dt-length select:focus {
             outline: none; border-color: #10b981; box-shadow: 0 0 0 2px rgba(16,185,129,.15);
         }
-        .dt-container .dt-info { color: #6b7280; font-size: 12px; }
+        .dt-container .dt-length select option {
+            background: #111827; color: #d1d5db; padding: 4px 8px;
+        }
+        /* Info text */
+        .dt-container .dt-info {
+            color: #9ca3af; font-size: 13px; line-height: 1.5;
+        }
+        /* Length & search labels: consistent sizing */
+        .dt-container .dt-search label,
+        .dt-container .dt-length label {
+            color: #9ca3af; font-size: 13px; line-height: 1.5;
+            display: inline-flex; align-items: center; gap: 6px;
+        }
+        /* Pagination buttons */
+        .dt-container .dt-paging {
+            display: flex; align-items: center; gap: 2px;
+        }
         .dt-container .dt-paging .dt-paging-button {
             color: #9ca3af !important; background: #111827 !important;
             border: 1px solid #374151 !important; border-radius: 6px !important;
-            margin: 0 2px; padding: 5px 12px !important; font-size: 12px;
-            transition: all .15s ease;
+            margin: 0 2px; padding: 6px 12px !important; font-size: 13px;
+            line-height: 1.5; transition: all .15s ease; cursor: pointer;
         }
         .dt-container .dt-paging .dt-paging-button.current,
         .dt-container .dt-paging .dt-paging-button:hover {
@@ -62,6 +91,7 @@
             color: #4b5563 !important; background: transparent !important;
             border-color: #1f2937 !important; cursor: default;
         }
+        /* Table header */
         table.dataTable thead th {
             border-bottom: 2px solid #374151 !important; font-size: 11px;
             text-transform: uppercase; letter-spacing: .05em; color: #6b7280;
@@ -70,11 +100,15 @@
         table.dataTable tbody td { padding: 10px 16px !important; }
         table.dataTable tbody tr { border-bottom: 1px solid rgba(31,41,55,.6) !important; transition: background .1s ease; }
         table.dataTable tbody tr:hover { background-color: rgba(31,41,55,.5) !important; }
-        .dt-container .dt-search label,
-        .dt-container .dt-length label { color: #6b7280; font-size: 12px; }
         /* Sorting arrow colors */
         table.dataTable thead .dt-ordering-asc .dt-column-order::before,
         table.dataTable thead .dt-ordering-desc .dt-column-order::after { color: #10b981 !important; opacity: 1 !important; }
+        /* Image detail modal */
+        .gempa-img-modal { backdrop-filter: blur(4px); }
+        .gempa-img-modal img {
+            max-height: 80vh; border-radius: 8px;
+            border: 1px solid #374151; cursor: zoom-in;
+        }
     </style>
     {% block extra_head %}{% endblock %}
 </head>

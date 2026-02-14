@@ -7,7 +7,7 @@
 (async function () {
     'use strict';
 
-    const { fetchJSON, magColor, magBg, formatDatetime, setText, setHTML, parseCoords } = GempaUtils;
+    const { fetchJSON, magColor, magBg, formatDatetime, setText, setHTML, parseCoords, bmkgImageUrls, bmkgImageLabels } = GempaUtils;
 
     // ── Latest earthquake ───────────────────────────────────
     try {
@@ -41,6 +41,27 @@
             latestMap.setView(coords, 8);
             GempaMap.addQuakeMarker(latestMap, coords[0], coords[1], mag,
                 GempaMap.quakePopup({ mag, area: info.area, depth: info.depth, time: `${info.date}T${info.time}` }));
+        }
+
+        // BMKG analysis images
+        const eventid = info.eventid;
+        if (eventid) {
+            const imgs = bmkgImageUrls(eventid);
+            const grid = document.getElementById('latest-images-grid');
+            const container = document.getElementById('latest-images');
+            if (grid && container) {
+                grid.innerHTML = Object.entries(imgs).map(([key, url]) => `
+                    <div class="group cursor-pointer" onclick="document.getElementById('img-modal-src').src='${url}';document.getElementById('img-modal-title').textContent='${bmkgImageLabels[key]}';document.getElementById('img-modal').classList.remove('hidden')">
+                        <div class="relative overflow-hidden rounded-lg border border-gray-800 bg-gray-900 aspect-video">
+                            <img src="${url}" alt="${bmkgImageLabels[key]}" loading="lazy"
+                                 class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+                                 onerror="this.parentElement.parentElement.style.display='none'">
+                        </div>
+                        <p class="text-[10px] text-gray-500 mt-1 text-center group-hover:text-gray-300 transition-colors">${bmkgImageLabels[key]}</p>
+                    </div>
+                `).join('');
+                container.classList.remove('hidden');
+            }
         }
     } catch (e) {
         setText('latest-area', 'Gagal memuat data');

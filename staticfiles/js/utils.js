@@ -5,11 +5,31 @@
 const GempaUtils = (() => {
     'use strict';
 
-    /** Fetch JSON from an API endpoint with error handling. */
+    const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+    /**
+     * Fetch JSON with sessionStorage caching.
+     * Cached responses are reused within CACHE_TTL to avoid redundant network calls.
+     */
     async function fetchJSON(url) {
+        const cacheKey = `gempa_cache:${url}`;
+        try {
+            const cached = sessionStorage.getItem(cacheKey);
+            if (cached) {
+                const { ts, data } = JSON.parse(cached);
+                if (Date.now() - ts < CACHE_TTL) return data;
+            }
+        } catch { /* ignore corrupt cache */ }
+
         const res = await fetch(url);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
+        const data = await res.json();
+
+        try {
+            sessionStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), data }));
+        } catch { /* storage full — silently ignore */ }
+
+        return data;
     }
 
     /** Return a Tailwind text-color class based on magnitude (per-integer M1–M9+). */
@@ -136,6 +156,27 @@ const GempaUtils = (() => {
         return 'bg-gray-700/20 text-gray-400 border-gray-600';
     }
 
+    /** Build BMKG image URLs for an event by its eventid. */
+    const BMKG_STORAGE = 'https://bmkg-content-inatews.storage.googleapis.com';
+    function bmkgImageUrls(eventid) {
+        if (!eventid) return null;
+        const base = `${BMKG_STORAGE}/${eventid}_rev`;
+        return {
+            locMap:       `${base}/loc_map.png`,
+            stationMMI:   `${base}/stationlist_MMI.jpg`,
+            impactList:   `${base}/impact_list.jpg`,
+            intensityLogo:`${base}/intensity_logo.jpg`,
+        };
+    }
+
+    /** Labels for each BMKG image type. */
+    const bmkgImageLabels = {
+        locMap:        'Sebaran Acelerometer',
+        stationMMI:    'PGA Max & MMI',
+        impactList:    'Dampak Kecamatan',
+        intensityLogo: 'Intensitas',
+    };
+
     return {
         fetchJSON,
         magColor, magBg, magHex,
@@ -143,5 +184,6 @@ const GempaUtils = (() => {
         setText, setHTML,
         parseCoords,
         tsunamiLevelColor,
+        bmkgImageUrls, bmkgImageLabels,
     };
 })();
