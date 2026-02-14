@@ -85,14 +85,14 @@
     }
 
     /** Popup for GeoJSON earthquake feature (mon3/yr5). */
-    function geoPopup(p, coords) {
+    function geoPopup(p) {
         const mag = p.mag ?? '?';
         const place = p.place || '—';
-        const depth = coords[2] ?? '?';
+        const depth = p.depth != null ? Number(p.depth).toFixed(1) : '?';
         const time = p.time ? new Date(p.time).toISOString() : '';
         return `
             <div style="font-family:system-ui;font-size:13px;color:#e5e7eb;">
-                <div style="font-weight:700;font-size:14px;color:#fff;">M ${mag} — ${place}</div>
+                <div style="font-weight:700;font-size:14px;color:#fff;">M ${Number(mag).toFixed(1)} — ${place}</div>
                 <div style="color:#9ca3af;font-size:11px;">${GempaUtils.formatDatetime(time)}</div>
                 <div style="color:#d1d5db;font-size:12px;margin-top:4px;">
                     Kedalaman: <b>${depth} km</b>
@@ -111,7 +111,7 @@
                 if (lat == null || lon == null) return;
                 const p = f.properties || {};
                 GempaMap.addQuakeMarkerToLayer(layers.mon3, lat, lon, p.mag ?? 3,
-                    geoPopup(p, f.geometry.coordinates));
+                    geoPopup(p));
             });
             tick('mon3');
         }).catch(e => { console.error('Mon3:', e); tick('mon3'); }),
@@ -125,7 +125,7 @@
                 if (lat == null || lon == null) return;
                 const p = f.properties || {};
                 GempaMap.addQuakeMarkerToLayer(layers.yr5, lat, lon, p.mag ?? 3,
-                    geoPopup(p, f.geometry.coordinates), { fillOpacity: 0.35, opacity: 0.6 });
+                    geoPopup(p), { fillOpacity: 0.35, opacity: 0.6 });
             });
             tick('yr5');
         }).catch(e => { console.error('Yr5:', e); tick('yr5'); }),
@@ -138,8 +138,8 @@
                 const [lon, lat] = f.geometry?.coordinates || [];
                 if (lat == null || lon == null) return;
                 const p = f.properties || {};
-                GempaMap.addSensorMarker(layers.seismicIndo, lat, lon, {
-                    station: p.station, network: p.network, elevation: p.elevation,
+                GempaMap.addSensorMarkerIndo(layers.seismicIndo, lat, lon, {
+                    id: p.id, stakeholder: p.stakeholder, uptbmkg: p.uptbmkg,
                 });
             });
             tick('seismic-indo');
@@ -153,8 +153,8 @@
                 const [lon, lat] = f.geometry?.coordinates || [];
                 if (lat == null || lon == null) return;
                 const p = f.properties || {};
-                GempaMap.addSensorMarker(layers.seismicGlobal, lat, lon, {
-                    station: p.station, network: p.network, elevation: p.elevation,
+                GempaMap.addSensorMarkerGlobal(layers.seismicGlobal, lat, lon, {
+                    id: f.id, description: p.description, net: p.net, sta: p.sta,
                 });
             });
             tick('seismic-global');

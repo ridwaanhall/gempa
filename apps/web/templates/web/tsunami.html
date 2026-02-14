@@ -1,4 +1,5 @@
 {% extends 'core.html' %}
+{% load static %}
 
 {% block content %}
 <div class="mb-6">
@@ -16,5 +17,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="/static/js/tsunami.js"></script>
+<script src="{% static 'js/tsunami.js' %}"></script>
 {% endblock %}

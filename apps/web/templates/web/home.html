@@ -1,4 +1,5 @@
 {% extends 'core.html' %}
+{% load static %}
 
 {% block content %}
 <!-- Page header -->
@@ -7,11 +8,18 @@
     <p class="text-sm text-gray-500 mt-1">Data terkini dari BMKG Indonesia</p>
 </div>
 
-<!-- Latest earthquake hero card -->
+<!-- Latest earthquake hero -->
 <div id="latest-section" class="mb-6">
-    <div class="bg-gradient-to-br from-gray-900 to-gray-900/80 rounded-xl border border-gray-800 overflow-hidden">
-        <div class="p-5 lg:p-6">
-            <div class="flex items-center gap-2 mb-4">
+    <div class="lg:flex lg:gap-4">
+        <!-- Map (left on desktop) -->
+        <div class="lg:w-[420px] shrink-0">
+            <div id="latest-map" class="w-full rounded-xl overflow-hidden z-0" style="height: 320px; background: #111827;"></div>
+        </div>
+
+        <!-- Info (right on desktop) -->
+        <div class="flex-1 min-w-0 mt-4 lg:mt-0 flex flex-col">
+            <!-- Badge + magnitude row -->
+            <div class="flex items-center gap-3 mb-3">
                 <span class="relative flex h-2.5 w-2.5">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                     <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
@@ -19,45 +27,38 @@
                 <span class="text-xs font-semibold text-emerald-400 uppercase tracking-wider">Gempa Terkini</span>
             </div>
 
-            <div class="lg:flex lg:gap-6">
-                <!-- Info -->
-                <div class="flex-1 min-w-0">
-                    <div class="flex items-start gap-4 mb-4">
-                        <div id="latest-mag-badge"
-                             class="shrink-0 w-16 h-16 rounded-2xl bg-gray-800 flex items-center justify-center">
-                            <span id="latest-mag" class="text-2xl font-black text-gray-400">—</span>
-                        </div>
-                        <div class="min-w-0">
-                            <h2 id="latest-area" class="text-lg font-bold text-white leading-tight">Memuat data&hellip;</h2>
-                            <p id="latest-time" class="text-sm text-gray-500 mt-1">—</p>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-                        <div class="bg-gray-800/50 rounded-lg px-3 py-2">
-                            <p class="text-[10px] text-gray-600 uppercase">Kedalaman</p>
-                            <p id="latest-depth" class="text-sm font-semibold text-gray-200">—</p>
-                        </div>
-                        <div class="bg-gray-800/50 rounded-lg px-3 py-2">
-                            <p class="text-[10px] text-gray-600 uppercase">Koordinat</p>
-                            <p id="latest-coords" class="text-sm font-semibold text-gray-200">—</p>
-                        </div>
-                        <div class="bg-gray-800/50 rounded-lg px-3 py-2">
-                            <p class="text-[10px] text-gray-600 uppercase">Potensi</p>
-                            <p id="latest-potential" class="text-sm font-semibold text-gray-200">—</p>
-                        </div>
-                        <div class="bg-gray-800/50 rounded-lg px-3 py-2">
-                            <p class="text-[10px] text-gray-600 uppercase">Dirasakan</p>
-                            <p id="latest-felt" class="text-sm font-semibold text-gray-200">—</p>
-                        </div>
-                    </div>
-                    <p id="latest-desc" class="text-xs text-gray-500 leading-relaxed hidden"></p>
+            <div class="flex items-start gap-4 mb-3">
+                <div id="latest-mag-badge"
+                     class="shrink-0 w-16 h-16 rounded-2xl bg-gray-800 flex items-center justify-center">
+                    <span id="latest-mag" class="text-2xl font-black text-gray-400">—</span>
                 </div>
-
-                <!-- Map -->
-                <div class="lg:w-96 mt-4 lg:mt-0 shrink-0">
-                    {% include 'web/component/map_container.html' with map_id='latest-map' map_height='240px' %}
+                <div class="min-w-0">
+                    <h2 id="latest-area" class="text-lg font-bold text-white leading-tight">Memuat data&hellip;</h2>
+                    <p id="latest-time" class="text-sm text-gray-500 mt-1">—</p>
                 </div>
             </div>
+
+            <!-- Info grid -->
+            <div class="grid grid-cols-2 gap-2.5 mb-3">
+                <div class="bg-gray-900 rounded-lg border border-gray-800 px-3 py-2">
+                    <p class="text-[10px] text-gray-600 uppercase">Kedalaman</p>
+                    <p id="latest-depth" class="text-sm font-semibold text-gray-200">—</p>
+                </div>
+                <div class="bg-gray-900 rounded-lg border border-gray-800 px-3 py-2">
+                    <p class="text-[10px] text-gray-600 uppercase">Koordinat</p>
+                    <p id="latest-coords" class="text-sm font-semibold text-gray-200">—</p>
+                </div>
+                <div class="bg-gray-900 rounded-lg border border-gray-800 px-3 py-2">
+                    <p class="text-[10px] text-gray-600 uppercase">Potensi</p>
+                    <p id="latest-potential" class="text-sm font-semibold text-gray-200">—</p>
+                </div>
+                <div class="bg-gray-900 rounded-lg border border-gray-800 px-3 py-2">
+                    <p class="text-[10px] text-gray-600 uppercase">Dirasakan</p>
+                    <p id="latest-felt" class="text-sm font-semibold text-gray-200">—</p>
+                </div>
+            </div>
+
+            <p id="latest-desc" class="text-xs text-gray-500 leading-relaxed hidden"></p>
         </div>
     </div>
 </div>
@@ -91,7 +92,11 @@
         </span>
         <span class="flex items-center gap-1.5">
             <svg width="12" height="12" viewBox="0 0 12 12"><rect x="2" y="2" width="8" height="8" rx="1" fill="#38bdf8" fill-opacity="0.7" stroke="#0ea5e9" stroke-width="1"/></svg>
-            Sensor seismik
+            Sensor Indo
+        </span>
+        <span class="flex items-center gap-1.5">
+            <svg width="12" height="12" viewBox="0 0 12 12"><polygon points="6,1 11,11 1,11" fill="#818cf8" fill-opacity="0.7" stroke="#6366f1" stroke-width="1"/></svg>
+            Sensor Global
         </span>
         <span class="flex items-center gap-1.5">
             <span class="inline-block w-5 border-t-2 border-dashed border-orange-400 opacity-70"></span> Sesar / patahan
@@ -101,5 +106,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="/static/js/home.js"></script>
+<script src="{% static 'js/home.js' %}"></script>
 {% endblock %}
