@@ -1,0 +1,53 @@
+{% extends 'core.html' %}
+{% load static %}
+
+{% block content %}
+<div class="mb-6">
+    <h1 class="text-2xl font-bold text-white">Gempa Merusak</h1>
+    <p class="text-sm text-gray-500 mt-1">Data historis gempa yang menyebabkan kerusakan</p>
+</div>
+
+<!-- Stats -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+    {% include 'web/component/stats_card.html' with label='Total Event' value_id='dmg-total' color='text-red-400' %}
+    {% include 'web/component/stats_card.html' with label='Tsunami' value_id='dmg-tsunami' color='text-amber-400' %}
+    {% include 'web/component/stats_card.html' with label='Terbesar' value_id='dmg-max' color='text-orange-400' sublabel='Magnitudo' %}
+    {% include 'web/component/stats_card.html' with label='Periode' value_id='dmg-period' color='text-blue-400' %}
+</div>
+
+<div class="mb-6">
+    {% include 'web/component/map_container.html' with map_id='dmg-map' map_height='440px' %}
+</div>
+
+<!-- Table -->
+<div class="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
+    <div class="px-5 py-4 border-b border-gray-800">
+        <h3 class="text-sm font-semibold text-gray-300">Daftar Gempa Merusak</h3>
+    </div>
+    <div class="overflow-x-auto">
+        <table id="dmg-table" class="w-full text-sm">
+            <thead>
+                <tr class="text-xs text-gray-500 uppercase tracking-wider border-b border-gray-800/60">
+                    <th class="px-4 py-3 text-left font-medium">Tanggal</th>
+                    <th class="px-4 py-3 text-left font-medium">Lokasi</th>
+                    <th class="px-4 py-3 text-center font-medium">Mag</th>
+                    <th class="px-4 py-3 text-center font-medium">Kedlmn</th>
+                    <th class="px-4 py-3 text-center font-medium">Tsunami</th>
+                    <th class="px-4 py-3 text-left font-medium">Dirasakan</th>
+                </tr>
+            </thead>
+            <tbody id="dmg-tbody" class="divide-y divide-gray-800/40">
+                <tr>
+                    <td colspan="6" class="px-4 py-12 text-center text-gray-600">
+                        {% include 'web/component/loading.html' with container_id='dmg-loading' %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/damage.js' %}"></script>
+{% endblock %}

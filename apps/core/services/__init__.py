@@ -1,4 +1,4 @@
-from apps.core.services.bmkg_client import (  # noqa: F401
+from apps.core.services.bmkg_client import (
     BmkgClient,
     BmkgClientError,
     BmkgEndpoints,

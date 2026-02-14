@@ -1,21 +1,114 @@
+"""DRF serializers for BMKG earthquake API responses.
+
+Organised with shared base classes to eliminate field duplication
+across M5 / Felt / Tsunami / Latest alert envelopes and Mon3 / Yr5
+GeoJSON catalogs.
+"""
+
+from __future__ import annotations
+
 from rest_framework import serializers
 
-# custom fields
+
+# ── Custom fields ────────────────────────────────────────────
+
+
 class IndonesianBooleanField(serializers.BooleanField):
-    """Boolean field that treats 'Ya'/'Tidak' (case-insensitive) as True/False."""
+    """Accepts ``'Ya'`` / ``'Tidak'`` (case-insensitive) as booleans."""
+
     TRUE_VALUES = serializers.BooleanField.TRUE_VALUES | {"ya"}
     FALSE_VALUES = serializers.BooleanField.FALSE_VALUES | {"tidak"}
 
 
-# faults (shared)
+# ── Shared geometry ─────────────────────────────────────────
+
+
+class GeoPointSerializer(serializers.Serializer):
+    """GeoJSON ``Point`` geometry — reused across all GeoJSON endpoints."""
+
+    type = serializers.CharField()
+    coordinates = serializers.ListField(child=serializers.FloatField())
+
+
+class AlertPointSerializer(serializers.Serializer):
+    """CAP coordinate string ``"lon,lat"``."""
+
+    coordinates = serializers.CharField()
+
+
+# ── Shared alert envelope / info ─────────────────────────────
+
+
+class BaseAlertEnvelopeSerializer(serializers.Serializer):
+    """Common CAP alert envelope fields."""
+
+    identifier = serializers.CharField()
+    sender = serializers.CharField()
+    sent = serializers.CharField()
+    status = serializers.CharField()
+    msgType = serializers.CharField()
+    scope = serializers.CharField()
+    code = serializers.CharField()
+
+
+class BaseAlertInfoSerializer(serializers.Serializer):
+    """Fields shared by M5 / Felt / Latest / Tsunami ``<info>`` blocks."""
+
+    event = serializers.CharField()
+    date = serializers.DateField(input_formats=["%d-%m-%y", "%d-%m-%Y"])
+    time = serializers.CharField()
+    point = AlertPointSerializer()
+    latitude = serializers.CharField()
+    longitude = serializers.CharField()
+    magnitude = serializers.FloatField(allow_null=True, required=False)
+    depth = serializers.CharField()
+    area = serializers.CharField()
+    eventid = serializers.IntegerField()
+    potential = serializers.CharField()
+    subject = serializers.CharField()
+    headline = serializers.CharField()
+    description = serializers.CharField()
+    instruction = serializers.CharField()
+    shakemap = serializers.CharField(allow_blank=True, required=False)
+    timesent = serializers.CharField()
+
+
+# ── GeoJSON event helpers (Mon3 / Yr5) ───────────────────────
+
+
+class GeoEventPropertiesSerializer(serializers.Serializer):
+    """Properties for Mon3 / Yr5 GeoJSON features (identical schema)."""
+
+    status = serializers.CharField()
+    depth = serializers.FloatField()
+    place = serializers.CharField()
+    mag = serializers.FloatField()
+    time = serializers.DateTimeField(input_formats=["%Y-%m-%d %H:%M:%S.%f"])
+    id = serializers.CharField()
+    fase = serializers.IntegerField()
+
+
+class GeoEventFeatureSerializer(serializers.Serializer):
+    """GeoJSON ``Feature`` for Mon3 / Yr5."""
+
+    geometry = GeoPointSerializer()
+    type = serializers.CharField()
+    properties = GeoEventPropertiesSerializer()
+
+
+# ── Fault serializers ────────────────────────────────────────
+
+
 class FaultGeometrySerializer(serializers.Serializer):
     type = serializers.CharField()
     coordinates = serializers.JSONField()
+
 
 class FaultFeatureSerializer(serializers.Serializer):
     type = serializers.CharField()
     properties = serializers.DictField()
     geometry = FaultGeometrySerializer()
+
 
 class FaultCatalogSerializer(serializers.Serializer):
     type = serializers.CharField()
@@ -24,7 +117,9 @@ class FaultCatalogSerializer(serializers.Serializer):
     features = FaultFeatureSerializer(many=True)
 
 
-# history
+# ── History serializers ──────────────────────────────────────
+
+
 class HistoryRecordSerializer(serializers.Serializer):
     timestamp = serializers.DateTimeField(input_formats=["%Y-%m-%d %H:%M:%S"])
     ot_minutes = serializers.FloatField(allow_null=True, required=False)
@@ -43,10 +138,7 @@ class HistoryResponseSerializer(serializers.Serializer):
     records = HistoryRecordSerializer(many=True)
 
 
-# global sensors
-class GlobalGeometrySerializer(serializers.Serializer):
-    type = serializers.CharField()
-    coordinates = serializers.ListField(child=serializers.FloatField())
+# ── Global sensor serializers ────────────────────────────────
 
 
 class GlobalPropertiesSerializer(serializers.Serializer):
@@ -58,7 +150,7 @@ class GlobalPropertiesSerializer(serializers.Serializer):
 class GlobalFeatureSerializer(serializers.Serializer):
     id = serializers.CharField()
     type = serializers.CharField()
-    geometry = GlobalGeometrySerializer()
+    geometry = GeoPointSerializer()
     properties = GlobalPropertiesSerializer()
 
 
@@ -66,10 +158,7 @@ class GlobalCatalogSerializer(serializers.Serializer):
     features = GlobalFeatureSerializer(many=True)
 
 
-# seismic sensors
-class SeismicGeometrySerializer(serializers.Serializer):
-    type = serializers.CharField()
-    coordinates = serializers.ListField(child=serializers.FloatField())
+# ── Seismic sensor serializers ───────────────────────────────
 
 
 class SeismicPropertiesSerializer(serializers.Serializer):
@@ -81,7 +170,7 @@ class SeismicPropertiesSerializer(serializers.Serializer):
 class SeismicFeatureSerializer(serializers.Serializer):
     type = serializers.CharField()
     properties = SeismicPropertiesSerializer()
-    geometry = SeismicGeometrySerializer()
+    geometry = GeoPointSerializer()
 
 
 class SeismicCatalogSerializer(serializers.Serializer):
@@ -89,126 +178,38 @@ class SeismicCatalogSerializer(serializers.Serializer):
     features = SeismicFeatureSerializer(many=True)
 
 
-# yr5
-class Yr5GeometrySerializer(serializers.Serializer):
-    type = serializers.CharField()
-    coordinates = serializers.ListField(child=serializers.FloatField())
+# ── Mon3 / Yr5 (identical GeoJSON catalog schema) ───────────
 
-class Yr5PropertiesSerializer(serializers.Serializer):
-    status = serializers.CharField()
-    depth = serializers.FloatField()
-    place = serializers.CharField()
-    mag = serializers.FloatField()
-    time = serializers.DateTimeField(input_formats=["%Y-%m-%d %H:%M:%S.%f"])
-    id = serializers.CharField()
-    fase = serializers.IntegerField()
-
-class Yr5FeatureSerializer(serializers.Serializer):
-    geometry = Yr5GeometrySerializer()
-    type = serializers.CharField()
-    properties = Yr5PropertiesSerializer()
-
-class Yr5CatalogSerializer(serializers.Serializer):
-    type = serializers.CharField()
-    features = Yr5FeatureSerializer(many=True)
-
-
-# mon3
-class Mon3GeometrySerializer(serializers.Serializer):
-    type = serializers.CharField()
-    coordinates = serializers.ListField(child=serializers.FloatField())
-
-class Mon3PropertiesSerializer(serializers.Serializer):
-    status = serializers.CharField()
-    depth = serializers.FloatField()
-    place = serializers.CharField()
-    mag = serializers.FloatField()
-    time = serializers.DateTimeField(input_formats=["%Y-%m-%d %H:%M:%S.%f"])
-    id = serializers.CharField()
-    fase = serializers.IntegerField()
-
-class Mon3FeatureSerializer(serializers.Serializer):
-    geometry = Mon3GeometrySerializer()
-    type = serializers.CharField()
-    properties = Mon3PropertiesSerializer()
 
 class Mon3CatalogSerializer(serializers.Serializer):
     type = serializers.CharField()
-    features = Mon3FeatureSerializer(many=True)
+    features = GeoEventFeatureSerializer(many=True)
 
 
-# m5
-class M5PointSerializer(serializers.Serializer):
-    coordinates = serializers.CharField()
-
-class M5InfoSerializer(serializers.Serializer):
-    event = serializers.CharField()
-    date = serializers.DateField(input_formats=["%d-%m-%y", "%d-%m-%Y"])
-    time = serializers.CharField()
-    point = M5PointSerializer()
-    latitude = serializers.CharField()
-    longitude = serializers.CharField()
-    magnitude = serializers.FloatField(allow_null=True, required=False)
-    depth = serializers.CharField()
-    area = serializers.CharField()
-    eventid = serializers.IntegerField()
-    potential = serializers.CharField()
-    subject = serializers.CharField()
-    headline = serializers.CharField()
-    description = serializers.CharField()
-    instruction = serializers.CharField()
-    shakemap = serializers.CharField(allow_blank=True, required=False)
-    timesent = serializers.CharField()
-
-class M5AlertSerializer(serializers.Serializer):
-    identifier = serializers.CharField()
-    sender = serializers.CharField()
-    sent = serializers.CharField()
-    status = serializers.CharField()
-    msgType = serializers.CharField()
-    scope = serializers.CharField()
-    code = serializers.CharField()
-    info = M5InfoSerializer(many=True)
+class Yr5CatalogSerializer(Mon3CatalogSerializer):
+    """Yr5 shares its schema with Mon3."""
 
 
-# felt
-class FeltPointSerializer(serializers.Serializer):
-    coordinates = serializers.CharField()
+# ── M5 alert ─────────────────────────────────────────────────
 
-class FeltInfoSerializer(serializers.Serializer):
-    event = serializers.CharField()
-    date = serializers.DateField(input_formats=["%d-%m-%y", "%d-%m-%Y"])
-    time = serializers.CharField()
-    point = FeltPointSerializer()
-    latitude = serializers.CharField()
-    longitude = serializers.CharField()
-    magnitude = serializers.FloatField(allow_null=True, required=False)
-    depth = serializers.CharField()
-    area = serializers.CharField()
-    eventid = serializers.IntegerField()
-    potential = serializers.CharField()
-    subject = serializers.CharField()
-    headline = serializers.CharField()
-    description = serializers.CharField()
-    instruction = serializers.CharField()
-    shakemap = serializers.CharField(allow_blank=True, required=False)
+
+class M5AlertSerializer(BaseAlertEnvelopeSerializer):
+    info = BaseAlertInfoSerializer(many=True)
+
+
+# ── Felt alert ───────────────────────────────────────────────
+
+
+class FeltInfoSerializer(BaseAlertInfoSerializer):
     felt = serializers.CharField()
-    timesent = serializers.CharField()
 
-class FeltAlertSerializer(serializers.Serializer):
-    identifier = serializers.CharField()
-    sender = serializers.CharField()
-    sent = serializers.CharField()
-    status = serializers.CharField()
-    msgType = serializers.CharField()
-    scope = serializers.CharField()
-    code = serializers.CharField()
+
+class FeltAlertSerializer(BaseAlertEnvelopeSerializer):
     info = FeltInfoSerializer(many=True)
 
 
-# tsunami
-class TsunamiPointSerializer(serializers.Serializer):
-    coordinates = serializers.CharField(allow_blank=True, required=False)
+# ── Tsunami alert ────────────────────────────────────────────
+
 
 class TsunamiWzAreaSerializer(serializers.Serializer):
     province = serializers.CharField(allow_blank=True, required=False)
@@ -216,6 +217,7 @@ class TsunamiWzAreaSerializer(serializers.Serializer):
     level = serializers.CharField(allow_blank=True, required=False)
     date = serializers.DateField(input_formats=["%d-%m-%Y", "%d-%m-%y"], required=False)
     time = serializers.CharField(allow_blank=True, required=False)
+
 
 class TsunamiObsAreaSerializer(serializers.Serializer):
     location = serializers.CharField(allow_blank=True, required=False)
@@ -225,85 +227,41 @@ class TsunamiObsAreaSerializer(serializers.Serializer):
     date = serializers.DateField(input_formats=["%d-%m-%Y", "%d-%m-%y"], required=False)
     time = serializers.CharField(allow_blank=True, required=False)
 
-class TsunamiInfoSerializer(serializers.Serializer):
-    event = serializers.CharField()
-    date = serializers.DateField(input_formats=["%d-%m-%y", "%d-%m-%Y"])
-    time = serializers.CharField()
-    point = TsunamiPointSerializer(required=False)
-    latitude = serializers.CharField()
-    longitude = serializers.CharField()
-    magnitude = serializers.FloatField(allow_null=True, required=False)
-    depth = serializers.CharField()
-    area = serializers.CharField()
-    eventid = serializers.IntegerField()
-    potential = serializers.CharField()
-    subject = serializers.CharField()
-    headline = serializers.CharField()
-    description = serializers.CharField()
-    instruction = serializers.CharField()
-    shakemap = serializers.CharField(allow_blank=True, required=False)
+
+class TsunamiInfoSerializer(BaseAlertInfoSerializer):
+    point = AlertPointSerializer(required=False)
     wzmap = serializers.CharField(allow_blank=True, required=False)
     ttmap = serializers.CharField(allow_blank=True, required=False)
     sshmap = serializers.CharField(allow_blank=True, required=False)
     instruction1 = serializers.CharField(allow_blank=True, required=False)
     instruction2 = serializers.CharField(allow_blank=True, required=False)
     instruction3 = serializers.CharField(allow_blank=True, required=False)
-    timesent = serializers.CharField()
     wzarea = TsunamiWzAreaSerializer(many=True, required=False)
     obsarea = TsunamiObsAreaSerializer(many=True, required=False)
 
-class TsunamiAlertSerializer(serializers.Serializer):
-    identifier = serializers.CharField()
-    sender = serializers.CharField()
-    sent = serializers.CharField()
-    status = serializers.CharField()
-    msgType = serializers.CharField()
-    scope = serializers.CharField()
-    code = serializers.CharField()
+
+class TsunamiAlertSerializer(BaseAlertEnvelopeSerializer):
     info = TsunamiInfoSerializer(many=True)
 
 
-# latest
-class PointSerializer(serializers.Serializer):
-    coordinates = serializers.CharField()
+# ── Latest earthquake alert ──────────────────────────────────
 
-class InfoSerializer(serializers.Serializer):
-    event = serializers.CharField()
-    date = serializers.DateField(
-        input_formats=["%d-%m-%y"]
-    )
-    time = serializers.CharField()
-    point = PointSerializer()
-    latitude = serializers.CharField()
-    longitude = serializers.CharField()
+
+class InfoSerializer(BaseAlertInfoSerializer):
+    """Latest alert info — adds ``felt`` and tightens ``date`` format."""
+
+    date = serializers.DateField(input_formats=["%d-%m-%y"])
     magnitude = serializers.FloatField()
-    depth = serializers.CharField()
-    area = serializers.CharField()
-    eventid = serializers.IntegerField()
-    potential = serializers.CharField()
-    subject = serializers.CharField()
-    headline = serializers.CharField()
-    description = serializers.CharField()
-    instruction = serializers.CharField()
     shakemap = serializers.CharField()
-    felt = serializers.CharField()
-    timesent = serializers.CharField()
+    felt = serializers.CharField(required=False, allow_blank=True)
 
-class EarthquakeAlertSerializer(serializers.Serializer):
-    identifier = serializers.CharField()
-    sender = serializers.CharField()
-    sent = serializers.CharField()
-    status = serializers.CharField()
-    msgType = serializers.CharField()
-    scope = serializers.CharField()
-    code = serializers.CharField()
+
+class EarthquakeAlertSerializer(BaseAlertEnvelopeSerializer):
     info = InfoSerializer()
 
 
-# catalog
-class GeometrySerializer(serializers.Serializer):
-    type = serializers.CharField()
-    coordinates = serializers.ListField(child=serializers.FloatField())
+# ── Damage / catalog ─────────────────────────────────────────
+
 
 class PropertiesSerializer(serializers.Serializer):
     lokasi = serializers.CharField()
@@ -318,23 +276,27 @@ class PropertiesSerializer(serializers.Serializer):
     sumber = serializers.CharField()
     dirasakan = serializers.CharField()
 
+
 class FeatureSerializer(serializers.Serializer):
-    geometry = GeometrySerializer()
+    geometry = GeoPointSerializer()
     type = serializers.CharField()
     properties = PropertiesSerializer()
+
 
 class DamageSerializer(serializers.Serializer):
     type = serializers.CharField()
     features = FeatureSerializer(many=True)
 
 
-# realtime
+# ── Realtime ─────────────────────────────────────────────────
+
+
 class RealtimeEventSerializer(serializers.Serializer):
     eventid = serializers.CharField()
     status = serializers.CharField()
     datetime = serializers.DateTimeField(
         source="waktu",
-        input_formats=["%Y/%m/%d %H:%M:%S.%f"]
+        input_formats=["%Y/%m/%d %H:%M:%S.%f"],
     )
     latitude = serializers.FloatField(source="lintang")
     longitude = serializers.FloatField(source="bujur")
@@ -342,6 +304,7 @@ class RealtimeEventSerializer(serializers.Serializer):
     mag = serializers.FloatField()
     fokal = serializers.CharField()
     area = serializers.CharField()
+
 
 class RealtimeCatalogSerializer(serializers.Serializer):
     events = RealtimeEventSerializer(many=True)

@@ -1,0 +1,6 @@
+<!-- Stats card component — expects JS to populate via id -->
+<div class="bg-gray-900 rounded-xl border border-gray-800 p-4 flex flex-col">
+    <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">{{ label }}</p>
+    <p id="{{ value_id }}" class="mt-1 text-2xl font-bold {{ color|default:'text-white' }}">—</p>
+    <p class="mt-0.5 text-xs text-gray-600">{{ sublabel|default:'' }}</p>
+</div>

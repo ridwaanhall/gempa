@@ -1,0 +1,111 @@
+<!-- Sidebar navigation -->
+<aside id="sidebar"
+       class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 border-r border-gray-800 flex flex-col
+              transform -translate-x-full lg:translate-x-0 lg:static lg:inset-auto transition-transform duration-200">
+
+    <!-- Brand -->
+    <div class="px-5 py-5 border-b border-gray-800">
+        <a href="{% url 'web:dashboard' %}" class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+                <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+            </div>
+            <div>
+                <span class="font-bold text-lg text-white">Gempa</span>
+                <span class="text-xs text-gray-500 block -mt-0.5">BMKG Monitor</span>
+            </div>
+        </a>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+        <p class="px-3 mb-2 text-[10px] font-semibold tracking-widest text-gray-500 uppercase">Menu Utama</p>
+
+        <a href="{% url 'web:dashboard' %}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                  {% if nav_active == 'dashboard' %}bg-emerald-500/10 text-emerald-400{% else %}text-gray-400 hover:bg-gray-800/60 hover:text-gray-200{% endif %}">
+            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+            Dashboard
+        </a>
+
+        <a href="{% url 'web:realtime' %}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                  {% if nav_active == 'realtime' %}bg-emerald-500/10 text-emerald-400{% else %}text-gray-400 hover:bg-gray-800/60 hover:text-gray-200{% endif %}">
+            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                      d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            Gempa Real-time
+        </a>
+
+        <p class="px-3 mt-5 mb-2 text-[10px] font-semibold tracking-widest text-gray-500 uppercase">Data Gempa</p>
+
+        <a href="{% url 'web:felt' %}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                  {% if nav_active == 'felt' %}bg-emerald-500/10 text-emerald-400{% else %}text-gray-400 hover:bg-gray-800/60 hover:text-gray-200{% endif %}">
+            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                      d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+            </svg>
+            Gempa Dirasakan
+        </a>
+
+        <a href="{% url 'web:m5' %}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                  {% if nav_active == 'm5' %}bg-emerald-500/10 text-emerald-400{% else %}text-gray-400 hover:bg-gray-800/60 hover:text-gray-200{% endif %}">
+            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+            </svg>
+            Gempa M5+
+        </a>
+
+        <a href="{% url 'web:tsunami' %}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                  {% if nav_active == 'tsunami' %}bg-emerald-500/10 text-emerald-400{% else %}text-gray-400 hover:bg-gray-800/60 hover:text-gray-200{% endif %}">
+            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                      d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"/>
+            </svg>
+            Peringatan Tsunami
+        </a>
+
+        <a href="{% url 'web:damage' %}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                  {% if nav_active == 'damage' %}bg-emerald-500/10 text-emerald-400{% else %}text-gray-400 hover:bg-gray-800/60 hover:text-gray-200{% endif %}">
+            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+            </svg>
+            Gempa Merusak
+        </a>
+    </nav>
+
+    <!-- Footer -->
+    <div class="px-5 py-4 border-t border-gray-800">
+        <p class="text-[11px] text-gray-600">Data dari BMKG Indonesia</p>
+        <p class="text-[10px] text-gray-700 mt-0.5">ridwaanhall</p>
+    </div>
+</aside>
+
+<!-- Backdrop for mobile -->
+<div onclick="document.getElementById('sidebar').classList.add('-translate-x-full')"
+     class="fixed inset-0 bg-black/50 z-40 lg:hidden"
+     id="sidebar-backdrop"
+     style="display:none;"></div>
+
+<script>
+(function() {
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    const observer = new MutationObserver(function() {
+        backdrop.style.display = sidebar.classList.contains('-translate-x-full') ? 'none' : 'block';
+    });
+    observer.observe(sidebar, { attributes: true, attributeFilter: ['class'] });
+})();
+</script>
