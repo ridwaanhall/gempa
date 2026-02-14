@@ -37,7 +37,7 @@
                     <div class="flex items-start justify-between gap-3 mb-3">
                         <div class="flex-1 min-w-0">
                             <h3 class="font-semibold text-white text-sm leading-tight">${info.area}</h3>
-                            <p class="text-xs text-gray-500 mt-1">${info.date} • ${info.time}</p>
+                            <p class="text-xs text-gray-500 mt-1">${formatDatetime(`${info.date}T${info.time}`)}</p>
                         </div>
                         <span class="shrink-0 inline-flex items-center px-2.5 py-1 rounded-full text-sm font-bold ${magBg(mag)}">
                             M ${mag}

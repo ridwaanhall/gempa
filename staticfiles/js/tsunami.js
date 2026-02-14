@@ -21,11 +21,17 @@
 
             if (coords) {
                 points.push(coords);
+                const tTime = info.date && info.time ? `${info.date}T${info.time}` : '';
                 GempaMap.addQuakeMarker(map, coords[0], coords[1], mag, `
                     <div style="font-family:system-ui;font-size:13px;color:#e5e7eb;">
                         <div style="font-weight:700;font-size:14px;color:#fff;">M ${mag} — Tsunami</div>
-                        <div style="color:#9ca3af;font-size:11px;margin-top:2px;">${info.area}</div>
-                        <div style="color:#fbbf24;font-size:11px;margin-top:4px;">${info.potential}</div>
+                        <div style="color:#9ca3af;font-size:11px;margin-top:2px;">${info.area || '—'}</div>
+                        <div style="color:#9ca3af;font-size:11px;margin-top:2px;">${formatDatetime(tTime)}</div>
+                        <div style="margin-top:6px;display:flex;gap:12px;font-size:12px;color:#d1d5db;">
+                            <span>Kedalaman: <b>${info.depth || '?'}</b></span>
+                        </div>
+                        <div style="color:#6b7280;font-size:10px;margin-top:4px;">${info.latitude || '?'}, ${info.longitude || '?'}</div>
+                        ${info.potential ? `<div style="color:#fbbf24;font-size:11px;margin-top:4px;">${info.potential}</div>` : ''}
                     </div>
                 `);
             }
@@ -92,7 +98,7 @@
                                 </span>
                             </div>
                             <h3 class="text-sm font-semibold text-white leading-tight">${info.area}</h3>
-                            <p class="text-xs text-gray-500 mt-1">${info.date} • ${info.time}</p>
+                            <p class="text-xs text-gray-500 mt-1">${formatDatetime(`${info.date}T${info.time}`)}</p>
                         </div>
                         <span class="shrink-0 inline-flex items-center px-2.5 py-1 rounded-full text-sm font-bold ${magBg(mag)}">
                             M ${mag}

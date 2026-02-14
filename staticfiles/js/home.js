@@ -23,7 +23,7 @@
         if (magSpan) magSpan.className = `text-2xl font-black ${magColor(mag)}`;
 
         setText('latest-area', info.area);
-        setText('latest-time', `${info.date} • ${info.time}`);
+        setText('latest-time', formatDatetime(`${info.date}T${info.time}`));
         setText('latest-depth', info.depth);
         setText('latest-coords', `${info.latitude}, ${info.longitude}`);
         setText('latest-potential', info.potential || '—');

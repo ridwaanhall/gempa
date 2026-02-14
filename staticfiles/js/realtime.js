@@ -4,7 +4,7 @@
 const GempaApp = (() => {
     'use strict';
 
-    const { fetchJSON, magBg, magColor, formatDatetime, setHTML } = GempaUtils;
+    const { fetchJSON, magBg, magColor, formatDatetime, datetimeSortKey, setHTML } = GempaUtils;
     let rtMap;
 
     async function init() {
@@ -29,7 +29,7 @@ const GempaApp = (() => {
             const tbody = document.getElementById('rt-tbody');
             tbody.innerHTML = events.map(ev => `
                 <tr>
-                    <td class="px-4 py-3 text-gray-300 whitespace-nowrap">${formatDatetime(ev.datetime)}</td>
+                    <td class="px-4 py-3 text-gray-300 whitespace-nowrap" data-order="${datetimeSortKey(ev.datetime)}">${formatDatetime(ev.datetime)}</td>
                     <td class="px-4 py-3 text-gray-200 max-w-xs truncate">${ev.area}</td>
                     <td class="px-4 py-3 text-center">
                         <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold ${magBg(ev.mag)}">${ev.mag}</span>

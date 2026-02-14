@@ -4,7 +4,7 @@
 (async function () {
     'use strict';
 
-    const { fetchJSON, magBg, magColor, formatDate, setText } = GempaUtils;
+    const { fetchJSON, magBg, magColor, formatDatetime, datetimeSortKey, setText } = GempaUtils;
 
     const map = GempaMap.create('dmg-map');
 
@@ -28,13 +28,15 @@
         features.forEach(f => {
             const [lon, lat] = f.geometry.coordinates;
             const p = f.properties;
+            const iso = p.ot_utc ? `${p.date}T${p.ot_utc}Z` : p.date;
             points.push([lat, lon]);
             GempaMap.addQuakeMarker(map, lat, lon, p.mag, `
                 <div style="font-family:system-ui;font-size:13px;color:#e5e7eb;">
                     <div style="font-weight:700;font-size:14px;color:#fff;">M ${p.mag}</div>
                     <div style="color:#9ca3af;font-size:11px;">${p.lokasi}</div>
                     <div style="color:#d1d5db;font-size:12px;margin-top:4px;">${p.pusat_gempa}</div>
-                    <div style="color:#9ca3af;font-size:11px;margin-top:2px;">${p.date}</div>
+                    <div style="color:#9ca3af;font-size:11px;margin-top:2px;">${formatDatetime(iso)}</div>
+                    <div style="color:#d1d5db;font-size:12px;margin-top:4px;">Kedalaman: <b>${p.depth} km</b></div>
                     ${p.tsunami ? '<div style="color:#fbbf24;font-size:11px;margin-top:2px;">⚠ Tsunami</div>' : ''}
                 </div>
             `);
@@ -45,10 +47,11 @@
         const tbody = document.getElementById('dmg-tbody');
         tbody.innerHTML = features.map(f => {
             const p = f.properties;
+            const iso = p.ot_utc ? `${p.date}T${p.ot_utc}Z` : p.date;
             const feltShort = (p.dirasakan || '').split(';').slice(0, 5).filter(Boolean).join('; ');
             return `
                 <tr>
-                    <td class="px-4 py-3 text-gray-300 whitespace-nowrap">${formatDate(p.date)}</td>
+                    <td class="px-4 py-3 text-gray-300 whitespace-nowrap" data-order="${datetimeSortKey(iso)}">${formatDatetime(iso)}</td>
                     <td class="px-4 py-3 text-gray-200">
                         <div class="max-w-xs">
                             <p class="font-medium truncate">${p.lokasi}</p>

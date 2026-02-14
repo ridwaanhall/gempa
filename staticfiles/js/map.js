@@ -55,14 +55,18 @@ const GempaMap = (() => {
         return map;
     }
 
-    /** Calculate marker radius from magnitude. */
+    /** Calculate marker radius from magnitude (per-integer M1–M9+). */
     function magRadius(mag) {
+        if (mag >= 9) return 18;
+        if (mag >= 8) return 16;
         if (mag >= 7) return 14;
         if (mag >= 6) return 11;
         if (mag >= 5) return 9;
         if (mag >= 4) return 7;
         if (mag >= 3) return 5;
-        return 4;
+        if (mag >= 2) return 4;
+        if (mag >= 1) return 3;
+        return 2;
     }
 
     /** Strip trailing unit (Km, km, KM) from a depth value and return a clean number string. */
