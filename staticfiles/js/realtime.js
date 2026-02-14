@@ -1,5 +1,5 @@
 /**
- * Realtime earthquakes page — full table + map + history modal.
+ * Realtime earthquakes page — DataTable + map + history modal.
  */
 const GempaApp = (() => {
     'use strict';
@@ -25,16 +25,16 @@ const GempaApp = (() => {
             });
             if (points.length) GempaMap.fitToPoints(rtMap, points);
 
-            // Table
+            // Populate table rows
             const tbody = document.getElementById('rt-tbody');
             tbody.innerHTML = events.map(ev => `
-                <tr class="hover:bg-gray-800/40 transition-colors">
+                <tr>
                     <td class="px-4 py-3 text-gray-300 whitespace-nowrap">${formatDatetime(ev.datetime)}</td>
                     <td class="px-4 py-3 text-gray-200 max-w-xs truncate">${ev.area}</td>
                     <td class="px-4 py-3 text-center">
                         <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold ${magBg(ev.mag)}">${ev.mag}</span>
                     </td>
-                    <td class="px-4 py-3 text-center text-gray-400">${ev.depth} km</td>
+                    <td class="px-4 py-3 text-center text-gray-400" data-order="${ev.depth}">${ev.depth} km</td>
                     <td class="px-4 py-3 text-center">
                         <span class="text-xs px-2 py-0.5 rounded-full ${ev.status === 'confirmed' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-gray-700 text-gray-400'}">${ev.status}</span>
                     </td>
@@ -46,6 +46,23 @@ const GempaApp = (() => {
                     </td>
                 </tr>
             `).join('');
+
+            // Init DataTable
+            $('#rt-table').DataTable({
+                paging: true,
+                pageLength: 15,
+                ordering: true,
+                order: [[0, 'desc']],
+                info: true,
+                searching: true,
+                language: {
+                    search: 'Cari:',
+                    lengthMenu: 'Tampilkan _MENU_ data',
+                    info: '_START_–_END_ dari _TOTAL_',
+                    paginate: { previous: '‹', next: '›' },
+                    zeroRecords: 'Tidak ada data',
+                },
+            });
         } catch (e) {
             document.getElementById('rt-tbody').innerHTML =
                 '<tr><td colspan="6" class="px-4 py-12 text-center text-red-400">Gagal memuat data</td></tr>';

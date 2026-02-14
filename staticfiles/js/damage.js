@@ -1,5 +1,5 @@
 /**
- * Damage (gempa merusak) page — historical damaging earthquakes table + map.
+ * Damage (gempa merusak) page — historical damaging earthquakes DataTable + map.
  */
 (async function () {
     'use strict';
@@ -41,13 +41,13 @@
         });
         if (points.length) GempaMap.fitToPoints(map, points);
 
-        // Table
+        // Table rows
         const tbody = document.getElementById('dmg-tbody');
         tbody.innerHTML = features.map(f => {
             const p = f.properties;
             const feltShort = (p.dirasakan || '').split(';').slice(0, 5).filter(Boolean).join('; ');
             return `
-                <tr class="hover:bg-gray-800/40 transition-colors">
+                <tr>
                     <td class="px-4 py-3 text-gray-300 whitespace-nowrap">${formatDate(p.date)}</td>
                     <td class="px-4 py-3 text-gray-200">
                         <div class="max-w-xs">
@@ -58,7 +58,7 @@
                     <td class="px-4 py-3 text-center">
                         <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold ${magBg(p.mag)}">${p.mag}</span>
                     </td>
-                    <td class="px-4 py-3 text-center text-gray-400">${p.depth} km</td>
+                    <td class="px-4 py-3 text-center text-gray-400" data-order="${p.depth}">${p.depth} km</td>
                     <td class="px-4 py-3 text-center">
                         ${p.tsunami
                             ? '<span class="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400">Ya</span>'
@@ -68,6 +68,23 @@
                 </tr>
             `;
         }).join('');
+
+        // Init DataTable
+        $('#dmg-table').DataTable({
+            paging: true,
+            pageLength: 15,
+            ordering: true,
+            order: [[0, 'desc']],
+            info: true,
+            searching: true,
+            language: {
+                search: 'Cari:',
+                lengthMenu: 'Tampilkan _MENU_ data',
+                info: '_START_–_END_ dari _TOTAL_',
+                paginate: { previous: '‹', next: '›' },
+                zeroRecords: 'Tidak ada data',
+            },
+        });
 
     } catch (e) {
         document.getElementById('dmg-tbody').innerHTML =

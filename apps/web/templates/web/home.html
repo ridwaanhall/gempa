@@ -64,30 +64,38 @@
 
 <!-- Stats row -->
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-    {% include 'web/component/stats_card.html' with label='Total Event' value_id='stat-total' color='text-emerald-400' sublabel='Real-time' %}
-    {% include 'web/component/stats_card.html' with label='Rata-rata Mag' value_id='stat-avg-mag' color='text-amber-400' sublabel='Magnitudo' %}
-    {% include 'web/component/stats_card.html' with label='Terbesar' value_id='stat-max-mag' color='text-red-400' sublabel='Magnitudo tertinggi' %}
-    {% include 'web/component/stats_card.html' with label='Terdalam' value_id='stat-max-depth' color='text-blue-400' sublabel='Kedalaman (km)' %}
+    {% include 'web/component/stats_card.html' with label='Gempa 3 Bulan' value_id='stat-mon3' color='text-emerald-400' sublabel='Mon3 total' %}
+    {% include 'web/component/stats_card.html' with label='Gempa 5 Tahun' value_id='stat-yr5' color='text-amber-400' sublabel='Yr5 total' %}
+    {% include 'web/component/stats_card.html' with label='Sensor Indo' value_id='stat-sensor-indo' color='text-sky-400' sublabel='Stasiun seismik' %}
+    {% include 'web/component/stats_card.html' with label='Sensor Global' value_id='stat-sensor-global' color='text-blue-400' sublabel='Stasiun seismik' %}
 </div>
 
-<!-- Realtime map + table -->
-<div class="grid lg:grid-cols-5 gap-4">
-    <!-- Map -->
-    <div class="lg:col-span-3">
-        <div class="bg-gray-900 rounded-xl border border-gray-800 p-4">
-            <h3 class="text-sm font-semibold text-gray-400 mb-3">Peta Gempa Real-time</h3>
-            {% include 'web/component/map_container.html' with map_id='realtime-map' map_height='380px' %}
-        </div>
+<!-- Layer-controlled map -->
+<div class="bg-gray-900 rounded-xl border border-gray-800 p-4">
+    <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-semibold text-gray-300">Peta Layer — Gempa & Sensor</h3>
+        <span id="layer-status" class="text-[11px] text-gray-600">Memuat layer…</span>
     </div>
+    {% include 'web/component/map_container.html' with map_id='home-layer-map' map_height='540px' %}
 
-    <!-- Recent events list -->
-    <div class="lg:col-span-2">
-        <div class="bg-gray-900 rounded-xl border border-gray-800 p-4 h-full flex flex-col">
-            <h3 class="text-sm font-semibold text-gray-400 mb-3">Gempa Terbaru</h3>
-            <div id="recent-events" class="flex-1 overflow-y-auto space-y-2 max-h-[380px] pr-1">
-                {% include 'web/component/loading.html' with container_id='recent-loading' %}
-            </div>
-        </div>
+    <!-- Legend -->
+    <div class="mt-3 flex flex-wrap gap-4 text-[11px] text-gray-500">
+        <span class="flex items-center gap-1.5">
+            <span class="w-3 h-3 rounded-full bg-emerald-400 inline-block opacity-70"></span> Gempa kecil
+        </span>
+        <span class="flex items-center gap-1.5">
+            <span class="w-3 h-3 rounded-full bg-yellow-400 inline-block opacity-70"></span> Gempa sedang
+        </span>
+        <span class="flex items-center gap-1.5">
+            <span class="w-3 h-3 rounded-full bg-red-500 inline-block opacity-70"></span> Gempa besar
+        </span>
+        <span class="flex items-center gap-1.5">
+            <svg width="12" height="12" viewBox="0 0 12 12"><rect x="2" y="2" width="8" height="8" rx="1" fill="#38bdf8" fill-opacity="0.7" stroke="#0ea5e9" stroke-width="1"/></svg>
+            Sensor seismik
+        </span>
+        <span class="flex items-center gap-1.5">
+            <span class="inline-block w-5 border-t-2 border-dashed border-orange-400 opacity-70"></span> Sesar / patahan
+        </span>
     </div>
 </div>
 {% endblock %}

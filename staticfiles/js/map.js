@@ -1,6 +1,7 @@
 /**
  * Gempa Monitor — Leaflet map utilities.
- * Creates dark-themed maps, magnitude-scaled circle markers, and popups.
+ * Creates dark-themed maps, magnitude-scaled circle markers, popups,
+ * sensor markers, fault lines, and layer-group helpers.
  */
 const GempaMap = (() => {
     'use strict';
@@ -63,6 +64,87 @@ const GempaMap = (() => {
         return marker;
     }
 
+    /**
+     * Add a seismic-sensor marker — visually distinct (triangle / diamond)
+     * using a DivIcon with an SVG.
+     */
+    function addSensorMarker(layerGroup, lat, lon, data) {
+        const size = 12;
+        const icon = L.divIcon({
+            className: '',
+            iconSize: [size, size],
+            iconAnchor: [size / 2, size / 2],
+            html: `<svg width="${size}" height="${size}" viewBox="0 0 12 12">
+                     <rect x="2" y="2" width="8" height="8" rx="1" fill="#38bdf8" fill-opacity="0.7" stroke="#0ea5e9" stroke-width="1"/>
+                   </svg>`,
+        });
+
+        const name = data.station || data.name || data.net || '—';
+        const popup = `
+            <div style="font-family:system-ui;font-size:13px;color:#e5e7eb;">
+                <div style="font-weight:700;font-size:14px;color:#38bdf8;">📡 ${name}</div>
+                ${data.network ? `<div style="color:#9ca3af;font-size:11px;">Network: ${data.network}</div>` : ''}
+                <div style="color:#d1d5db;font-size:11px;margin-top:4px;">
+                    ${lat.toFixed(4)}, ${lon.toFixed(4)}
+                    ${data.elevation != null ? ` · ${data.elevation}m` : ''}
+                </div>
+            </div>
+        `;
+
+        const marker = L.marker([lat, lon], { icon })
+            .bindPopup(popup, { className: 'gempa-popup', maxWidth: 260 });
+
+        layerGroup.addLayer(marker);
+        return marker;
+    }
+
+    /**
+     * Add an earthquake marker to a layer group (instead of directly to map).
+     */
+    function addQuakeMarkerToLayer(layerGroup, lat, lon, mag, popupHTML, options = {}) {
+        const color = GempaUtils.magHex(mag);
+        const marker = L.circleMarker([lat, lon], {
+            radius: magRadius(mag),
+            fillColor: color,
+            color: color,
+            weight: 1,
+            opacity: 0.8,
+            fillOpacity: 0.5,
+            ...options,
+        });
+
+        if (popupHTML) {
+            marker.bindPopup(popupHTML, { className: 'gempa-popup', maxWidth: 280 });
+        }
+
+        layerGroup.addLayer(marker);
+        return marker;
+    }
+
+    /**
+     * Add fault / plate-boundary linestrings from GeoJSON features onto a layer group.
+     * @param {L.LayerGroup} layerGroup
+     * @param {Array} features — GeoJSON features (LineString / MultiLineString)
+     * @param {object} style — Leaflet path style
+     */
+    function addFaultLines(layerGroup, features, style = {}) {
+        const defaultStyle = {
+            color: '#f97316',
+            weight: 1.5,
+            opacity: 0.6,
+            dashArray: '4 3',
+            ...style,
+        };
+
+        features.forEach(f => {
+            if (!f.geometry) return;
+            try {
+                const layer = L.geoJSON(f, { style: () => defaultStyle });
+                layerGroup.addLayer(layer);
+            } catch { /* skip malformed */ }
+        });
+    }
+
     /** Build a standard popup HTML string for an earthquake event. */
     function quakePopup(data) {
         const mag = data.mag ?? data.magnitude ?? '?';
@@ -100,5 +182,8 @@ const GempaMap = (() => {
         map.fitBounds(bounds, { padding: [30, 30], maxZoom: 8 });
     }
 
-    return { create, addQuakeMarker, quakePopup, clearMarkers, fitToPoints, magRadius };
+    return {
+        create, addQuakeMarker, addQuakeMarkerToLayer, addSensorMarker,
+        addFaultLines, quakePopup, clearMarkers, fitToPoints, magRadius,
+    };
 })();
