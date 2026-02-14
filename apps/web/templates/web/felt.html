@@ -1,0 +1,20 @@
+{% extends 'core.html' %}
+
+{% block content %}
+<div class="mb-6">
+    <h1 class="text-2xl font-bold text-white">Gempa Dirasakan</h1>
+    <p class="text-sm text-gray-500 mt-1">Daftar gempa yang dirasakan masyarakat (30 terbaru)</p>
+</div>
+
+<div class="mb-6">
+    {% include 'web/component/map_container.html' with map_id='felt-map' map_height='380px' %}
+</div>
+
+<div id="felt-cards" class="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+    {% include 'web/component/loading.html' with container_id='felt-loading' %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/felt.js"></script>
+{% endblock %}

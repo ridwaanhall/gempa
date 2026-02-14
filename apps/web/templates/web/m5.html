@@ -1,0 +1,20 @@
+{% extends 'core.html' %}
+
+{% block content %}
+<div class="mb-6">
+    <h1 class="text-2xl font-bold text-white">Gempa Magnitudo 5+</h1>
+    <p class="text-sm text-gray-500 mt-1">Gempa besar terkini M &ge; 5.0 (30 terbaru)</p>
+</div>
+
+<div class="mb-6">
+    {% include 'web/component/map_container.html' with map_id='m5-map' map_height='400px' %}
+</div>
+
+<div id="m5-cards" class="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+    {% include 'web/component/loading.html' with container_id='m5-loading' %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/m5.js"></script>
+{% endblock %}

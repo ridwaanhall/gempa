@@ -1,0 +1,64 @@
+{% extends 'core.html' %}
+
+{% block content %}
+<div class="mb-6">
+    <h1 class="text-2xl font-bold text-white">Gempa Real-time</h1>
+    <p class="text-sm text-gray-500 mt-1">30 gempa terkini dari jaringan sensor BMKG</p>
+</div>
+
+<!-- Full map -->
+<div class="mb-6">
+    {% include 'web/component/map_container.html' with map_id='rt-map' map_height='480px' %}
+</div>
+
+<!-- Events table -->
+<div class="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
+    <div class="px-5 py-4 border-b border-gray-800 flex items-center justify-between">
+        <h3 class="text-sm font-semibold text-gray-300">Daftar Gempa</h3>
+        <span id="rt-count" class="text-xs text-gray-600">—</span>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="text-xs text-gray-500 uppercase tracking-wider border-b border-gray-800/60">
+                    <th class="px-4 py-3 text-left font-medium">Waktu (UTC)</th>
+                    <th class="px-4 py-3 text-left font-medium">Wilayah</th>
+                    <th class="px-4 py-3 text-center font-medium">Mag</th>
+                    <th class="px-4 py-3 text-center font-medium">Kedalaman</th>
+                    <th class="px-4 py-3 text-center font-medium">Status</th>
+                    <th class="px-4 py-3 text-center font-medium">Detail</th>
+                </tr>
+            </thead>
+            <tbody id="rt-tbody" class="divide-y divide-gray-800/40">
+                <tr>
+                    <td colspan="6" class="px-4 py-12 text-center text-gray-600">
+                        {% include 'web/component/loading.html' with container_id='rt-loading' %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- History modal -->
+<div id="history-modal" class="fixed inset-0 z-[9999] hidden">
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="GempaApp.closeModal()"></div>
+    <div class="relative z-10 mx-auto mt-20 max-w-2xl bg-gray-900 rounded-2xl border border-gray-700 shadow-2xl overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-800 flex items-center justify-between">
+            <h3 id="history-title" class="font-semibold text-white">Riwayat Event</h3>
+            <button onclick="GempaApp.closeModal()" class="p-1 rounded-lg hover:bg-gray-800 text-gray-400 hover:text-white transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+        <div id="history-content" class="p-6 max-h-[60vh] overflow-y-auto">
+            {% include 'web/component/loading.html' with container_id='history-loading' %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/realtime.js"></script>
+{% endblock %}

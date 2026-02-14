@@ -9,7 +9,7 @@ from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 
 from . import serializers
-from .services import bmkg_client
+from apps.core.services.bmkg_client import BmkgClient, BmkgClientError, BmkgEndpoints
 
 
 class ValidatedRemoteView(APIView):
@@ -22,7 +22,7 @@ class ValidatedRemoteView(APIView):
 	def get(self, request, *args, **kwargs) -> Response:  # type: ignore[override]
 		try:
 			payload: dict[str, Any] = self.fetcher()
-		except bmkg_client.BmkgClientError as exc:
+		except BmkgClientError as exc:
 			return Response({"detail": str(exc)}, status=status.HTTP_502_BAD_GATEWAY)
 
 		serializer = self.serializer_class(data=payload)
@@ -30,22 +30,22 @@ class ValidatedRemoteView(APIView):
 		return Response(serializer.data)
 
 
-_bmkg_endpoints = bmkg_client.BmkgEndpoints(
-	alert_url=settings.BMKG_ALERT_URL,
-	catalog_url=settings.BMKG_CATALOG_URL,
-	realtime_url=settings.BMKG_REALTIME_URL,
-	tsunami_url=settings.BMKG_TSUNAMI_URL,
-	felt_url=settings.BMKG_FELT_URL,
-	m5_url=settings.BMKG_M5_URL,
-	mon3_url=settings.BMKG_MON3_URL,
-	yr5_url=settings.BMKG_YR5_URL,
-	seismic_url=settings.BMKG_SEISMIC_URL,
-	global_url=settings.BMKG_GLOBAL_URL,
-	faults_global_url=settings.BMKG_FAULTS_GLOBAL_URL,
-	faults_indo_url=settings.BMKG_FAULTS_INDO_URL,
-	history_url_template=settings.BMKG_HISTORY_URL_TEMPLATE,
+_bmkg_endpoints = BmkgEndpoints(
+    alert_url=settings.BMKG_ALERT_URL,
+    catalog_url=settings.BMKG_CATALOG_URL,
+    realtime_url=settings.BMKG_REALTIME_URL,
+    tsunami_url=settings.BMKG_TSUNAMI_URL,
+    felt_url=settings.BMKG_FELT_URL,
+    m5_url=settings.BMKG_M5_URL,
+    mon3_url=settings.BMKG_MON3_URL,
+    yr5_url=settings.BMKG_YR5_URL,
+    seismic_url=settings.BMKG_SEISMIC_URL,
+    global_url=settings.BMKG_GLOBAL_URL,
+    faults_global_url=settings.BMKG_FAULTS_GLOBAL_URL,
+    faults_indo_url=settings.BMKG_FAULTS_INDO_URL,
+    history_url_template=settings.BMKG_HISTORY_URL_TEMPLATE,
 )
-_client = bmkg_client.BmkgClient(endpoints=_bmkg_endpoints)
+_client = BmkgClient(endpoints=_bmkg_endpoints)
 
 
 class EarthquakeAlertView(ValidatedRemoteView):
@@ -141,7 +141,7 @@ class EarthquakeHistoryView(APIView):
 	def get(self, request, eventid: str, *args, **kwargs) -> Response:  # type: ignore[override]
 		try:
 			payload: dict[str, Any] = _client.get_history(eventid)
-		except bmkg_client.BmkgClientError as exc:
+		except BmkgClientError as exc:
 			return Response({"detail": str(exc)}, status=status.HTTP_502_BAD_GATEWAY)
 
 		serializer = self.serializer_class(data=payload)
