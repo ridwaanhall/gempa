@@ -38,7 +38,7 @@
         // Latest map
         const latestMap = GempaMap.create('latest-map', { zoom: 7 });
         if (coords) {
-            latestMap.setView(coords, 8);
+            latestMap.setView(coords, 5);
             GempaMap.addQuakeMarker(latestMap, coords[0], coords[1], mag,
                 GempaMap.quakePopup({ mag, area: info.area, depth: info.depth, time: `${info.date}T${info.time}` }));
         }
