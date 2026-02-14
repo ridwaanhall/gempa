@@ -253,7 +253,7 @@ class InfoSerializer(BaseAlertInfoSerializer):
     date = serializers.DateField(input_formats=["%d-%m-%y"])
     magnitude = serializers.FloatField()
     shakemap = serializers.CharField()
-    felt = serializers.CharField()
+    felt = serializers.CharField(required=False, allow_blank=True)
 
 
 class EarthquakeAlertSerializer(BaseAlertEnvelopeSerializer):
