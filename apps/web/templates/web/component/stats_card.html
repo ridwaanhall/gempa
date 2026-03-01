@@ -1,6 +1,9 @@
-<!-- Stats card component — expects JS to populate via id -->
-<div class="bg-gray-900 rounded-xl border border-gray-800 p-4 flex flex-col">
-    <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">{{ label }}</p>
-    <p id="{{ value_id }}" class="mt-1 text-2xl font-bold {{ color|default:'text-white' }}">—</p>
-    <p class="mt-0.5 text-xs text-gray-600">{{ sublabel|default:'' }}</p>
+<!-- Stats card component — refined with left accent bar -->
+<div class="bg-gray-900/80 backdrop-blur-sm rounded-2xl border border-gray-800/60 shadow-lg shadow-black/10 p-5 flex flex-col relative overflow-hidden group hover:border-gray-700/60 transition-colors">
+    <div class="absolute left-0 top-0 bottom-0 w-1 {{ color|default:'bg-emerald-400' }} opacity-40 group-hover:opacity-70 transition-opacity rounded-l-2xl"></div>
+    <p class="text-xs font-medium text-gray-400 uppercase tracking-wider">{{ label }}</p>
+    <p id="{{ value_id }}" class="mt-2 text-2xl font-bold {{ color|default:'text-white' }} tracking-tight">—</p>
+    {% if sublabel %}
+    <p class="mt-1 text-xs text-gray-600">{{ sublabel }}</p>
+    {% endif %}
 </div>

@@ -22,11 +22,11 @@ const GempaTsunami = (() => {
         content.innerHTML = `
             ${detailInfoRow(info.depth, `${info.date}T${info.time}`, info.latitude, info.longitude)}
             ${info.potential ? `
-                <div class="mb-4 px-3 py-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                <div class="mb-4 px-3 py-2 rounded-xl bg-amber-500/10 border border-amber-500/20">
                     <p class="text-xs text-amber-400 font-medium">${info.potential}</p>
                 </div>
             ` : ''}
-            <p class="text-[10px] text-gray-600 uppercase font-semibold mb-2">Analisis BMKG</p>
+            <p class="text-[10px] text-gray-500 uppercase font-semibold mb-3 tracking-wider">Analisis BMKG</p>
             <div class="grid grid-cols-2 gap-3">${bmkgImageGrid(info.eventid)}</div>
         `;
         modal.classList.remove('hidden');
@@ -76,10 +76,10 @@ const GempaTsunami = (() => {
 
                 const wzHTML = wzAreas.length ? `
                     <div class="mt-4">
-                        <p class="text-[10px] text-gray-500 uppercase font-semibold mb-2">Zona Peringatan</p>
+                        <p class="text-[10px] text-gray-500 uppercase font-semibold mb-2 tracking-wider">Zona Peringatan</p>
                         <div class="space-y-1.5">
                             ${wzAreas.map(wz => `
-                                <div class="flex items-center justify-between px-3 py-2 rounded-lg border ${tsunamiLevelColor(wz.level)}">
+                                <div class="flex items-center justify-between px-3 py-2 rounded-xl border ${tsunamiLevelColor(wz.level)}">
                                     <div>
                                         <span class="text-xs font-semibold">${wz.district || '—'}</span>
                                         <span class="text-[10px] opacity-60 ml-1">${wz.province || ''}</span>
@@ -93,7 +93,7 @@ const GempaTsunami = (() => {
 
                 const obsHTML = obsAreas.length ? `
                     <div class="mt-4">
-                        <p class="text-[10px] text-gray-500 uppercase font-semibold mb-2">Observasi Tinggi Gelombang</p>
+                        <p class="text-[10px] text-gray-500 uppercase font-semibold mb-2 tracking-wider">Observasi Tinggi Gelombang</p>
                         <div class="overflow-x-auto">
                             <table class="w-full text-xs">
                                 <thead>
@@ -118,9 +118,9 @@ const GempaTsunami = (() => {
                 ` : '';
 
                 return `
-                    <div class="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
+                    <div class="bg-gray-900/80 backdrop-blur-sm rounded-2xl border border-gray-800/60 shadow-lg shadow-black/10 overflow-hidden">
                         <!-- Header -->
-                        <div class="px-5 py-4 border-b border-gray-800 flex items-start justify-between gap-3">
+                        <div class="px-5 py-4 border-b border-gray-800/60 flex items-start justify-between gap-3">
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-2 mb-1">
                                     <svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -132,7 +132,7 @@ const GempaTsunami = (() => {
                                     </span>
                                 </div>
                                 <h3 class="text-sm font-semibold text-white leading-tight">${info.area}</h3>
-                                <p class="text-xs text-gray-500 mt-1">${formatDatetime(`${info.date}T${info.time}`)}</p>
+                                <p class="text-xs text-gray-500 mt-1.5">${formatDatetime(`${info.date}T${info.time}`)}</p>
                             </div>
                             <span class="shrink-0 inline-flex items-center px-2.5 py-1 rounded-full text-sm font-bold ${magBg(mag)}">
                                 M ${mag}
@@ -141,25 +141,25 @@ const GempaTsunami = (() => {
 
                         <!-- Body -->
                         <div class="px-5 py-4">
-                            <div class="grid grid-cols-3 gap-3 text-center mb-3">
-                                <div class="bg-gray-800/50 rounded-lg py-2">
-                                    <p class="text-[9px] text-gray-600 uppercase">Kedalaman</p>
-                                    <p class="text-xs font-semibold text-gray-300">${info.depth}</p>
+                            <div class="grid grid-cols-3 gap-3 text-center mb-4">
+                                <div class="bg-gray-800/40 rounded-xl py-2.5">
+                                    <p class="text-[9px] text-gray-500 uppercase font-medium">Kedalaman</p>
+                                    <p class="text-xs font-semibold text-gray-300 mt-0.5">${info.depth}</p>
                                 </div>
-                                <div class="bg-gray-800/50 rounded-lg py-2">
-                                    <p class="text-[9px] text-gray-600 uppercase">Lintang</p>
-                                    <p class="text-xs font-semibold text-gray-300">${info.latitude}</p>
+                                <div class="bg-gray-800/40 rounded-xl py-2.5">
+                                    <p class="text-[9px] text-gray-500 uppercase font-medium">Lintang</p>
+                                    <p class="text-xs font-semibold text-gray-300 mt-0.5">${info.latitude}</p>
                                 </div>
-                                <div class="bg-gray-800/50 rounded-lg py-2">
-                                    <p class="text-[9px] text-gray-600 uppercase">Bujur</p>
-                                    <p class="text-xs font-semibold text-gray-300">${info.longitude}</p>
+                                <div class="bg-gray-800/40 rounded-xl py-2.5">
+                                    <p class="text-[9px] text-gray-500 uppercase font-medium">Bujur</p>
+                                    <p class="text-xs font-semibold text-gray-300 mt-0.5">${info.longitude}</p>
                                 </div>
                             </div>
 
                             <p class="text-xs text-gray-400 leading-relaxed">${info.description || ''}</p>
 
                             ${info.potential ? `
-                                <div class="mt-3 px-3 py-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                                <div class="mt-3 px-3 py-2 rounded-xl bg-amber-500/10 border border-amber-500/20">
                                     <p class="text-xs text-amber-400 font-medium">${info.potential}</p>
                                 </div>
                             ` : ''}
@@ -168,16 +168,18 @@ const GempaTsunami = (() => {
                             ${obsHTML}
 
                             ${info.instruction ? `
-                                <p class="mt-4 text-[11px] text-gray-500 leading-relaxed italic">${info.instruction}</p>
+                                <div class="mt-4 px-3 py-2 rounded-xl bg-amber-500/8 border border-amber-500/15">
+                                    <p class="text-[11px] text-amber-400/80 leading-relaxed italic">${info.instruction}</p>
+                                </div>
                             ` : ''}
 
                             <div class="mt-4 flex gap-2">
                                 <button onclick="GempaTsunami.showDetail(${i})"
-                                        class="flex-1 text-xs text-center py-2 rounded-lg border border-gray-700 text-emerald-400 hover:bg-gray-800 hover:border-emerald-500/30 transition-colors">
+                                        class="flex-1 text-xs text-center py-2.5 rounded-xl border border-gray-700/60 text-emerald-400 hover:bg-emerald-500/5 hover:border-emerald-500/30 transition-all duration-200 font-medium">
                                     Detail & Analisis
                                 </button>
                                 <button onclick="GempaTsunami.showNarasi(${i})"
-                                        class="flex-1 text-xs text-center py-2 rounded-lg border border-gray-700 text-sky-400 hover:bg-gray-800 hover:border-sky-500/30 transition-colors">
+                                        class="flex-1 text-xs text-center py-2.5 rounded-xl border border-gray-700/60 text-sky-400 hover:bg-sky-500/5 hover:border-sky-500/30 transition-all duration-200 font-medium">
                                     Narasi BMKG
                                 </button>
                             </div>
@@ -187,11 +189,11 @@ const GempaTsunami = (() => {
             }).join('');
 
             if (points.length) GempaMap.fitToPoints(map, points);
-            if (!infos.length) container.innerHTML = '<p class="text-gray-500 text-center py-12">Tidak ada peringatan tsunami aktif</p>';
+            if (!infos.length) container.innerHTML = '<div class="flex flex-col items-center justify-center py-16"><svg class="w-12 h-12 text-gray-700 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><p class="text-gray-500 text-sm">Tidak ada peringatan tsunami aktif</p></div>';
 
         } catch (e) {
             document.getElementById('tsunami-cards').innerHTML =
-                '<p class="text-red-400 text-center py-12">Gagal memuat data tsunami</p>';
+                '<div class="flex flex-col items-center justify-center py-16"><svg class="w-12 h-12 text-red-500/40 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg><p class="text-red-400 text-sm">Gagal memuat data tsunami</p></div>';
             console.error('Tsunami:', e);
         }
     }

@@ -20,7 +20,7 @@
 
         setText('latest-mag', mag);
         const magBadge = document.getElementById('latest-mag-badge');
-        if (magBadge) magBadge.className = `shrink-0 w-16 h-16 rounded-2xl flex items-center justify-center ${magBg(mag).split(' ')[0]}`;
+        if (magBadge) magBadge.className = `shrink-0 w-16 h-16 rounded-2xl flex items-center justify-center ${magBg(mag).split(' ')[0]} backdrop-blur-sm`;
         const magSpan = document.getElementById('latest-mag');
         if (magSpan) magSpan.className = `text-2xl font-black ${magColor(mag)}`;
 

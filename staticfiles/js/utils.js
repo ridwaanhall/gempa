@@ -186,7 +186,7 @@ const GempaUtils = (() => {
         if (!imgs) return '<p class="text-gray-500 text-sm">Tidak ada gambar tersedia</p>';
         return Object.entries(imgs).map(([key, url]) => `
             <div class="group cursor-pointer" onclick="document.getElementById('img-modal-src').src='${url}';document.getElementById('img-modal-title').textContent='${bmkgImageLabels[key]}';document.getElementById('img-modal').classList.remove('hidden')">
-                <div class="relative overflow-hidden rounded-lg border border-gray-800 bg-gray-950 aspect-video">
+                <div class="relative overflow-hidden rounded-xl border border-gray-800/60 bg-gray-950 aspect-video">
                     <img src="${url}" alt="${bmkgImageLabels[key]}" loading="lazy"
                          class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
                          onerror="this.parentElement.parentElement.style.display='none'">
@@ -242,17 +242,17 @@ const GempaUtils = (() => {
     function detailInfoRow(depth, datetime, latitude, longitude) {
         return `
             <div class="grid grid-cols-3 gap-3 text-center mb-4">
-                <div class="bg-gray-800/50 rounded-lg py-2">
-                    <p class="text-[9px] text-gray-600 uppercase">Kedalaman</p>
-                    <p class="text-xs font-semibold text-gray-300">${depth}</p>
+                <div class="bg-gray-800/40 rounded-xl py-2.5">
+                    <p class="text-[9px] text-gray-500 uppercase font-medium">Kedalaman</p>
+                    <p class="text-xs font-semibold text-gray-300 mt-0.5">${depth}</p>
                 </div>
-                <div class="bg-gray-800/50 rounded-lg py-2">
-                    <p class="text-[9px] text-gray-600 uppercase">Waktu</p>
-                    <p class="text-xs font-semibold text-gray-300">${formatDatetime(datetime)}</p>
+                <div class="bg-gray-800/40 rounded-xl py-2.5">
+                    <p class="text-[9px] text-gray-500 uppercase font-medium">Waktu</p>
+                    <p class="text-xs font-semibold text-gray-300 mt-0.5">${formatDatetime(datetime)}</p>
                 </div>
-                <div class="bg-gray-800/50 rounded-lg py-2">
-                    <p class="text-[9px] text-gray-600 uppercase">Koordinat</p>
-                    <p class="text-xs font-semibold text-gray-300">${latitude}, ${longitude}</p>
+                <div class="bg-gray-800/40 rounded-xl py-2.5">
+                    <p class="text-[9px] text-gray-500 uppercase font-medium">Koordinat</p>
+                    <p class="text-xs font-semibold text-gray-300 mt-0.5">${latitude}, ${longitude}</p>
                 </div>
             </div>`;
     }

@@ -1,5 +1,7 @@
-<!-- Leaflet map container component -->
-<div id="{{ map_id|default:'map' }}"
-     class="w-full rounded-xl border border-gray-800 overflow-hidden z-0"
-     style="height: {{ map_height|default:'420px' }}; background: #111827;">
+<!-- Leaflet map container component — refined with rounded corners and shadow -->
+<div class="bg-gray-900/80 backdrop-blur-sm rounded-2xl border border-gray-800/60 shadow-lg shadow-black/10 overflow-hidden">
+    <div id="{{ map_id|default:'map' }}"
+         class="w-full z-0"
+         style="height: {{ map_height|default:'420px' }}; background: #0d1117;">
+    </div>
 </div>
