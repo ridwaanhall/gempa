@@ -1,5 +1,7 @@
 # Gempa Monitor
 
+![Gempa Web](global/gempa_web.png)
+
 A modern, responsive web dashboard for monitoring earthquakes in Indonesia, powered by BMKG data. Built with Django, Tailwind CSS, and Leaflet.js.
 
 ## Features
