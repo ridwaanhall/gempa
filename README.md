@@ -36,4 +36,4 @@ A modern, responsive web dashboard for monitoring earthquakes in Indonesia, powe
 
 ## License
 
-MIT
+CC0-1.0 license
