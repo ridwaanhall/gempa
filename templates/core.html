@@ -43,12 +43,6 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
     <style>
-        /* ── Custom scrollbar ───────────────────────────────── */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
-        * { scrollbar-width: thin; scrollbar-color: #374151 transparent; }
 
         /* ── Leaflet overrides (dark theme) ──────────────────── */
         .gempa-popup .leaflet-popup-content-wrapper {
@@ -147,12 +141,6 @@
         [data-narasi-styles] em { color: #9ca3af; }
         [data-narasi-styles] strong { color: #fff; }
         [data-narasi-styles] a { color: #34d399; }
-
-        /* ── Image lightbox ─────────────────────────────────── */
-        .gempa-img-modal img {
-            max-height: 80vh; border-radius: 12px;
-            border: 1px solid #1f2937; cursor: zoom-in;
-        }
     </style>
     {% block extra_head %}{% endblock %}
 </head>
@@ -193,6 +181,9 @@
             </div>
         </div>
     </div>
+
+    <!-- Modals — direct <body> children so CSS fixed positioning uses the viewport, not a transformed ancestor -->
+    {% block modals %}{% endblock %}
 
     <script src="{% static 'js/utils.js' %}"></script>
     <script src="{% static 'js/map.js' %}"></script>

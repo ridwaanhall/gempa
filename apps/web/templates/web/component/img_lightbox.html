@@ -1,19 +1,18 @@
 <!-- Image lightbox modal component — reusable across pages that show BMKG analysis images -->
 <!-- JS sets #img-modal-src (src) and #img-modal-title (textContent) before showing -->
-<div id="img-modal" class="hidden fixed inset-0 z-[60] overflow-y-auto">
-    <div class="flex justify-center items-start min-h-full px-4 pt-[5vh] pb-4 bg-black/85 backdrop-blur-sm"
-         onclick="if(event.target===this)GempaUtils.hideModal('img-modal')">
-        <div class="w-full max-w-5xl">
-            <div class="flex justify-end mb-3">
-                <button onclick="GempaUtils.hideModal('img-modal')"
-                        class="w-10 h-10 rounded-xl flex items-center justify-center text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50 transition-colors duration-200">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-            <p id="img-modal-title" class="text-sm text-zinc-300 mb-3 text-center font-medium"></p>
-            <img id="img-modal-src" src="" alt="" class="mx-auto rounded-xl border border-zinc-700/50 shadow-2xl" style="max-height:75vh">
+<div id="img-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4"
+     style="background:rgba(0,0,0,.85);backdrop-filter:blur(4px)"
+     onclick="if(event.target===this)GempaUtils.hideModal('img-modal')">
+    <div class="w-full max-w-5xl">
+        <div class="flex justify-end mb-3">
+            <button onclick="GempaUtils.hideModal('img-modal')"
+                    class="w-10 h-10 rounded-xl flex items-center justify-center text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50 transition-colors duration-200">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
         </div>
+        <p id="img-modal-title" class="text-sm text-zinc-300 mb-3 text-center font-medium"></p>
+        <img id="img-modal-src" src="" alt="" class="mx-auto rounded-xl border border-zinc-700/50 shadow-2xl" style="max-height:75vh">
     </div>
 </div>

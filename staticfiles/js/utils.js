@@ -230,18 +230,21 @@ const GempaUtils = (() => {
         }
     }
 
-    /** Show a modal by ID — removes hidden, locks body scroll. */
+    /** Show a modal by ID — forces display:flex so centering works, locks body scroll. */
     function showModal(id) {
         const el = document.getElementById(id);
         if (!el) return;
         el.classList.remove('hidden');
+        el.style.display = 'flex';  // explicit — ensures items-center/justify-center work
         document.body.classList.add('overflow-hidden');
     }
 
-    /** Hide a modal by ID — adds hidden, unlocks body scroll. */
+    /** Hide a modal by ID — resets display, adds hidden, unlocks body scroll. */
     function hideModal(id) {
         const el = document.getElementById(id);
-        if (el) el.classList.add('hidden');
+        if (!el) return;
+        el.style.display = 'none';
+        el.classList.add('hidden');
         document.body.classList.remove('overflow-hidden');
     }
 
