@@ -185,7 +185,7 @@ const GempaUtils = (() => {
         const imgs = bmkgImageUrls(eventid);
         if (!imgs) return '<p class="text-zinc-500 text-sm">Tidak ada gambar tersedia</p>';
         return Object.entries(imgs).map(([key, url]) => `
-            <div class="group cursor-pointer" onclick="document.getElementById('img-modal-src').src='${url}';document.getElementById('img-modal-title').textContent='${bmkgImageLabels[key]}';document.getElementById('img-modal').classList.remove('hidden')">
+            <div class="group cursor-pointer" onclick="document.getElementById('img-modal-src').src='${url}';document.getElementById('img-modal-title').textContent='${bmkgImageLabels[key]}';document.getElementById('img-modal').classList.remove('hidden');document.body.classList.add('overflow-hidden')">
                 <div class="relative overflow-hidden rounded-xl border border-zinc-800/60 bg-zinc-950 aspect-video">
                     <img src="${url}" alt="${bmkgImageLabels[key]}" loading="lazy"
                          class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
@@ -218,8 +218,7 @@ const GempaUtils = (() => {
     async function showNarasiModal(eventid, modalId, titleId, contentId) {
         const modal = document.getElementById(modalId);
         if (!modal) return;
-        modal.classList.remove('hidden');
-        document.getElementById(titleId).textContent = `Narasi BMKG — ${eventid}`;
+        modal.classList.remove('hidden');        document.body.classList.add('overflow-hidden');        document.getElementById(titleId).textContent = `Narasi BMKG — ${eventid}`;
         setHTML(contentId, '<div class="flex justify-center py-8"><div class="animate-spin w-8 h-8 border-2 border-sky-400 border-t-transparent rounded-full"></div></div>');
 
         const html = await fetchNarasi(eventid);
@@ -234,6 +233,7 @@ const GempaUtils = (() => {
     function hideModal(id) {
         const el = document.getElementById(id);
         if (el) el.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
     }
 
     /**

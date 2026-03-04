@@ -46,19 +46,21 @@
 </div>
 
 <!-- History modal -->
-<div id="history-modal" class="fixed inset-0 z-[9999] hidden">
+<div id="history-modal" class="fixed inset-0 z-[9999] hidden overflow-y-auto">
     <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="GempaApp.closeModal()"></div>
-    <div class="relative z-10 mx-auto mt-20 max-w-2xl bg-zinc-900 rounded-xl border border-zinc-700/50 shadow-2xl overflow-hidden">
-        <div class="px-6 py-4 border-b border-zinc-700 flex items-center justify-between">
-            <h3 id="history-title" class="font-medium text-zinc-300 text-sm">Riwayat Event</h3>
-            <button onclick="GempaApp.closeModal()" class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 transition-colors duration-200">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
-        </div>
-        <div id="history-content" class="p-6 max-h-[60vh] overflow-y-auto">
-            {% include 'web/component/loading.html' with container_id='history-loading' %}
+    <div class="flex items-center justify-center min-h-full p-4 relative z-10">
+        <div class="bg-zinc-900 rounded-xl border border-zinc-700/50 shadow-2xl overflow-hidden max-w-2xl w-full">
+            <div class="px-6 py-4 border-b border-zinc-700 flex items-center justify-between">
+                <h3 id="history-title" class="font-medium text-zinc-300 text-sm">Riwayat Event</h3>
+                <button onclick="GempaApp.closeModal()" class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 transition-colors duration-200">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div id="history-content" class="p-6 max-h-[60vh] overflow-y-auto">
+                {% include 'web/component/loading.html' with container_id='history-loading' %}
+            </div>
         </div>
     </div>
 </div>

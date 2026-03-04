@@ -30,6 +30,7 @@ const GempaM5 = (() => {
             <div class="grid grid-cols-2 gap-3">${bmkgImageGrid(info.eventid)}</div>
         `;
         modal.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
     }
 
     function showNarasi(idx) {
