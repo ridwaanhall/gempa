@@ -65,9 +65,7 @@ const GempaApp = (() => {
     }
 
     async function showHistory(eventid) {
-        const modal = document.getElementById('history-modal');
-        modal.classList.remove('hidden');
-        document.body.classList.add('overflow-hidden');
+        GempaUtils.showModal('history-modal');
         document.getElementById('history-title').textContent = `Riwayat: ${eventid}`;
         setHTML('history-content', '<div class="flex justify-center py-8"><div class="animate-spin w-8 h-8 border-2 border-indigo-400 border-t-transparent rounded-full"></div></div>');
 
@@ -119,8 +117,7 @@ const GempaApp = (() => {
     }
 
     function closeModal() {
-        document.getElementById('history-modal').classList.add('hidden');
-        document.body.classList.remove('overflow-hidden');
+        GempaUtils.hideModal('history-modal');
     }
 
     document.addEventListener('DOMContentLoaded', init);

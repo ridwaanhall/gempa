@@ -46,10 +46,11 @@
 </div>
 
 <!-- History modal -->
-<div id="history-modal" class="fixed inset-0 z-[9999] hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
-     onclick="if(event.target===this){GempaApp.closeModal()}">
-        <div class="bg-zinc-900 rounded-xl border border-zinc-700/50 shadow-2xl overflow-hidden max-w-2xl w-full">
-            <div class="px-6 py-4 border-b border-zinc-700 flex items-center justify-between">
+<div id="history-modal" class="hidden fixed inset-0 z-[9999] overflow-y-auto">
+    <div class="flex justify-center items-start min-h-full px-4 pt-[5vh] pb-4 bg-black/70 backdrop-blur-sm"
+         onclick="if(event.target===this)GempaApp.closeModal()">
+        <div class="w-full max-w-2xl max-h-[85vh] flex flex-col bg-zinc-900 rounded-xl border border-zinc-700/50 shadow-2xl overflow-hidden">
+            <div class="shrink-0 px-6 py-4 border-b border-zinc-700 flex items-center justify-between">
                 <h3 id="history-title" class="font-medium text-zinc-300 text-sm">Riwayat Event</h3>
                 <button onclick="GempaApp.closeModal()" class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 transition-colors duration-200">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -57,10 +58,11 @@
                     </svg>
                 </button>
             </div>
-            <div id="history-content" class="p-6 max-h-[60vh] overflow-y-auto">
+            <div id="history-content" class="min-h-0 overflow-y-auto p-6">
                 {% include 'web/component/loading.html' with container_id='history-loading' %}
             </div>
         </div>
+    </div>
 </div>
 {% endblock %}
 

@@ -242,8 +242,7 @@
         if (!analisisSlides.length) return;
         analisisIndex = 0;
         renderAnalisisSlide();
-        document.getElementById('analisis-modal').classList.remove('hidden');
-        document.body.classList.add('overflow-hidden');
+        GempaUtils.showModal('analisis-modal');
     };
 
     window.slideAnalisis = function (dir) {
@@ -258,9 +257,5 @@
         if (!modal || modal.classList.contains('hidden')) return;
         if (e.key === 'ArrowLeft') slideAnalisis(-1);
         else if (e.key === 'ArrowRight') slideAnalisis(1);
-        else if (e.key === 'Escape') {
-            modal.classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
-        }
     });
 })();

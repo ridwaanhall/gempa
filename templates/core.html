@@ -220,6 +220,15 @@
         });
         // Loading bar progress on page load
         (function(){ const lb = document.getElementById('loading-bar'); if(lb){ lb.style.width='30%'; window.addEventListener('load',()=>{ lb.style.width='100%'; setTimeout(()=>{ lb.style.opacity='0'; },400); }); }})();
+        // Global Escape key — closes topmost visible modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key !== 'Escape') return;
+            const ids = ['img-modal','analisis-modal','narasi-modal','detail-modal','history-modal'];
+            for (const id of ids) {
+                const el = document.getElementById(id);
+                if (el && !el.classList.contains('hidden')) { GempaUtils.hideModal(id); break; }
+            }
+        });
     </script>
     {% block extra_js %}{% endblock %}
 </body>

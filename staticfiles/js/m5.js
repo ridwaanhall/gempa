@@ -29,8 +29,7 @@ const GempaM5 = (() => {
             <p class="text-[10px] text-zinc-500 uppercase font-semibold mb-3 tracking-wider">Analisis BMKG</p>
             <div class="grid grid-cols-2 gap-3">${bmkgImageGrid(info.eventid)}</div>
         `;
-        modal.classList.remove('hidden');
-        document.body.classList.add('overflow-hidden');
+        GempaUtils.showModal('detail-modal');
     }
 
     function showNarasi(idx) {
