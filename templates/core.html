@@ -153,39 +153,58 @@
     </style>
     {% block extra_head %}{% endblock %}
 </head>
-<body class="h-full bg-gray-950 text-gray-100 antialiased">
-    <div class="flex h-full">
+<body class="bg-black text-zinc-300 transition-colors duration-200">
 
-        {% include 'sidebar.html' %}
+    <!-- Loading bar -->
+    <div id="loading-bar" class="fixed top-0 left-0 h-0.5 bg-gradient-to-r from-teal-400 via-teal-300 to-teal-500 z-50 transition-all duration-300 ease-out" style="width: 0%;"></div>
 
-        <!-- Mobile header -->
-        <div class="lg:hidden fixed top-0 left-0 right-0 z-40 bg-gray-950/90 backdrop-blur-xl border-b border-gray-800/60 px-4 py-3 flex items-center gap-3">
-            <button onclick="document.getElementById('sidebar').classList.toggle('-translate-x-full')"
-                    class="p-2 rounded-xl hover:bg-gray-800/60 transition-colors active:scale-95" aria-label="Toggle menu">
-                <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <!-- Mobile top header -->
+    <header class="md:hidden bg-black shadow-sm border-b border-zinc-800 fixed top-0 left-0 w-full z-40">
+        <div class="px-4 py-3 flex items-center gap-3">
+            <button onclick="document.getElementById('sidebar').classList.toggle('-translate-x-full');document.getElementById('sidebar-backdrop').style.display=document.getElementById('sidebar').classList.contains('-translate-x-full')?'none':'block'"
+                    class="p-2 rounded-lg hover:bg-zinc-800 transition-colors duration-200" aria-label="Toggle menu">
+                <svg class="w-5 h-5 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                 </svg>
             </button>
             <div class="flex items-center gap-2">
-                <div class="w-7 h-7 rounded-lg bg-emerald-500/15 flex items-center justify-center">
-                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                    </svg>
-                </div>
-                <span class="font-bold text-sm text-white">Gempa<span class="text-emerald-400">.</span></span>
+                <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+                <span class="font-bold text-sm text-zinc-300">Gempa<span class="text-indigo-400">.</span></span>
             </div>
         </div>
+    </header>
 
-        <!-- Main content -->
-        <main class="flex-1 overflow-y-auto lg:ml-0 pt-14 lg:pt-0">
-            <div class="p-4 sm:p-6 lg:p-8 max-w-screen-2xl mx-auto">
-                {% block content %}{% endblock %}
+    <div class="mx-auto max-w-6xl pt-20 lg:pt-0">
+        <div class="flex flex-col lg:flex-row lg:gap-2 lg:py-4 xl:pb-8">
+            {% include 'sidebar.html' %}
+
+            <!-- Main content -->
+            <div class="flex-1 md:ml-62">
+                <main class="px-3 py-4 sm:px-4 md:px-6 lg:px-8">
+                    <div class="max-w-7xl mx-auto z-10 w-full opacity-0 translate-y-8 transition-all duration-700 ease-out" id="main-content">
+                        {% block content %}{% endblock %}
+                    </div>
+                </main>
             </div>
-        </main>
+        </div>
     </div>
 
     <script src="{% static 'js/utils.js' %}"></script>
     <script src="{% static 'js/map.js' %}"></script>
+    <script>
+        // Content entry animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const mc = document.getElementById('main-content');
+            if (mc) { requestAnimationFrame(() => { mc.classList.remove('opacity-0','translate-y-8'); mc.classList.add('opacity-100','translate-y-0'); }); }
+            // Loading bar
+            const lb = document.getElementById('loading-bar');
+            if (lb) { lb.style.width = '100%'; setTimeout(() => { lb.style.opacity = '0'; setTimeout(() => lb.remove(), 300); }, 500); }
+        });
+        // Loading bar progress on page load
+        (function(){ const lb = document.getElementById('loading-bar'); if(lb){ lb.style.width='30%'; window.addEventListener('load',()=>{ lb.style.width='100%'; setTimeout(()=>{ lb.style.opacity='0'; },400); }); }})();
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

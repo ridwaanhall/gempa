@@ -1,14 +1,14 @@
 <!-- Section card component — consistent card wrapper for content sections -->
 <!-- Usage: wrap content in this card for a consistent elevated panel look -->
 <!-- Parameters: title (optional), title_id (optional), subtitle (optional), subtitle_id (optional), extra_class (optional) -->
-<div class="bg-gray-900/80 backdrop-blur-sm rounded-2xl border border-gray-800/60 shadow-lg shadow-black/10 overflow-hidden {{ extra_class }}">
+<div class="rounded-xl border border-zinc-700/50 transition-all duration-300 hover:border-zinc-700 overflow-hidden backdrop-blur-sm {{ extra_class }}">
     {% if title %}
-    <div class="px-5 py-4 border-b border-gray-800/60 flex items-center justify-between">
-        <h3 class="text-sm font-semibold text-gray-200">{{ title }}</h3>
+    <div class="px-5 py-4 border-b border-zinc-700 flex items-center justify-between">
+        <h3 class="text-base sm:text-lg font-medium text-zinc-300">{{ title }}</h3>
         {% if subtitle_id %}
-        <span id="{{ subtitle_id }}" class="text-xs text-gray-500">{{ subtitle|default:'—' }}</span>
+        <span id="{{ subtitle_id }}" class="text-xs sm:text-sm text-zinc-400">{{ subtitle|default:'—' }}</span>
         {% elif subtitle %}
-        <span class="text-xs text-gray-500">{{ subtitle }}</span>
+        <span class="text-xs sm:text-sm text-zinc-400">{{ subtitle }}</span>
         {% endif %}
     </div>
     {% endif %}

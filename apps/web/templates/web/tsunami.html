@@ -4,11 +4,13 @@
 {% block content %}
 {% include 'web/component/page_header.html' with title='Peringatan Tsunami' subtitle='Data peringatan dini tsunami BMKG (30 terbaru)' icon='M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5' %}
 
-<div class="mb-8">
+<div class="mb-6">
     {% include 'web/component/map_container.html' with map_id='tsunami-map' map_height='400px' %}
 </div>
 
-<div id="tsunami-cards" class="space-y-4">
+<hr class="w-full mx-auto border-t border-zinc-700 my-4 md:my-6 lg:my-6" />
+
+<div id="tsunami-cards" class="space-y-3 sm:space-y-4">
     {% include 'web/component/loading.html' with container_id='tsunami-loading' %}
 </div>
 

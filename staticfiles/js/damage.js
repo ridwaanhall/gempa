@@ -51,23 +51,23 @@
             const feltShort = (p.dirasakan || '').split(';').slice(0, 5).filter(Boolean).join('; ');
             return `
                 <tr>
-                    <td class="px-4 py-3 text-gray-300 whitespace-nowrap" data-order="${datetimeSortKey(iso)}">${formatDatetime(iso)}</td>
-                    <td class="px-4 py-3 text-gray-200">
+                    <td class="px-4 py-3 text-zinc-300 whitespace-nowrap" data-order="${datetimeSortKey(iso)}">${formatDatetime(iso)}</td>
+                    <td class="px-4 py-3 text-zinc-200">
                         <div class="max-w-xs">
                             <p class="font-medium truncate">${p.lokasi}</p>
-                            <p class="text-[11px] text-gray-500 truncate">${p.pusat_gempa}</p>
+                            <p class="text-[11px] text-zinc-500 truncate">${p.pusat_gempa}</p>
                         </div>
                     </td>
                     <td class="px-4 py-3 text-center">
                         <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold ${magBg(p.mag)}">${p.mag}</span>
                     </td>
-                    <td class="px-4 py-3 text-center text-gray-400" data-order="${p.depth}">${p.depth} km</td>
+                    <td class="px-4 py-3 text-center text-zinc-400" data-order="${p.depth}">${p.depth} km</td>
                     <td class="px-4 py-3 text-center">
                         ${p.tsunami
                             ? '<span class="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400">Ya</span>'
-                            : '<span class="text-xs px-2 py-0.5 rounded-full bg-gray-700 text-gray-500">Tidak</span>'}
+                            : '<span class="text-xs px-2 py-0.5 rounded-full bg-zinc-700 text-zinc-500">Tidak</span>'}
                     </td>
-                    <td class="px-4 py-3 text-xs text-gray-500 max-w-[180px] truncate">${feltShort || '—'}</td>
+                    <td class="px-4 py-3 text-xs text-zinc-500 max-w-[180px] truncate">${feltShort || '—'}</td>
                 </tr>
             `;
         }).join('');

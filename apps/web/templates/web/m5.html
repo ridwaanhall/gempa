@@ -4,11 +4,13 @@
 {% block content %}
 {% include 'web/component/page_header.html' with title='Gempa Magnitudo 5+' subtitle='Gempa besar terkini M ≥ 5.0 (30 terbaru)' icon='M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z' %}
 
-<div class="mb-8">
+<div class="mb-6">
     {% include 'web/component/map_container.html' with map_id='m5-map' map_height='400px' %}
 </div>
 
-<div id="m5-cards" class="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+<hr class="w-full mx-auto border-t border-zinc-700 my-4 md:my-6 lg:my-6" />
+
+<div id="m5-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
     {% include 'web/component/loading.html' with container_id='m5-loading' %}
 </div>
 
