@@ -1,7 +1,6 @@
 <!-- Narasi BMKG modal — reusable across felt/m5/tsunami/home pages -->
-<div id="narasi-modal" class="hidden fixed inset-0 z-[55] bg-black/70 backdrop-blur-sm overflow-y-auto"
+<div id="narasi-modal" class="hidden fixed inset-0 z-[55] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
      onclick="if(event.target===this){GempaUtils.hideModal('narasi-modal');document.body.classList.remove('overflow-hidden')}">
-    <div class="flex items-center justify-center min-h-full p-4">
         <div class="relative bg-zinc-900 rounded-xl border border-zinc-700/50 max-w-3xl w-full max-h-[85vh] overflow-hidden shadow-2xl">
             <div class="sticky top-0 z-10 bg-zinc-900 border-b border-zinc-700 px-6 py-4 flex items-center justify-between">
                 <div class="flex items-center gap-2.5 min-w-0">
@@ -22,5 +21,4 @@
                 >
             </div>
         </div>
-    </div>
 </div>
