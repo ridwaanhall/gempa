@@ -1,9 +1,8 @@
-<!-- Stats card component — refined with left accent bar -->
-<div class="bg-gray-900/80 backdrop-blur-sm rounded-2xl border border-gray-800/60 shadow-lg shadow-black/10 p-5 flex flex-col relative overflow-hidden group hover:border-gray-700/60 transition-colors">
-    <div class="absolute left-0 top-0 bottom-0 w-1 {{ color|default:'bg-emerald-400' }} opacity-40 group-hover:opacity-70 transition-opacity rounded-l-2xl"></div>
-    <p class="text-xs font-medium text-gray-400 uppercase tracking-wider">{{ label }}</p>
-    <p id="{{ value_id }}" class="mt-2 text-2xl font-bold {{ color|default:'text-white' }} tracking-tight">—</p>
+<!-- Stats card component — semi-transparent with colored border accent -->
+<div class="bg-transparent backdrop-blur-sm rounded-lg sm:rounded-xl hover:shadow-lg overflow-hidden p-3 sm:p-4 border border-indigo-500/50 transition-all duration-300 hover:shadow-indigo-500/10">
+    <p class="text-xs sm:text-sm text-zinc-400 uppercase tracking-wider">{{ label }}</p>
+    <p id="{{ value_id }}" class="mt-2 text-2xl font-bold {{ color|default:'text-zinc-300' }} tracking-tight">—</p>
     {% if sublabel %}
-    <p class="mt-1 text-xs text-gray-600">{{ sublabel }}</p>
+    <p class="mt-1 text-xs text-zinc-500">{{ sublabel }}</p>
     {% endif %}
 </div>

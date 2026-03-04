@@ -43,7 +43,7 @@ const GempaUtils = (() => {
         if (mag >= 3)   return 'text-green-400';
         if (mag >= 2)   return 'text-emerald-400';
         if (mag >= 1)   return 'text-teal-400';
-        return 'text-gray-400';
+        return 'text-zinc-400';
     }
 
     /** Return a Tailwind bg-color class for magnitude badges (per-integer M1–M9+). */
@@ -57,7 +57,7 @@ const GempaUtils = (() => {
         if (mag >= 3)   return 'bg-green-400/20 text-green-300';
         if (mag >= 2)   return 'bg-emerald-400/20 text-emerald-300';
         if (mag >= 1)   return 'bg-teal-400/20 text-teal-300';
-        return 'bg-gray-700/40 text-gray-400';
+        return 'bg-zinc-700/40 text-zinc-400';
     }
 
     /** Return a hex colour for Leaflet markers by magnitude (per-integer M1–M9+). */
@@ -153,7 +153,7 @@ const GempaUtils = (() => {
         if (l.includes('awas'))    return 'bg-red-500/20 text-red-400 border-red-500/30';
         if (l.includes('siaga'))   return 'bg-orange-500/20 text-orange-400 border-orange-500/30';
         if (l.includes('waspada')) return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
-        return 'bg-gray-700/20 text-gray-400 border-gray-600';
+        return 'bg-zinc-700/20 text-zinc-400 border-zinc-600';
     }
 
     /** Build BMKG image URLs for an event by its eventid. */
@@ -183,15 +183,15 @@ const GempaUtils = (() => {
      */
     function bmkgImageGrid(eventid) {
         const imgs = bmkgImageUrls(eventid);
-        if (!imgs) return '<p class="text-gray-500 text-sm">Tidak ada gambar tersedia</p>';
+        if (!imgs) return '<p class="text-zinc-500 text-sm">Tidak ada gambar tersedia</p>';
         return Object.entries(imgs).map(([key, url]) => `
-            <div class="group cursor-pointer" onclick="document.getElementById('img-modal-src').src='${url}';document.getElementById('img-modal-title').textContent='${bmkgImageLabels[key]}';document.getElementById('img-modal').classList.remove('hidden')">
-                <div class="relative overflow-hidden rounded-xl border border-gray-800/60 bg-gray-950 aspect-video">
+            <div class="group cursor-pointer" onclick="document.getElementById('img-modal-src').src='${url}';document.getElementById('img-modal-title').textContent='${bmkgImageLabels[key]}';GempaUtils.showModal('img-modal')">
+                <div class="relative overflow-hidden rounded-xl border border-zinc-800/60 bg-zinc-950 aspect-video">
                     <img src="${url}" alt="${bmkgImageLabels[key]}" loading="lazy"
                          class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
                          onerror="this.parentElement.parentElement.style.display='none'">
                 </div>
-                <p class="text-[10px] text-gray-500 mt-1 text-center group-hover:text-gray-300 transition-colors">${bmkgImageLabels[key]}</p>
+                <p class="text-[10px] text-zinc-500 mt-1 text-center group-hover:text-zinc-300 transition-colors">${bmkgImageLabels[key]}</p>
             </div>
         `).join('');
     }
@@ -218,7 +218,7 @@ const GempaUtils = (() => {
     async function showNarasiModal(eventid, modalId, titleId, contentId) {
         const modal = document.getElementById(modalId);
         if (!modal) return;
-        modal.classList.remove('hidden');
+        showModal(modalId);
         document.getElementById(titleId).textContent = `Narasi BMKG — ${eventid}`;
         setHTML(contentId, '<div class="flex justify-center py-8"><div class="animate-spin w-8 h-8 border-2 border-sky-400 border-t-transparent rounded-full"></div></div>');
 
@@ -226,14 +226,26 @@ const GempaUtils = (() => {
         if (html) {
             setHTML(contentId, html);
         } else {
-            setHTML(contentId, '<p class="text-gray-500 text-center py-8">Narasi tidak tersedia untuk event ini</p>');
+            setHTML(contentId, '<p class="text-zinc-500 text-center py-8">Narasi tidak tersedia untuk event ini</p>');
         }
     }
 
-    /** Hide a modal by ID. */
+    /** Show a modal by ID — forces display:flex so centering works, locks body scroll. */
+    function showModal(id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.remove('hidden');
+        el.style.display = 'flex';  // explicit — ensures items-center/justify-center work
+        document.body.classList.add('overflow-hidden');
+    }
+
+    /** Hide a modal by ID — resets display, adds hidden, unlocks body scroll. */
     function hideModal(id) {
         const el = document.getElementById(id);
-        if (el) el.classList.add('hidden');
+        if (!el) return;
+        el.style.display = 'none';
+        el.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
     }
 
     /**
@@ -242,17 +254,17 @@ const GempaUtils = (() => {
     function detailInfoRow(depth, datetime, latitude, longitude) {
         return `
             <div class="grid grid-cols-3 gap-3 text-center mb-4">
-                <div class="bg-gray-800/40 rounded-xl py-2.5">
-                    <p class="text-[9px] text-gray-500 uppercase font-medium">Kedalaman</p>
-                    <p class="text-xs font-semibold text-gray-300 mt-0.5">${depth}</p>
+                <div class="bg-zinc-800/30 rounded-lg py-2.5">
+                    <p class="text-[9px] text-zinc-500 uppercase font-medium">Kedalaman</p>
+                    <p class="text-xs font-semibold text-zinc-300 mt-0.5">${depth}</p>
                 </div>
-                <div class="bg-gray-800/40 rounded-xl py-2.5">
-                    <p class="text-[9px] text-gray-500 uppercase font-medium">Waktu</p>
-                    <p class="text-xs font-semibold text-gray-300 mt-0.5">${formatDatetime(datetime)}</p>
+                <div class="bg-zinc-800/30 rounded-lg py-2.5">
+                    <p class="text-[9px] text-zinc-500 uppercase font-medium">Waktu</p>
+                    <p class="text-xs font-semibold text-zinc-300 mt-0.5">${formatDatetime(datetime)}</p>
                 </div>
-                <div class="bg-gray-800/40 rounded-xl py-2.5">
-                    <p class="text-[9px] text-gray-500 uppercase font-medium">Koordinat</p>
-                    <p class="text-xs font-semibold text-gray-300 mt-0.5">${latitude}, ${longitude}</p>
+                <div class="bg-zinc-800/30 rounded-lg py-2.5">
+                    <p class="text-[9px] text-zinc-500 uppercase font-medium">Koordinat</p>
+                    <p class="text-xs font-semibold text-zinc-300 mt-0.5">${latitude}, ${longitude}</p>
                 </div>
             </div>`;
     }
@@ -276,7 +288,7 @@ const GempaUtils = (() => {
         parseCoords,
         tsunamiLevelColor,
         bmkgImageUrls, bmkgImageLabels, bmkgImageGrid,
-        fetchNarasi, showNarasiModal, hideModal,
+        fetchNarasi, showNarasiModal, showModal, hideModal,
         detailInfoRow, dataTableLang,
         BMKG_STORAGE,
     };

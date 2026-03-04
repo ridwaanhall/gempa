@@ -4,14 +4,19 @@
 {% block content %}
 {% include 'web/component/page_header.html' with title='Gempa Dirasakan' subtitle='Daftar gempa yang dirasakan masyarakat (30 terbaru)' icon='M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9' %}
 
-<div class="mb-8">
+<div class="mb-6">
     {% include 'web/component/map_container.html' with map_id='felt-map' map_height='380px' %}
 </div>
 
-<div id="felt-cards" class="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+<hr class="w-full mx-auto border-t border-zinc-700 my-4 md:my-6 lg:my-6" />
+
+<div id="felt-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
     {% include 'web/component/loading.html' with container_id='felt-loading' %}
 </div>
 
+{% endblock %}
+
+{% block modals %}
 {% include 'web/component/detail_modal.html' %}
 {% include 'web/component/img_lightbox.html' %}
 {% include 'web/component/narasi_modal.html' %}

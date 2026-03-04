@@ -5,31 +5,31 @@
 {% include 'web/component/page_header.html' with title='Gempa Merusak' subtitle='Data historis gempa yang menyebabkan kerusakan' icon='M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' %}
 
 <!-- Stats -->
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
     {% include 'web/component/stats_card.html' with label='Total Event' value_id='dmg-total' color='text-red-400' %}
     {% include 'web/component/stats_card.html' with label='Tsunami' value_id='dmg-tsunami' color='text-amber-400' %}
     {% include 'web/component/stats_card.html' with label='Terbesar' value_id='dmg-max' color='text-orange-400' sublabel='Magnitudo' %}
     {% include 'web/component/stats_card.html' with label='Periode' value_id='dmg-period' color='text-blue-400' %}
 </div>
 
-<div class="mb-8">
+<div class="mb-6">
     {% include 'web/component/map_container.html' with map_id='dmg-map' map_height='440px' %}
 </div>
 
+<hr class="w-full mx-auto border-t border-zinc-700 my-4 md:my-6 lg:my-6" />
+
 <!-- Table -->
-<div class="bg-gray-900/80 backdrop-blur-sm rounded-2xl border border-gray-800/60 shadow-lg shadow-black/10 overflow-hidden">
-    <div class="px-5 py-4 border-b border-gray-800/40 flex items-center gap-2.5">
-        <div class="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center">
-            <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-            </svg>
-        </div>
-        <h3 class="text-sm font-semibold text-gray-200">Daftar Gempa Merusak</h3>
+<div class="rounded-xl border border-zinc-700/50 transition-all duration-300 hover:border-zinc-700 overflow-hidden backdrop-blur-sm">
+    <div class="p-2 sm:p-3 md:p-4 border-b border-zinc-700 flex items-center gap-2.5">
+        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+        </svg>
+        <h3 class="text-base sm:text-lg font-medium text-zinc-300">Daftar Gempa Merusak</h3>
     </div>
     <div class="overflow-x-auto">
         <table id="dmg-table" class="w-full text-sm">
             <thead>
-                <tr class="text-xs text-gray-500 uppercase tracking-wider border-b border-gray-800/60">
+                <tr class="text-xs text-zinc-500 uppercase tracking-wider border-b border-zinc-700">
                     <th class="px-4 py-3 text-left font-medium">Tanggal</th>
                     <th class="px-4 py-3 text-left font-medium">Lokasi</th>
                     <th class="px-4 py-3 text-center font-medium">Mag</th>
@@ -38,9 +38,9 @@
                     <th class="px-4 py-3 text-left font-medium">Dirasakan</th>
                 </tr>
             </thead>
-            <tbody id="dmg-tbody" class="divide-y divide-gray-800/40">
+            <tbody id="dmg-tbody" class="divide-y divide-zinc-700/50">
                 <tr>
-                    <td colspan="6" class="px-4 py-12 text-center text-gray-600">
+                    <td colspan="6" class="px-4 py-12 text-center text-zinc-500">
                         {% include 'web/component/loading.html' with container_id='dmg-loading' %}
                     </td>
                 </tr>

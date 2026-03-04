@@ -7,9 +7,11 @@
 (async function () {
     'use strict';
 
-    const { fetchJSON, magColor, magBg, formatDatetime, setText, setHTML, parseCoords, bmkgImageGrid, showNarasiModal, hideModal } = GempaUtils;
+    const { fetchJSON, magColor, magBg, formatDatetime, setText, setHTML, parseCoords, bmkgImageUrls, bmkgImageLabels, showNarasiModal, hideModal } = GempaUtils;
 
     let latestEventId = null;
+    let analisisSlides = [];
+    let analisisIndex = 0;
 
     // ── Latest earthquake ───────────────────────────────────
     try {
@@ -49,15 +51,21 @@
         const eventid = info.eventid;
         if (eventid) {
             latestEventId = eventid;
-            const grid = document.getElementById('latest-images-grid');
-            const container = document.getElementById('latest-images');
-            if (grid && container) {
-                grid.innerHTML = bmkgImageGrid(eventid);
-                container.classList.remove('hidden');
+
+            // Build slides array from BMKG image URLs
+            const imgs = bmkgImageUrls(eventid);
+            if (imgs) {
+                analisisSlides = Object.entries(imgs).map(([key, url]) => ({
+                    url,
+                    label: bmkgImageLabels[key],
+                }));
             }
-            // Show narasi button
+
+            // Show buttons
             const narasiBtn = document.getElementById('latest-narasi-btn');
             if (narasiBtn) narasiBtn.classList.remove('hidden');
+            const analisisBtn = document.getElementById('latest-analisis-btn');
+            if (analisisBtn && analisisSlides.length) analisisBtn.classList.remove('hidden');
         }
     } catch (e) {
         setText('latest-area', 'Gagal memuat data');
@@ -205,4 +213,49 @@
             showNarasiModal(latestEventId, 'narasi-modal', 'narasi-title', 'narasi-content');
         }
     };
+
+    // ── Analisis slider handlers ────────────────────────────
+    function renderAnalisisSlide() {
+        if (!analisisSlides.length) return;
+        const slide = analisisSlides[analisisIndex];
+        const img = document.getElementById('analisis-slide-img');
+        const label = document.getElementById('analisis-slide-label');
+        const noImg = document.getElementById('analisis-no-img');
+        if (img) {
+            img.style.display = '';
+            img.src = slide.url;
+            img.alt = slide.label;
+        }
+        if (noImg) noImg.classList.add('hidden');
+        if (label) label.textContent = `${analisisIndex + 1} / ${analisisSlides.length} — ${slide.label}`;
+
+        // Render dots
+        const dots = document.getElementById('analisis-dots');
+        if (dots) {
+            dots.innerHTML = analisisSlides.map((_, i) =>
+                `<button onclick="slideAnalisis(${i - analisisIndex})" class="w-2 h-2 rounded-full transition-colors duration-200 ${i === analisisIndex ? 'bg-indigo-400' : 'bg-zinc-600 hover:bg-zinc-500'}"></button>`
+            ).join('');
+        }
+    }
+
+    window.showLatestAnalisis = function () {
+        if (!analisisSlides.length) return;
+        analisisIndex = 0;
+        renderAnalisisSlide();
+        GempaUtils.showModal('analisis-modal');
+    };
+
+    window.slideAnalisis = function (dir) {
+        if (!analisisSlides.length) return;
+        analisisIndex = (analisisIndex + dir + analisisSlides.length) % analisisSlides.length;
+        renderAnalisisSlide();
+    };
+
+    // Keyboard navigation for analisis slider
+    document.addEventListener('keydown', function (e) {
+        const modal = document.getElementById('analisis-modal');
+        if (!modal || modal.classList.contains('hidden')) return;
+        if (e.key === 'ArrowLeft') slideAnalisis(-1);
+        else if (e.key === 'ArrowRight') slideAnalisis(1);
+    });
 })();
