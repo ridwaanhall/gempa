@@ -24,6 +24,14 @@ SITE_TWITTER_CARD = "summary_large_image"
 # ── Per-page SEO metadata ───────────────────────────────────
 
 PAGE_META: dict[str, dict[str, str]] = {
+    "single_realtime": {
+        "title": "Real-Time",
+        "description": (
+            "Gempa bumi terbaru dari jaringan sensor BMKG Indonesia. "
+            "Data real-time satu gempa terkini dengan peta interaktif multi-layer."
+        ),
+        "keywords": "gempa real-time, gempa terbaru, live earthquake, BMKG sensor, gempa hari ini",
+    },
     "dashboard": {
         "title": "Dashboard",
         "description": (

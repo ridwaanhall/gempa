@@ -20,6 +20,12 @@ class BasePageView(TemplateView):
         return ctx
 
 
+class SingleRealtimeView(BasePageView):
+    template_name: str = "web/single_realtime.html"
+    page_title: str = "Real-Time"
+    nav_active: str = "single_realtime"
+
+
 class DashboardView(BasePageView):
     template_name: str = "web/home.html"
     page_title: str = "Dashboard"

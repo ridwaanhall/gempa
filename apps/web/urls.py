@@ -7,7 +7,8 @@ from . import views
 app_name: str = "web"
 
 urlpatterns: list = [
-    path("", views.DashboardView.as_view(), name="dashboard"),
+    path("", views.SingleRealtimeView.as_view(), name="single_realtime"),
+    path("dashboard/", views.DashboardView.as_view(), name="dashboard"),
     path("realtime/", views.RealtimeView.as_view(), name="realtime"),
     path("felt/", views.FeltView.as_view(), name="felt"),
     path("tsunami/", views.TsunamiView.as_view(), name="tsunami"),

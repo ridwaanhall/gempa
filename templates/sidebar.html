@@ -5,7 +5,7 @@
 
     <!-- Brand -->
     <div class="px-6 py-6 border-b border-zinc-800/50">
-        <a href="{% url 'web:dashboard' %}" class="flex items-center gap-3 group">
+        <a href="{% url 'web:single_realtime' %}" class="flex items-center gap-3 group">
             <svg class="w-5 h-5 text-indigo-400 transition-transform duration-300 ease-in-out group-hover:-rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M13 10V3L4 14h7v7l9-11h-7z"/>
@@ -20,6 +20,21 @@
     <!-- Navigation -->
     <nav class="flex-1 px-4 py-5 space-y-1 overflow-y-auto">
         <p class="px-3 mb-3 text-[10px] font-semibold tracking-widest text-zinc-500 uppercase">Menu Utama</p>
+
+        <a href="{% url 'web:single_realtime' %}"
+           class="flex group items-center px-3 py-2 mb-1 rounded-lg transition-colors duration-200
+                  {% if nav_active == 'single_realtime' %}bg-zinc-800{% else %}hover:bg-zinc-800{% endif %}">
+            <svg class="w-5 h-5 transition-transform duration-300 ease-in-out group-hover:-rotate-12 {% if nav_active == 'single_realtime' %}text-indigo-400{% else %}text-zinc-400{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                      d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            <span class="ml-3 text-sm {% if nav_active == 'single_realtime' %}text-zinc-300{% else %}text-zinc-400{% endif %}">Real-Time</span>
+            {% if nav_active == 'single_realtime' %}
+            <svg class="w-4 h-4 ml-auto animate-pulse text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+            {% endif %}
+        </a>
 
         <a href="{% url 'web:dashboard' %}"
            class="flex group items-center px-3 py-2 mb-1 rounded-lg transition-colors duration-200

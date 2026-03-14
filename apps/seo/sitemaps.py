@@ -12,7 +12,8 @@ class StaticViewSitemap(Sitemap):
     protocol = "https"
 
     _page_items = [
-        {"name": "web:dashboard", "priority": 1.0, "changefreq": "always"},
+        {"name": "web:single_realtime", "priority": 1.0, "changefreq": "always"},
+        {"name": "web:dashboard", "priority": 0.9, "changefreq": "always"},
         {"name": "web:realtime", "priority": 0.9, "changefreq": "always"},
         {"name": "web:felt", "priority": 0.8, "changefreq": "hourly"},
         {"name": "web:m5", "priority": 0.8, "changefreq": "hourly"},

@@ -42,7 +42,7 @@ def seo_context(request: HttpRequest) -> dict:
 
     # Structured data
     jsonld_parts: list[dict] = []
-    if page_key == "dashboard":
+    if page_key == "single_realtime":
         jsonld_parts.append(build_website_jsonld(site_url))
 
     jsonld_parts.append(
@@ -51,7 +51,7 @@ def seo_context(request: HttpRequest) -> dict:
 
     # Breadcrumbs
     breadcrumbs = [("Beranda", "")]
-    if page_key and page_key != "dashboard":
+    if page_key and page_key not in ("single_realtime", "dashboard"):
         breadcrumbs.append((title, request.path.lstrip("/")))
     jsonld_parts.append(build_breadcrumb_jsonld(site_url, breadcrumbs))
 
@@ -78,7 +78,8 @@ def seo_context(request: HttpRequest) -> dict:
 # ── Helpers ──────────────────────────────────────────────────
 
 _PATH_MAP: dict[str, str] = {
-    "/": "dashboard",
+    "/": "single_realtime",
+    "/dashboard/": "dashboard",
     "/realtime/": "realtime",
     "/felt/": "felt",
     "/m5/": "m5",
