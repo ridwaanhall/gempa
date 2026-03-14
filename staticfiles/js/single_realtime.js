@@ -90,6 +90,105 @@
                 GempaMap.quakePopup({ mag, area: ev.area, depth: ev.depth, datetime: ev.datetime })
             );
         }
+
+        // ── Overlay layers ──────────────────────────────────────
+        const layers = {
+            seismicIndo:   L.layerGroup(),
+            seismicGlobal: L.layerGroup(),
+            faultsIndo:    L.layerGroup(),
+            faultsGlobal:  L.layerGroup(),
+        };
+
+        // Default on: Sesar Indonesia
+        layers.faultsIndo.addTo(map);
+
+        // Overlay layer control (collapsed toggle, bottomright — avoids info card at topright)
+        L.control.layers(null, {
+            '📡 Sensor Indonesia': layers.seismicIndo,
+            '📡 Sensor Global':    layers.seismicGlobal,
+            '🟠 Sesar Indonesia':  layers.faultsIndo,
+            '🟠 Sesar Global':     layers.faultsGlobal,
+        }, { collapsed: true, position: 'bottomright' }).addTo(map);
+
+        // Map legend (bottomleft)
+        const legend = L.control({ position: 'bottomleft' });
+        legend.onAdd = function () {
+            const div = L.DomUtil.create('div');
+            div.style.cssText = [
+                'background:rgba(0,0,0,0.82)',
+                'backdrop-filter:blur(8px)',
+                '-webkit-backdrop-filter:blur(8px)',
+                'border:1px solid rgba(63,63,70,0.6)',
+                'border-radius:10px',
+                'padding:10px 12px',
+                'font-family:system-ui,-apple-system,sans-serif',
+                'font-size:11px',
+                'color:#d4d4d8',
+                'min-width:148px',
+                'pointer-events:none',
+                'line-height:1.4',
+            ].join(';');
+            div.innerHTML = `
+                <div style="font-weight:700;font-size:10px;color:#a1a1aa;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;">Keterangan</div>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                    <div style="display:flex;align-items:center;gap:7px;">
+                        <svg width="14" height="14" viewBox="0 0 12 12" style="flex-shrink:0;"><rect x="2" y="2" width="8" height="8" rx="1" fill="#38bdf8" fill-opacity="0.7" stroke="#0ea5e9" stroke-width="1"/></svg>
+                        <span>Sensor Indonesia</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:7px;">
+                        <svg width="14" height="14" viewBox="0 0 12 12" style="flex-shrink:0;"><polygon points="6,1 11,11 1,11" fill="#818cf8" fill-opacity="0.7" stroke="#6366f1" stroke-width="1"/></svg>
+                        <span>Sensor Global</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:7px;">
+                        <span style="display:inline-block;width:18px;height:2.5px;background:#fb923c;border-radius:2px;flex-shrink:0;"></span>
+                        <span>Sesar Indonesia</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:7px;">
+                        <span style="display:inline-block;width:18px;height:2.5px;background:#f97316;opacity:.8;border-radius:2px;flex-shrink:0;"></span>
+                        <span>Sesar Global</span>
+                    </div>
+                </div>`;
+            return div;
+        };
+        legend.addTo(map);
+
+        // Fetch layer data concurrently
+        await Promise.allSettled([
+            fetchJSON('/api/seismic-indo/').then(data => {
+                (data.features || []).forEach(f => {
+                    const [lon, lat] = f.geometry?.coordinates || [];
+                    if (lat == null || lon == null) return;
+                    const p = f.properties || {};
+                    GempaMap.addSensorMarkerIndo(layers.seismicIndo, lat, lon, {
+                        id: p.id, stakeholder: p.stakeholder, uptbmkg: p.uptbmkg,
+                    });
+                });
+            }).catch(e => console.error('Seismic Indo:', e)),
+
+            fetchJSON('/api/seismic-global/').then(data => {
+                (data.features || []).forEach(f => {
+                    const [lon, lat] = f.geometry?.coordinates || [];
+                    if (lat == null || lon == null) return;
+                    const p = f.properties || {};
+                    GempaMap.addSensorMarkerGlobal(layers.seismicGlobal, lat, lon, {
+                        id: f.id, description: p.description, net: p.net, sta: p.sta,
+                    });
+                });
+            }).catch(e => console.error('Seismic Global:', e)),
+
+            fetchJSON('/api/faults-indo/').then(data => {
+                GempaMap.addFaultLines(layers.faultsIndo, data.features || [], {
+                    color: '#fb923c', weight: 2, opacity: 0.7,
+                });
+            }).catch(e => console.error('Faults Indo:', e)),
+
+            fetchJSON('/api/faults-global/').then(data => {
+                GempaMap.addFaultLines(layers.faultsGlobal, data.features || [], {
+                    color: '#f97316', weight: 1.5, opacity: 0.5,
+                });
+            }).catch(e => console.error('Faults Global:', e)),
+        ]);
+
     } catch (e) {
         setText('single-rt-area', 'Gagal memuat data');
         console.error('Single realtime:', e);
