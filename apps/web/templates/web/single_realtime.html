@@ -2,70 +2,80 @@
 {% load static %}
 
 {% block content %}
-{% include 'web/component/page_header.html' with title='Real-Time' subtitle='Satu gempa terbaru dari jaringan sensor BMKG Indonesia' icon='M13 10V3L4 14h7v7l9-11h-7z' badge='Live' badge_color='bg-green-900/30 text-green-400 border border-green-800/50' %}
+{% include 'web/component/page_header.html' with title='Real-Time Gempa' subtitle='Gempa terbaru dari jaringan sensor BMKG Indonesia' icon='M13 10V3L4 14h7v7l9-11h-7z' %}
 
-<!-- Single latest realtime earthquake hero -->
-<div id="single-rt-section" class="mb-6">
-    <div class="rounded-xl border border-zinc-700/50 transition-all duration-300 hover:border-zinc-700 overflow-hidden backdrop-blur-sm">
-        <div class="lg:flex">
-            <!-- Map (left on desktop) -->
-            <div class="lg:w-1/2 shrink-0">
-                <div id="single-rt-map" class="w-full z-0" style="height: 420px; background: #0d1117;"></div>
-            </div>
+<!-- Full map with floating overlay info card -->
+<div class="relative w-full overflow-hidden rounded-xl border border-zinc-700/50"
+     style="height:calc(50svh + 4rem);min-height:350px;">
 
-            <!-- Info (right on desktop) -->
-            <div class="lg:w-1/2 min-w-0 p-4 sm:p-5 flex flex-col">
-                <!-- Live badge + status row -->
-                <div class="flex items-center gap-2 flex-wrap mb-4">
-                    <span class="relative flex h-1.5 w-1.5">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span>
-                    </span>
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-900/30 text-green-400 border border-green-800/50">Gempa Terbaru</span>
-                    <span id="single-rt-status" class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-zinc-800 text-zinc-400 border border-zinc-700/50">—</span>
+    <!-- Leaflet map — fills entire container -->
+    <div id="single-rt-map" class="absolute inset-0 z-0" style="background:#0d1117;"></div>
+
+    <!-- Top-center: live pill -->
+    <div class="absolute top-3 z-10 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/70 backdrop-blur-sm border border-zinc-700/60"
+         style="left:50%;transform:translateX(-50%);">
+        <span class="relative flex h-1.5 w-1.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span>
+        </span>
+        <span class="text-xs font-semibold text-zinc-300 tracking-wide">Real-Time BMKG</span>
+    </div>
+
+    <!-- Top-right: earthquake info card overlay -->
+    <div style="position:absolute;top:1rem;right:1rem;z-index:10;max-width:340px;width:calc(100% - 2rem);">
+        <div class="overflow-hidden rounded-2xl border border-zinc-700/60 shadow-2xl"
+             style="background:rgba(0,0,0,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);">
+
+            <!-- Magnitude accent bar (colour set by JS on id="single-rt-accent") -->
+            <div id="single-rt-accent" style="height:3px;width:100%;background:#3f3f46;"></div>
+
+            <div class="p-4">
+                <!-- Status + EventID row -->
+                <div class="flex items-center gap-2 mb-3" style="min-width:0;">
+                    <span id="single-rt-status"
+                          class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-zinc-800 text-zinc-400 border border-zinc-700/50">—</span>
+                    <span id="single-rt-eventid"
+                          class="text-[10px] text-zinc-500 ml-auto font-mono truncate"
+                          style="max-width:9rem;">—</span>
                 </div>
 
-                <!-- Magnitude badge + area -->
-                <div class="flex items-start gap-4 mb-5">
+                <!-- Magnitude badge + area + time -->
+                <div class="flex items-start gap-3 mb-3">
                     <div id="single-rt-mag-badge"
-                         class="shrink-0 w-18 h-18 rounded-xl bg-zinc-800/50 flex items-center justify-center border border-zinc-700/50" style="width:4.5rem;height:4.5rem;">
-                        <span id="single-rt-mag" class="text-3xl font-bold text-zinc-400">—</span>
+                         class="shrink-0 rounded-xl flex items-center justify-center"
+                         style="width:3.5rem;height:3.5rem;background:rgba(63,63,70,0.35);border:1px solid rgba(63,63,70,0.5);">
+                        <span id="single-rt-mag" class="font-black text-zinc-400"
+                              style="font-size:1.4rem;line-height:1;">—</span>
                     </div>
-                    <div class="min-w-0">
-                        <h2 id="single-rt-area" class="text-base sm:text-lg md:text-xl font-medium text-zinc-300 leading-tight">Memuat data&hellip;</h2>
-                        <p id="single-rt-time" class="text-xs sm:text-sm text-zinc-400 mt-1.5">—</p>
-                    </div>
-                </div>
-
-                <!-- Info grid -->
-                <div class="grid grid-cols-2 gap-2.5 mb-4">
-                    <div class="bg-zinc-800/30 rounded-lg px-3.5 py-2.5">
-                        <p class="text-[10px] text-zinc-500 uppercase font-medium tracking-wide">Kedalaman</p>
-                        <p id="single-rt-depth" class="text-sm font-semibold text-zinc-300 mt-0.5">—</p>
-                    </div>
-                    <div class="bg-zinc-800/30 rounded-lg px-3.5 py-2.5">
-                        <p class="text-[10px] text-zinc-500 uppercase font-medium tracking-wide">Koordinat</p>
-                        <p id="single-rt-coords" class="text-sm font-semibold text-zinc-300 mt-0.5">—</p>
-                    </div>
-                    <div class="bg-zinc-800/30 rounded-lg px-3.5 py-2.5">
-                        <p class="text-[10px] text-zinc-500 uppercase font-medium tracking-wide">Mekanisme Fokal</p>
-                        <p id="single-rt-fokal" class="text-sm font-semibold text-zinc-300 mt-0.5 capitalize">—</p>
-                    </div>
-                    <div class="bg-zinc-800/30 rounded-lg px-3.5 py-2.5">
-                        <p class="text-[10px] text-zinc-500 uppercase font-medium tracking-wide">Event ID</p>
-                        <p id="single-rt-eventid" class="text-sm font-semibold text-zinc-300 mt-0.5 font-mono truncate">—</p>
+                    <div class="min-w-0 flex-1">
+                        <p id="single-rt-area"
+                           class="text-sm font-semibold text-zinc-200 leading-tight">Memuat data&hellip;</p>
+                        <p id="single-rt-time"
+                           class="text-[11px] text-zinc-400 mt-1 font-mono">—</p>
                     </div>
                 </div>
 
-                <!-- Footer note -->
-                <p class="mt-auto text-[11px] text-zinc-600 leading-relaxed">
-                    Data dari endpoint real-time BMKG Indonesia. Diperbarui setiap muat halaman.
-                </p>
+                <!-- Stats grid -->
+                <div class="grid grid-cols-3 gap-2 pt-3"
+                     style="border-top:1px solid rgba(63,63,70,0.5);">
+                    <div>
+                        <p class="text-[9px] text-zinc-500 uppercase tracking-wide font-medium">Kedalaman</p>
+                        <p id="single-rt-depth" class="text-xs font-semibold text-zinc-300 mt-0.5">—</p>
+                    </div>
+                    <div>
+                        <p class="text-[9px] text-zinc-500 uppercase tracking-wide font-medium">Koordinat</p>
+                        <p id="single-rt-coords" class="text-xs font-semibold text-zinc-300 mt-0.5">—</p>
+                    </div>
+                    <div>
+                        <p class="text-[9px] text-zinc-500 uppercase tracking-wide font-medium">Fokal</p>
+                        <p id="single-rt-fokal" class="text-xs font-semibold text-zinc-300 mt-0.5 capitalize">—</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
+</div>
 {% endblock %}
 
 {% block extra_js %}

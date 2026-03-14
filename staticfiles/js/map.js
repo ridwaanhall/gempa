@@ -214,23 +214,58 @@ const GempaMap = (() => {
 
     /** Build a standard popup HTML string for an earthquake event. */
     function quakePopup(data) {
-        const mag = data.mag ?? data.magnitude ?? '?';
-        const area = data.area || data.place || '—';
-        const depth = normalizeDepth(data.depth);
-        const time = data.time || data.datetime || '';
+        const mag    = data.mag ?? data.magnitude ?? '?';
+        const area   = data.area || data.place || '—';
+        const depth  = normalizeDepth(data.depth);
+        const time   = data.time || data.datetime || '';
+        const magNum = parseFloat(mag) || 0;
+        const hex    = GempaUtils.magHex(magNum);
+        const timeStr = time ? GempaUtils.formatDatetime(time) : '';
         return `
-            <div style="font-family:system-ui;font-size:13px;line-height:1.5;color:#e5e7eb;">
-                <div style="font-weight:700;font-size:15px;color:#fff;margin-bottom:4px;">
-                    M ${mag} — ${area}
+            <div style="min-width:210px;font-family:system-ui,-apple-system,sans-serif;line-height:1.5;">
+                <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(63,63,70,0.5);">
+                    <div style="flex-shrink:0;padding:5px 10px;border-radius:8px;background:${hex}22;border:1px solid ${hex}55;">
+                        <div style="font-weight:900;font-size:18px;letter-spacing:-0.5px;color:${hex};">M${Number(mag).toFixed(1)}</div>
+                    </div>
+                    <div style="padding-top:3px;min-width:0;">
+                        <div style="font-weight:600;font-size:13px;color:#f4f4f5;line-height:1.35;">${area}</div>
+                    </div>
                 </div>
-                <div style="color:#9ca3af;font-size:11px;">
-                    ${GempaUtils.formatDatetime(time)}
+                <div style="display:grid;gap:5px;font-size:11.5px;">
+                    ${timeStr ? `<div style="display:flex;gap:8px;"><span style="color:#71717a;min-width:64px;flex-shrink:0;">Waktu</span><span style="color:#e4e4e7;">${timeStr}</span></div>` : ''}
+                    <div style="display:flex;gap:8px;"><span style="color:#71717a;min-width:64px;flex-shrink:0;">Kedalaman</span><span style="color:#e4e4e7;">${depth} km</span></div>
                 </div>
-                <div style="margin-top:6px;display:flex;gap:12px;font-size:12px;color:#d1d5db;">
-                    <span>Kedalaman: <b>${depth} km</b></span>
-                </div>
-            </div>
-        `;
+            </div>`;
+    }
+
+    /**
+     * Animated pulse marker — expanding outline rings, no fill.
+     * Uses @keyframes gempa-ring-pulse defined in core.html <style> block.
+     * Ideal for single-event maps where the location needs visual emphasis.
+     */
+    function addPulseMarker(map, lat, lon, mag, popupHTML) {
+        const hex  = GempaUtils.magHex(mag);
+        const r    = Math.max(12, magRadius(mag) * 2.4);
+        const size = r * 2;
+        const dot  = Math.max(5, Math.round(r * 0.38));
+
+        const icon = L.divIcon({
+            className:   '',
+            iconSize:    [size, size],
+            iconAnchor:  [r, r],
+            popupAnchor: [0, -(r + 4)],
+            html: `<div style="position:relative;width:${size}px;height:${size}px;display:flex;align-items:center;justify-content:center;">
+                <div style="position:absolute;inset:0;border-radius:50%;border:2px solid ${hex};animation:gempa-ring-pulse 2s ease-out infinite;"></div>
+                <div style="position:absolute;inset:0;border-radius:50%;border:1.5px solid ${hex};animation:gempa-ring-pulse 2s ease-out 0.8s infinite;"></div>
+                <div style="width:${dot}px;height:${dot}px;border-radius:50%;border:2px solid ${hex};background:transparent;"></div>
+            </div>`,
+        });
+
+        const marker = L.marker([lat, lon], { icon });
+        if (popupHTML) {
+            marker.bindPopup(popupHTML, { className: 'gempa-popup', maxWidth: 300 });
+        }
+        return marker.addTo(map);
     }
 
     /** Clear all layers except the tile layer. */
@@ -250,7 +285,8 @@ const GempaMap = (() => {
     }
 
     return {
-        create, baseLayers, addQuakeMarker, addQuakeMarkerToLayer,
+        create, baseLayers,
+        addPulseMarker, addQuakeMarker, addQuakeMarkerToLayer,
         addSensorMarkerIndo, addSensorMarkerGlobal,
         addFaultLines, quakePopup, clearMarkers, fitToPoints,
         magRadius, normalizeDepth,

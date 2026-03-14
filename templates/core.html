@@ -52,7 +52,49 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
-    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    <style>
+        /* Leaflet popup — dark theme */
+        .gempa-popup .leaflet-popup-content-wrapper {
+            background: rgba(9,9,11,0.97); border: 1px solid rgba(63,63,70,0.7);
+            border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.8);
+            padding: 0; overflow: hidden;
+        }
+        .gempa-popup .leaflet-popup-content { margin: 14px 16px; color: #d4d4d8; font-family: system-ui, -apple-system, sans-serif; }
+        .gempa-popup .leaflet-popup-tip          { background: rgba(9,9,11,0.97); }
+        .gempa-popup .leaflet-popup-tip-container { margin-top: -1px; }
+        .gempa-popup .leaflet-popup-close-button {
+            top: 8px !important; right: 8px !important; width: 20px !important; height: 20px !important;
+            font-size: 16px !important; line-height: 20px !important; color: #71717a !important;
+            background: rgba(39,39,42,0.8) !important; border-radius: 50% !important; transition: color .15s, background .15s;
+        }
+        .gempa-popup .leaflet-popup-close-button:hover { color: #e4e4e7 !important; background: rgba(63,63,70,0.8) !important; }
+        /* Animated earthquake pulse marker */
+        @keyframes gempa-ring-pulse {
+            0%   { transform: scale(0.3); opacity: 1; }
+            80%  { opacity: 0.15; }
+            100% { transform: scale(3.8); opacity: 0; }
+        }
+        /* Narasi content */
+        .narasi-content p { margin: .5rem 0; line-height: 1.75; }
+        .narasi-content strong { color: #e4e4e7; }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #09090b; }
+        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #52525b; }
+        /* DataTables dark theme */
+        .dataTables_wrapper .dataTables_length select,
+        .dataTables_wrapper .dataTables_filter input { background: #18181b; color: #d4d4d8; border: 1px solid #3f3f46; border-radius: 6px; padding: 2px 6px; }
+        .dataTables_wrapper .dataTables_info,
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_filter,
+        .dataTables_wrapper .dataTables_paginate { color: #71717a !important; font-size: 12px; }
+        .dataTables_wrapper .dataTables_paginate .paginate_button { color: #a1a1aa !important; border-radius: 6px !important; }
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover { background: #27272a !important; border-color: #3f3f46 !important; color: #e4e4e7 !important; }
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover { background: #3f3f46 !important; border-color: transparent !important; color: #f4f4f5 !important; }
+        table.dataTable thead th, table.dataTable.no-footer { border-bottom-color: #27272a !important; }
+    </style>
     {% block extra_head %}{% endblock %}
 </head>
 <body class="bg-black text-zinc-300 transition-colors duration-200" style="font-family: 'Inter', system-ui, sans-serif;">

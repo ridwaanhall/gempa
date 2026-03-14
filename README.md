@@ -31,7 +31,7 @@ A modern, responsive web dashboard for monitoring earthquakes in Indonesia, powe
 
 1. Install Python dependencies: `pip install -r requirements.txt`
 2. Install Node dependencies: `npm install`
-3. Build CSS: `npx @tailwindcss/cli -i static/global.css -o staticfiles/css/global.css --minify`
+3. Build CSS: `npx @tailwindcss/cli -i static/global.css -o staticfiles/css/core.css --minify --watch`
 4. Run server: `python manage.py runserver`
 
 ## License
