@@ -2,18 +2,35 @@
 {% load static %}
 
 {% block content %}
-{% include 'web/component/page_header.html' with title='Peringatan Tsunami' subtitle='Data peringatan dini tsunami BMKG (30 terbaru)' icon='M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5' %}
+{% include 'web/component/page_header.html' with title='Peringatan Tsunami' subtitle='Peringatan dini tsunami dari BMKG dengan zona terdampak dan informasi real-time.' icon='M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5' %}
 
-<div class="mb-6">
-    {% include 'web/component/map_container.html' with map_id='tsunami-map' map_height='400px' %}
+<!-- Map Section -->
+<div class="mb-8">
+    <div class="mb-4 flex items-center gap-3">
+        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/10 border border-blue-500/30">
+            <svg class="h-5 w-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"/>
+            </svg>
+        </div>
+        <div>
+            <h3 class="text-lg font-bold text-zinc-100 font-heading">Peta Tsunami</h3>
+            <p class="text-xs text-zinc-400">Zona terdampak peringatan tsunami</p>
+        </div>
+    </div>
+    {% include 'web/component/map_container.html' with map_id='tsunami-map' map_class='h-96 sm:h-[480px] lg:h-[560px] rounded-3xl' %}
 </div>
 
-<hr class="w-full mx-auto border-t border-zinc-700 my-4 md:my-6 lg:my-6" />
+<div class="mb-8 h-px bg-gradient-to-r from-transparent via-zinc-700/50 to-transparent"></div>
 
-<div id="tsunami-cards" class="space-y-3 sm:space-y-4">
-    {% include 'web/component/loading.html' with container_id='tsunami-loading' %}
+<div>
+    <div class="mb-6">
+        <h3 class="text-lg font-bold text-zinc-100 font-heading">Peringatan Aktif</h3>
+        <p class="mt-1 text-xs text-zinc-400">30 peringatan tsunami terbaru</p>
+    </div>
+    <div id="tsunami-cards" class="space-y-4 sm:space-y-5">
+        {% include 'web/component/loading.html' with container_id='tsunami-loading' %}
+    </div>
 </div>
-
 {% endblock %}
 
 {% block modals %}

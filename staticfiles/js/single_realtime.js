@@ -39,25 +39,22 @@
         const mag = parseFloat(ev.mag);
         const lat = parseFloat(ev.latitude);
         const lon = parseFloat(ev.longitude);
-        const hex = magHex(mag);
-
         // Accent bar — magnitude colour
         const accentEl = document.getElementById('single-rt-accent');
-        if (accentEl) accentEl.style.background = hex;
+        if (accentEl) {
+            accentEl.className = `h-1 w-full ${magBg(mag).split(' ')[0]}`;
+        }
 
         // Magnitude badge
         const magBadge = document.getElementById('single-rt-mag-badge');
         if (magBadge) {
             const [bgClass] = magBg(mag).split(' ');
-            magBadge.className = `shrink-0 rounded-xl flex items-center justify-center backdrop-blur-sm ${bgClass}`;
-            magBadge.style.cssText = 'width:3.5rem;height:3.5rem;';
+            magBadge.className = `flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-zinc-700 backdrop-blur-sm ${bgClass}`;
         }
         const magSpan = document.getElementById('single-rt-mag');
         if (magSpan) {
             magSpan.textContent  = isNaN(mag) ? (ev.mag ?? '—') : mag.toFixed(1);
-            magSpan.className    = `font-black ${magColor(mag)}`;
-            magSpan.style.fontSize = '1.4rem';
-            magSpan.style.lineHeight = '1';
+            magSpan.className    = `text-2xl font-black leading-none ${magColor(mag)}`;
         }
 
         // Text fields
@@ -114,37 +111,24 @@
         const legend = L.control({ position: 'bottomleft' });
         legend.onAdd = function () {
             const div = L.DomUtil.create('div');
-            div.style.cssText = [
-                'background:rgba(0,0,0,0.82)',
-                'backdrop-filter:blur(8px)',
-                '-webkit-backdrop-filter:blur(8px)',
-                'border:1px solid rgba(63,63,70,0.6)',
-                'border-radius:10px',
-                'padding:10px 12px',
-                'font-family:system-ui,-apple-system,sans-serif',
-                'font-size:11px',
-                'color:#d4d4d8',
-                'min-width:148px',
-                'pointer-events:none',
-                'line-height:1.4',
-            ].join(';');
+            div.className = 'pointer-events-none min-w-[148px] rounded-xl border border-zinc-700/70 bg-zinc-950/80 p-3 text-[11px] leading-relaxed text-zinc-300 backdrop-blur';
             div.innerHTML = `
-                <div style="font-weight:700;font-size:10px;color:#a1a1aa;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;">Keterangan</div>
-                <div style="display:flex;flex-direction:column;gap:6px;">
-                    <div style="display:flex;align-items:center;gap:7px;">
-                        <svg width="14" height="14" viewBox="0 0 12 12" style="flex-shrink:0;"><rect x="2" y="2" width="8" height="8" rx="1" fill="#38bdf8" fill-opacity="0.7" stroke="#0ea5e9" stroke-width="1"/></svg>
+                <div class="mb-2 text-[10px] font-bold uppercase tracking-[0.12em] text-zinc-400">Keterangan</div>
+                <div class="flex flex-col gap-1.5">
+                    <div class="flex items-center gap-2">
+                        <svg width="14" height="14" viewBox="0 0 12 12" class="shrink-0"><rect x="2" y="2" width="8" height="8" rx="1" fill="#38bdf8" fill-opacity="0.7" stroke="#0ea5e9" stroke-width="1"/></svg>
                         <span>Sensor Indonesia</span>
                     </div>
-                    <div style="display:flex;align-items:center;gap:7px;">
-                        <svg width="14" height="14" viewBox="0 0 12 12" style="flex-shrink:0;"><polygon points="6,1 11,11 1,11" fill="#818cf8" fill-opacity="0.7" stroke="#6366f1" stroke-width="1"/></svg>
+                    <div class="flex items-center gap-2">
+                        <svg width="14" height="14" viewBox="0 0 12 12" class="shrink-0"><polygon points="6,1 11,11 1,11" fill="#818cf8" fill-opacity="0.7" stroke="#6366f1" stroke-width="1"/></svg>
                         <span>Sensor Global</span>
                     </div>
-                    <div style="display:flex;align-items:center;gap:7px;">
-                        <span style="display:inline-block;width:18px;height:2.5px;background:#fb923c;border-radius:2px;flex-shrink:0;"></span>
+                    <div class="flex items-center gap-2">
+                        <span class="inline-block h-[2.5px] w-[18px] shrink-0 rounded bg-orange-400"></span>
                         <span>Sesar Indonesia</span>
                     </div>
-                    <div style="display:flex;align-items:center;gap:7px;">
-                        <span style="display:inline-block;width:18px;height:2.5px;background:#f97316;opacity:.8;border-radius:2px;flex-shrink:0;"></span>
+                    <div class="flex items-center gap-2">
+                        <span class="inline-block h-[2.5px] w-[18px] shrink-0 rounded bg-orange-500 opacity-80"></span>
                         <span>Sesar Global</span>
                     </div>
                 </div>`;

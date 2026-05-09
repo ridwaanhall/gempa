@@ -116,12 +116,10 @@
         const depth = p.depth != null ? Number(p.depth).toFixed(1) : '?';
         const time = p.time ? new Date(p.time).toISOString() : '';
         return `
-            <div style="font-family:system-ui;font-size:13px;color:#e5e7eb;">
-                <div style="font-weight:700;font-size:14px;color:#fff;">M ${Number(mag).toFixed(1)} — ${place}</div>
-                <div style="color:#9ca3af;font-size:11px;">${GempaUtils.formatDatetime(time)}</div>
-                <div style="color:#d1d5db;font-size:12px;margin-top:4px;">
-                    Kedalaman: <b>${depth} km</b>
-                </div>
+            <div class="text-[13px] text-zinc-200">
+                <div class="text-sm font-bold text-zinc-100">M ${Number(mag).toFixed(1)} — ${place}</div>
+                <div class="text-[11px] text-zinc-400">${GempaUtils.formatDatetime(time)}</div>
+                <div class="mt-1 text-xs text-zinc-300">Kedalaman: <b>${depth} km</b></div>
             </div>`;
     }
 
@@ -222,7 +220,7 @@
         const label = document.getElementById('analisis-slide-label');
         const noImg = document.getElementById('analisis-no-img');
         if (img) {
-            img.style.display = '';
+            img.classList.remove('hidden');
             img.src = slide.url;
             img.alt = slide.label;
         }

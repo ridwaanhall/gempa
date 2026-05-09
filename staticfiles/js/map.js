@@ -117,13 +117,11 @@ const GempaMap = (() => {
         const stakeholder = data.stakeholder || '';
         const uptbmkg = data.uptbmkg || '';
         const popup = `
-            <div style="font-family:system-ui;font-size:13px;color:#e5e7eb;">
-                <div style="font-weight:700;font-size:14px;color:#38bdf8;">📡 ${id}</div>
-                ${stakeholder ? `<div style="color:#d1d5db;font-size:12px;margin-top:2px;">${stakeholder}</div>` : ''}
-                ${uptbmkg ? `<div style="color:#9ca3af;font-size:11px;margin-top:2px;">UPT BMKG: ${uptbmkg}</div>` : ''}
-                <div style="color:#6b7280;font-size:10px;margin-top:4px;">
-                    ${lat.toFixed(4)}, ${lon.toFixed(4)}
-                </div>
+            <div class="min-w-[180px] text-[13px] text-zinc-200">
+                <div class="text-sm font-bold text-sky-400">📡 ${id}</div>
+                ${stakeholder ? `<div class="mt-0.5 text-xs text-zinc-300">${stakeholder}</div>` : ''}
+                ${uptbmkg ? `<div class="mt-0.5 text-[11px] text-zinc-400">UPT BMKG: ${uptbmkg}</div>` : ''}
+                <div class="mt-1 text-[10px] text-zinc-500">${lat.toFixed(4)}, ${lon.toFixed(4)}</div>
             </div>`;
 
         const marker = L.marker([lat, lon], { icon })
@@ -151,15 +149,11 @@ const GempaMap = (() => {
         const net = data.net || '';
         const sta = data.sta || '';
         const popup = `
-            <div style="font-family:system-ui;font-size:13px;color:#e5e7eb;">
-                <div style="font-weight:700;font-size:14px;color:#818cf8;">📡 ${sta || id}</div>
-                ${desc ? `<div style="color:#d1d5db;font-size:12px;margin-top:2px;">${desc}</div>` : ''}
-                <div style="color:#9ca3af;font-size:11px;margin-top:2px;">
-                    ${net ? `Network: <b>${net}</b>` : ''}${net && sta ? ' · ' : ''}${sta ? `Station: <b>${sta}</b>` : ''}
-                </div>
-                <div style="color:#6b7280;font-size:10px;margin-top:4px;">
-                    ${lat.toFixed(4)}, ${lon.toFixed(4)}
-                </div>
+            <div class="min-w-[190px] text-[13px] text-zinc-200">
+                <div class="text-sm font-bold text-indigo-300">📡 ${sta || id}</div>
+                ${desc ? `<div class="mt-0.5 text-xs text-zinc-300">${desc}</div>` : ''}
+                <div class="mt-0.5 text-[11px] text-zinc-400">${net ? `Network: <b>${net}</b>` : ''}${net && sta ? ' · ' : ''}${sta ? `Station: <b>${sta}</b>` : ''}</div>
+                <div class="mt-1 text-[10px] text-zinc-500">${lat.toFixed(4)}, ${lon.toFixed(4)}</div>
             </div>`;
 
         const marker = L.marker([lat, lon], { icon })
@@ -219,53 +213,60 @@ const GempaMap = (() => {
         const depth  = normalizeDepth(data.depth);
         const time   = data.time || data.datetime || '';
         const magNum = parseFloat(mag) || 0;
-        const hex    = GempaUtils.magHex(magNum);
+        const magClass = GempaUtils.magColor(magNum);
         const timeStr = time ? GempaUtils.formatDatetime(time) : '';
         return `
-            <div style="min-width:210px;font-family:system-ui,-apple-system,sans-serif;line-height:1.5;">
-                <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(63,63,70,0.5);">
-                    <div style="flex-shrink:0;padding:5px 10px;border-radius:8px;background:${hex}22;border:1px solid ${hex}55;">
-                        <div style="font-weight:900;font-size:18px;letter-spacing:-0.5px;color:${hex};">M${Number(mag).toFixed(1)}</div>
+            <div class="min-w-[210px] leading-relaxed text-zinc-200">
+                <div class="mb-2.5 flex items-start gap-2.5 border-b border-zinc-700 pb-2.5">
+                    <div class="shrink-0 rounded-lg border border-zinc-700 bg-zinc-800 px-2.5 py-1">
+                        <div class="text-lg font-black tracking-tight ${magClass}">M${Number(mag).toFixed(1)}</div>
                     </div>
-                    <div style="padding-top:3px;min-width:0;">
-                        <div style="font-weight:600;font-size:13px;color:#f4f4f5;line-height:1.35;">${area}</div>
-                    </div>
+                    <div class="min-w-0 pt-0.5 text-sm font-semibold text-zinc-100">${area}</div>
                 </div>
-                <div style="display:grid;gap:5px;font-size:11.5px;">
-                    ${timeStr ? `<div style="display:flex;gap:8px;"><span style="color:#71717a;min-width:64px;flex-shrink:0;">Waktu</span><span style="color:#e4e4e7;">${timeStr}</span></div>` : ''}
-                    <div style="display:flex;gap:8px;"><span style="color:#71717a;min-width:64px;flex-shrink:0;">Kedalaman</span><span style="color:#e4e4e7;">${depth} km</span></div>
+                <div class="grid gap-1.5 text-[11px]">
+                    ${timeStr ? `<div class="flex gap-2"><span class="min-w-16 shrink-0 text-zinc-400">Waktu</span><span class="text-zinc-200">${timeStr}</span></div>` : ''}
+                    <div class="flex gap-2"><span class="min-w-16 shrink-0 text-zinc-400">Kedalaman</span><span class="text-zinc-200">${depth} km</span></div>
                 </div>
             </div>`;
     }
 
     /**
-     * Animated pulse marker — expanding outline rings, no fill.
-     * Uses @keyframes gempa-ring-pulse defined in core.html <style> block.
-     * Ideal for single-event maps where the location needs visual emphasis.
+     * Pulse-like marker using stacked circles (no custom CSS required).
      */
     function addPulseMarker(map, lat, lon, mag, popupHTML) {
         const hex  = GempaUtils.magHex(mag);
-        const r    = Math.max(12, magRadius(mag) * 2.4);
-        const size = r * 2;
-        const dot  = Math.max(5, Math.round(r * 0.38));
+        const baseRadius = Math.max(8, magRadius(mag));
+        const outer = L.circleMarker([lat, lon], {
+            radius: baseRadius + 8,
+            color: hex,
+            weight: 1,
+            opacity: 0.35,
+            fillOpacity: 0,
+        }).addTo(map);
 
-        const icon = L.divIcon({
-            className:   '',
-            iconSize:    [size, size],
-            iconAnchor:  [r, r],
-            popupAnchor: [0, -(r + 4)],
-            html: `<div style="position:relative;width:${size}px;height:${size}px;display:flex;align-items:center;justify-content:center;">
-                <div style="position:absolute;inset:0;border-radius:50%;border:2px solid ${hex};animation:gempa-ring-pulse 2s ease-out infinite;"></div>
-                <div style="position:absolute;inset:0;border-radius:50%;border:1.5px solid ${hex};animation:gempa-ring-pulse 2s ease-out 0.8s infinite;"></div>
-                <div style="width:${dot}px;height:${dot}px;border-radius:50%;border:2px solid ${hex};background:transparent;"></div>
-            </div>`,
-        });
+        const middle = L.circleMarker([lat, lon], {
+            radius: baseRadius + 4,
+            color: hex,
+            weight: 1,
+            opacity: 0.55,
+            fillOpacity: 0,
+        }).addTo(map);
 
-        const marker = L.marker([lat, lon], { icon });
+        const marker = L.circleMarker([lat, lon], {
+            radius: baseRadius,
+            fillColor: hex,
+            color: hex,
+            weight: 1.5,
+            opacity: 0.9,
+            fillOpacity: 0.35,
+        }).addTo(map);
+
         if (popupHTML) {
             marker.bindPopup(popupHTML, { className: 'gempa-popup', maxWidth: 300 });
+            outer.bindPopup(popupHTML, { className: 'gempa-popup', maxWidth: 300 });
+            middle.bindPopup(popupHTML, { className: 'gempa-popup', maxWidth: 300 });
         }
-        return marker.addTo(map);
+        return marker;
     }
 
     /** Clear all layers except the tile layer. */

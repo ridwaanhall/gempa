@@ -57,15 +57,15 @@ const GempaTsunami = (() => {
                     points.push(coords);
                     const tTime = info.date && info.time ? `${info.date}T${info.time}` : '';
                     GempaMap.addQuakeMarker(map, coords[0], coords[1], mag, `
-                        <div style="font-family:system-ui;font-size:13px;color:#e5e7eb;">
-                            <div style="font-weight:700;font-size:14px;color:#fff;">M ${mag} — Tsunami</div>
-                            <div style="color:#9ca3af;font-size:11px;margin-top:2px;">${info.area || '—'}</div>
-                            <div style="color:#9ca3af;font-size:11px;margin-top:2px;">${formatDatetime(tTime)}</div>
-                            <div style="margin-top:6px;display:flex;gap:12px;font-size:12px;color:#d1d5db;">
+                        <div class="text-[13px] text-zinc-200">
+                            <div class="text-sm font-bold text-zinc-100">M ${mag} — Tsunami</div>
+                            <div class="mt-0.5 text-[11px] text-zinc-400">${info.area || '—'}</div>
+                            <div class="mt-0.5 text-[11px] text-zinc-400">${formatDatetime(tTime)}</div>
+                            <div class="mt-1 text-xs text-zinc-300">
                                 <span>Kedalaman: <b>${info.depth || '?'}</b></span>
                             </div>
-                            <div style="color:#6b7280;font-size:10px;margin-top:4px;">${info.latitude || '?'}, ${info.longitude || '?'}</div>
-                            ${info.potential ? `<div style="color:#fbbf24;font-size:11px;margin-top:4px;">${info.potential}</div>` : ''}
+                            <div class="mt-1 text-[10px] text-zinc-500">${info.latitude || '?'}, ${info.longitude || '?'}</div>
+                            ${info.potential ? `<div class="mt-1 text-[11px] text-amber-300">${info.potential}</div>` : ''}
                         </div>
                     `);
                 }

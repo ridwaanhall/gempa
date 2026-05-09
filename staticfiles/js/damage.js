@@ -31,13 +31,13 @@
             const iso = p.ot_utc ? `${p.date}T${p.ot_utc}Z` : p.date;
             points.push([lat, lon]);
             GempaMap.addQuakeMarker(map, lat, lon, p.mag, `
-                <div style="font-family:system-ui;font-size:13px;color:#e5e7eb;">
-                    <div style="font-weight:700;font-size:14px;color:#fff;">M ${p.mag}</div>
-                    <div style="color:#9ca3af;font-size:11px;">${p.lokasi}</div>
-                    <div style="color:#d1d5db;font-size:12px;margin-top:4px;">${p.pusat_gempa}</div>
-                    <div style="color:#9ca3af;font-size:11px;margin-top:2px;">${formatDatetime(iso)}</div>
-                    <div style="color:#d1d5db;font-size:12px;margin-top:4px;">Kedalaman: <b>${p.depth} km</b></div>
-                    ${p.tsunami ? '<div style="color:#fbbf24;font-size:11px;margin-top:2px;">⚠ Tsunami</div>' : ''}
+                <div class="text-[13px] text-zinc-200">
+                    <div class="text-sm font-bold text-zinc-100">M ${p.mag}</div>
+                    <div class="text-[11px] text-zinc-400">${p.lokasi}</div>
+                    <div class="mt-1 text-xs text-zinc-300">${p.pusat_gempa}</div>
+                    <div class="mt-0.5 text-[11px] text-zinc-400">${formatDatetime(iso)}</div>
+                    <div class="mt-1 text-xs text-zinc-300">Kedalaman: <b>${p.depth} km</b></div>
+                    ${p.tsunami ? '<div class="mt-0.5 text-[11px] text-amber-300">⚠ Tsunami</div>' : ''}
                 </div>
             `);
         });

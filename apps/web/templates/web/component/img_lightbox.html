@@ -1,18 +1,17 @@
 <!-- Image lightbox modal component — reusable across pages that show BMKG analysis images -->
 <!-- JS sets #img-modal-src (src) and #img-modal-title (textContent) before showing -->
-<div id="img-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4"
-     style="background:rgba(0,0,0,.85);backdrop-filter:blur(4px)"
+<div id="img-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center bg-black/85 p-4 backdrop-blur"
      onclick="if(event.target===this)GempaUtils.hideModal('img-modal')">
     <div class="w-full max-w-5xl">
         <div class="flex justify-end mb-3">
             <button onclick="GempaUtils.hideModal('img-modal')"
-                    class="w-10 h-10 rounded-xl flex items-center justify-center text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50 transition-colors duration-200">
+                    class="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-700 bg-zinc-900/70 text-zinc-300 transition hover:border-magma-500/60 hover:text-magma-200">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                 </svg>
             </button>
         </div>
-        <p id="img-modal-title" class="text-sm text-zinc-300 mb-3 text-center font-medium"></p>
-        <img id="img-modal-src" src="" alt="" class="mx-auto rounded-xl border border-zinc-700/50 shadow-2xl" style="max-height:75vh">
+        <p id="img-modal-title" class="mb-3 text-center text-sm font-medium text-zinc-200"></p>
+        <img id="img-modal-src" src="" alt="" class="mx-auto max-h-[75vh] rounded-2xl border border-zinc-700/70 shadow-2xl shadow-black/70">
     </div>
 </div>

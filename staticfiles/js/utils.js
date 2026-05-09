@@ -189,7 +189,7 @@ const GempaUtils = (() => {
                 <div class="relative overflow-hidden rounded-xl border border-zinc-800/60 bg-zinc-950 aspect-video">
                     <img src="${url}" alt="${bmkgImageLabels[key]}" loading="lazy"
                          class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
-                         onerror="this.parentElement.parentElement.style.display='none'">
+                         onerror="this.closest('.group').classList.add('hidden')">
                 </div>
                 <p class="text-[10px] text-zinc-500 mt-1 text-center group-hover:text-zinc-300 transition-colors">${bmkgImageLabels[key]}</p>
             </div>
@@ -235,7 +235,6 @@ const GempaUtils = (() => {
         const el = document.getElementById(id);
         if (!el) return;
         el.classList.remove('hidden');
-        el.style.display = 'flex';  // explicit — ensures items-center/justify-center work
         document.body.classList.add('overflow-hidden');
     }
 
@@ -243,7 +242,6 @@ const GempaUtils = (() => {
     function hideModal(id) {
         const el = document.getElementById(id);
         if (!el) return;
-        el.style.display = 'none';
         el.classList.add('hidden');
         document.body.classList.remove('overflow-hidden');
     }

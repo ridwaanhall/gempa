@@ -1,19 +1,27 @@
-<!-- Page header component — consistent title block across pages -->
-<div class="mb-4 md:mb-6">
-    <h1 class="text-2xl lg:text-3xl font-medium mb-2 tracking-tight">
-        {% if icon %}
-        <svg class="w-5 h-5 text-indigo-400 inline-block mr-2 -mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ icon }}"/>
-        </svg>
-        {% endif %}
-        {{ title }}
-        {% if badge %}
-        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium {{ badge_color|default:'bg-indigo-800 text-indigo-300' }} ml-2">
-            {{ badge }}
-        </span>
-        {% endif %}
-    </h1>
+<!-- Page header component — elegant title block with earthquake theme -->
+<div class="mb-7 overflow-hidden rounded-3xl border border-zinc-700/50 bg-gradient-to-br from-zinc-900/60 via-slate-950/40 to-slate-950/60 p-6 shadow-seismic-lg backdrop-blur-xl sm:mb-8 sm:p-7 lg:p-8">
+    <div class="flex items-start justify-between gap-4 mb-4">
+        <div class="flex-1">
+            <p class="mb-3 text-[10px] font-bold uppercase tracking-[0.18em] text-zinc-400">Earthquake Intelligence</p>
+            <h1 class="mb-3 flex flex-wrap items-center gap-3 text-3xl font-heading font-black tracking-tight text-zinc-50 lg:text-4xl">
+                {% if icon %}
+                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-magma-500/20 to-magma-600/10 border border-magma-500/30">
+                    <svg class="h-5 w-5 text-magma-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="{{ icon }}"/>
+                    </svg>
+                </div>
+                {% endif %}
+                <span>{{ title }}</span>
+                {% if badge %}
+                <span class="ml-auto lg:ml-1 inline-flex items-center gap-2 rounded-full border border-magma-500/40 bg-magma-500/15 px-3 py-1.5 text-xs lg:text-sm font-semibold text-magma-200">
+                    <span class="h-1.5 w-1.5 rounded-full bg-magma-400"></span>
+                    {{ badge }}
+                </span>
+                {% endif %}
+            </h1>
+        </div>
+    </div>
     {% if subtitle %}
-    <p class="mt-2 text-base sm:text-lg text-zinc-300 leading-relaxed">{{ subtitle }}</p>
+    <p class="max-w-3xl text-sm leading-relaxed text-zinc-300 sm:text-base lg:text-base font-body">{{ subtitle }}</p>
     {% endif %}
 </div>

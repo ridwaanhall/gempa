@@ -2,18 +2,38 @@
 {% load static %}
 
 {% block content %}
-{% include 'web/component/page_header.html' with title='Gempa Dirasakan' subtitle='Daftar gempa yang dirasakan masyarakat (30 terbaru)' icon='M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9' %}
+{% include 'web/component/page_header.html' with title='Gempa Dirasakan' subtitle='30 event terakhir yang terasa oleh masyarakat dengan visualisasi peta dan informasi rinci.' icon='M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9' %}
 
-<div class="mb-6">
-    {% include 'web/component/map_container.html' with map_id='felt-map' map_height='380px' %}
+<!-- Map Section -->
+<div class="mb-8">
+    <div class="mb-4 flex items-center gap-3">
+        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 border border-emerald-500/30">
+            <svg class="h-5 w-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+            </svg>
+        </div>
+        <div>
+            <h3 class="text-lg font-bold text-zinc-100 font-heading">Peta Persebaran</h3>
+            <p class="text-xs text-zinc-400">Gempa yang dirasakan masyarakat</p>
+        </div>
+    </div>
+    {% include 'web/component/map_container.html' with map_id='felt-map' map_class='h-96 sm:h-[480px] lg:h-[560px] rounded-3xl' %}
 </div>
 
-<hr class="w-full mx-auto border-t border-zinc-700 my-4 md:my-6 lg:my-6" />
+<div class="mb-8 h-px bg-gradient-to-r from-transparent via-zinc-700/50 to-transparent"></div>
 
-<div id="felt-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-    {% include 'web/component/loading.html' with container_id='felt-loading' %}
+<!-- Events Grid -->
+<div>
+    <div class="mb-6 flex items-center justify-between">
+        <div>
+            <h3 class="text-lg font-bold text-zinc-100 font-heading">Event Terakhir</h3>
+            <p class="mt-1 text-xs text-zinc-400">Gempa-gempa yang terasa oleh masyarakat Indonesia</p>
+        </div>
+    </div>
+    <div id="felt-cards" class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
+        {% include 'web/component/loading.html' with container_id='felt-loading' %}
+    </div>
 </div>
-
 {% endblock %}
 
 {% block modals %}

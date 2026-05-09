@@ -1,30 +1,34 @@
-<!-- Earthquake info card component — populated by JS -->
-<div class="rounded-xl border border-zinc-700/50 transition-all duration-300 hover:border-zinc-700 overflow-hidden backdrop-blur-sm">
-    <div class="p-2 sm:p-3 md:p-4">
-        <div class="flex items-start justify-between gap-4">
+<!-- Earthquake info card component — elegant with gradient and hover effects -->
+<div class="group overflow-hidden rounded-2xl border border-zinc-700/50 bg-gradient-to-br from-zinc-900/70 via-zinc-800/40 to-slate-950/50 shadow-lg shadow-black/20 backdrop-blur transition duration-300 hover:-translate-y-1 hover:border-magma-500/40 hover:shadow-seismic cursor-pointer">
+    <div class="p-4 sm:p-5 md:p-6">
+        <!-- Header with location and magnitude -->
+        <div class="flex items-start justify-between gap-4 mb-4">
             <div class="flex-1 min-w-0">
-                <h3 id="{{ card_id }}-area" class="text-base sm:text-lg md:text-xl font-medium text-zinc-300 truncate">—</h3>
-                <p id="{{ card_id }}-time" class="text-xs sm:text-sm text-zinc-400 mt-1">—</p>
+                <h3 id="{{ card_id }}-area" class="truncate text-base font-bold text-zinc-50 sm:text-lg font-heading group-hover:text-magma-200 transition">—</h3>
+                <p id="{{ card_id }}-time" class="mt-2 text-xs font-medium text-zinc-400 group-hover:text-zinc-300 transition">—</p>
             </div>
-            <div class="text-right shrink-0">
-                <span id="{{ card_id }}-mag"
-                      class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-zinc-800 text-zinc-300">—</span>
-            </div>
-        </div>
-        <div class="mt-4 grid grid-cols-3 gap-3 text-center">
-            <div class="bg-zinc-800/30 rounded-lg py-2.5 px-2">
-                <p class="text-xs text-zinc-500 uppercase font-medium">Kedalaman</p>
-                <p id="{{ card_id }}-depth" class="text-sm font-semibold text-zinc-300 mt-0.5">—</p>
-            </div>
-            <div class="bg-zinc-800/30 rounded-lg py-2.5 px-2">
-                <p class="text-xs text-zinc-500 uppercase font-medium">Lintang</p>
-                <p id="{{ card_id }}-lat" class="text-sm font-semibold text-zinc-300 mt-0.5">—</p>
-            </div>
-            <div class="bg-zinc-800/30 rounded-lg py-2.5 px-2">
-                <p class="text-xs text-zinc-500 uppercase font-medium">Bujur</p>
-                <p id="{{ card_id }}-lon" class="text-sm font-semibold text-zinc-300 mt-0.5">—</p>
+            <div id="{{ card_id }}-mag-badge" class="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border-2 border-magma-500/40 bg-gradient-to-br from-magma-500/20 to-magma-600/10 group-hover:border-magma-500/60 group-hover:from-magma-500/30 transition">
+                <span id="{{ card_id }}-mag" class="text-2xl font-black text-magma-200">—</span>
             </div>
         </div>
-        <p id="{{ card_id }}-desc" class="mt-3 text-xs text-zinc-400 leading-relaxed" style="display:none;"></p>
+
+        <!-- Details Grid -->
+        <div class="grid grid-cols-3 gap-2 border-t border-zinc-700/50 pt-4">
+            <div class="text-center">
+                <p class="text-[10px] font-bold uppercase tracking-wider text-zinc-500 group-hover:text-zinc-400 transition">Kedalaman</p>
+                <p id="{{ card_id }}-depth" class="mt-1.5 text-sm font-bold text-zinc-200">—</p>
+            </div>
+            <div class="text-center border-l border-r border-zinc-700/50">
+                <p class="text-[10px] font-bold uppercase tracking-wider text-zinc-500 group-hover:text-zinc-400 transition">Lintang</p>
+                <p id="{{ card_id }}-lat" class="mt-1.5 text-xs font-mono text-zinc-300">—</p>
+            </div>
+            <div class="text-center">
+                <p class="text-[10px] font-bold uppercase tracking-wider text-zinc-500 group-hover:text-zinc-400 transition">Bujur</p>
+                <p id="{{ card_id }}-lon" class="mt-1.5 text-xs font-mono text-zinc-300">—</p>
+            </div>
+        </div>
+        
+        <!-- Description (if exists) -->
+        <p id="{{ card_id }}-desc" class="mt-4 hidden text-xs leading-relaxed text-zinc-300 border-t border-zinc-700/50 pt-3"></p>
     </div>
 </div>

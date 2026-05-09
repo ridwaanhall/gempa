@@ -1,7 +1,6 @@
-<!-- Leaflet map container component -->
-<div class="rounded-xl border border-zinc-700/50 transition-all duration-300 hover:border-zinc-700 overflow-hidden backdrop-blur-sm">
+<!-- Leaflet map container component — elegant with gradient border -->
+<div class="overflow-hidden rounded-3xl border border-zinc-800/60 bg-gradient-to-br from-zinc-900/60 to-slate-950/60 shadow-seismic-lg backdrop-blur-xl transition duration-300 hover:border-magma-500/30 hover:shadow-seismic-wave">
     <div id="{{ map_id|default:'map' }}"
-         class="w-full z-0"
-         style="height: {{ map_height|default:'420px' }}; background: #0d1117;">
+         class="z-0 w-full {{ map_class|default:'h-80 sm:h-96 lg:h-[430px] rounded-3xl' }} bg-gradient-to-br from-slate-950 to-zinc-950">
     </div>
 </div>

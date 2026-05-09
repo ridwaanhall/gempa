@@ -1,8 +1,8 @@
-<!-- Stats card component — semi-transparent with colored border accent -->
-<div class="bg-transparent backdrop-blur-sm rounded-lg sm:rounded-xl hover:shadow-lg overflow-hidden p-3 sm:p-4 border border-indigo-500/50 transition-all duration-300 hover:shadow-indigo-500/10">
-    <p class="text-xs sm:text-sm text-zinc-400 uppercase tracking-wider">{{ label }}</p>
-    <p id="{{ value_id }}" class="mt-2 text-2xl font-bold {{ color|default:'text-zinc-300' }} tracking-tight">—</p>
+<!-- Stats card component — elegant with gradient and hover effects -->
+<div class="group overflow-hidden rounded-2xl border border-zinc-700/50 bg-gradient-to-br from-zinc-900/70 via-zinc-800/40 to-slate-950/50 p-4 sm:p-5 backdrop-blur transition duration-300 hover:-translate-y-1 hover:border-magma-500/40 hover:shadow-seismic hover:from-zinc-900/80 hover:to-slate-950/70">
+    <p class="text-[10px] font-bold uppercase tracking-[0.12em] text-zinc-500 group-hover:text-zinc-400">{{ label }}</p>
+    <p id="{{ value_id }}" class="mt-3 text-3xl font-black tracking-tight sm:text-4xl {{ color|default:'text-zinc-200' }}">—</p>
     {% if sublabel %}
-    <p class="mt-1 text-xs text-zinc-500">{{ sublabel }}</p>
+    <p class="mt-2 text-xs text-zinc-400 group-hover:text-zinc-300">{{ sublabel }}</p>
     {% endif %}
 </div>

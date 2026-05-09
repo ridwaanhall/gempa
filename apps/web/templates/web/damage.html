@@ -2,52 +2,78 @@
 {% load static %}
 
 {% block content %}
-{% include 'web/component/page_header.html' with title='Gempa Merusak' subtitle='Data historis gempa yang menyebabkan kerusakan' icon='M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' %}
+{% include 'web/component/page_header.html' with title='Gempa Merusak' subtitle='Arsip historis gempa signifikan yang menyebabkan kerusakan dan korban jiwa.' icon='M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' %}
 
-<!-- Stats -->
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+<!-- Statistics Cards -->
+<div class="mb-8 grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-4">
     {% include 'web/component/stats_card.html' with label='Total Event' value_id='dmg-total' color='text-red-400' %}
-    {% include 'web/component/stats_card.html' with label='Tsunami' value_id='dmg-tsunami' color='text-amber-400' %}
-    {% include 'web/component/stats_card.html' with label='Terbesar' value_id='dmg-max' color='text-orange-400' sublabel='Magnitudo' %}
-    {% include 'web/component/stats_card.html' with label='Periode' value_id='dmg-period' color='text-blue-400' %}
+    {% include 'web/component/stats_card.html' with label='Dengan Tsunami' value_id='dmg-tsunami' color='text-blue-400' %}
+    {% include 'web/component/stats_card.html' with label='Magnitudo Terbesar' value_id='dmg-max' color='text-orange-400' sublabel='M' %}
+    {% include 'web/component/stats_card.html' with label='Periode Data' value_id='dmg-period' color='text-cyan-400' %}
 </div>
 
-<div class="mb-6">
-    {% include 'web/component/map_container.html' with map_id='dmg-map' map_height='440px' %}
+<!-- Map Section -->
+<div class="mb-8">
+    <div class="mb-4 flex items-center gap-3">
+        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-red-500/20 to-red-600/10 border border-red-500/30">
+            <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+            </svg>
+        </div>
+        <div>
+            <h3 class="text-lg font-bold text-zinc-100 font-heading">Peta Distribusi</h3>
+            <p class="text-xs text-zinc-400">Lokasi gempa merusak sepanjang waktu</p>
+        </div>
+    </div>
+    {% include 'web/component/map_container.html' with map_id='dmg-map' map_class='h-96 sm:h-[480px] lg:h-[560px] rounded-3xl' %}
 </div>
 
-<hr class="w-full mx-auto border-t border-zinc-700 my-4 md:my-6 lg:my-6" />
+<div class="mb-8 h-px bg-gradient-to-r from-transparent via-zinc-700/50 to-transparent"></div>
 
-<!-- Table -->
-<div class="rounded-xl border border-zinc-700/50 transition-all duration-300 hover:border-zinc-700 overflow-hidden backdrop-blur-sm">
-    <div class="p-2 sm:p-3 md:p-4 border-b border-zinc-700 flex items-center gap-2.5">
-        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-        </svg>
-        <h3 class="text-base sm:text-lg font-medium text-zinc-300">Daftar Gempa Merusak</h3>
+<!-- Data Table -->
+<div class="overflow-hidden rounded-3xl border border-zinc-800/60 bg-gradient-to-br from-zinc-900/60 via-slate-950/40 to-slate-950/60 shadow-seismic-lg backdrop-blur-xl">
+    <div class="flex items-center gap-3 border-b border-zinc-700/50 px-6 py-5 sm:px-7 sm:py-6 lg:px-8">
+        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-magma-500/20 to-magma-600/10 border border-magma-500/30">
+            <svg class="h-5 w-5 text-magma-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+            </svg>
+        </div>
+        <div>
+            <h3 class="text-base font-bold text-zinc-100 font-heading">Data Lengkap</h3>
+            <p class="text-xs text-zinc-400">Gempa merusak sepanjang sejarah</p>
+        </div>
     </div>
     <div class="overflow-x-auto">
-        <table id="dmg-table" class="w-full text-sm">
+        <table id="dmg-table" class="w-full min-w-[760px] text-sm text-zinc-200">
             <thead>
-                <tr class="text-xs text-zinc-500 uppercase tracking-wider border-b border-zinc-700">
-                    <th class="px-4 py-3 text-left font-medium">Tanggal</th>
-                    <th class="px-4 py-3 text-left font-medium">Lokasi</th>
-                    <th class="px-4 py-3 text-center font-medium">Mag</th>
-                    <th class="px-4 py-3 text-center font-medium">Kedlmn</th>
-                    <th class="px-4 py-3 text-center font-medium">Tsunami</th>
-                    <th class="px-4 py-3 text-left font-medium">Dirasakan</th>
+                <tr class="border-b border-zinc-700/50 bg-zinc-800/30 text-xs uppercase tracking-wider text-zinc-400 font-bold">
+                    <th class="px-5 py-4 text-left lg:px-6">Tanggal</th>
+                    <th class="px-5 py-4 text-left lg:px-6">Lokasi</th>
+                    <th class="px-5 py-4 text-center lg:px-6">Magnitudo</th>
+                    <th class="px-5 py-4 text-center lg:px-6">Kedalaman</th>
+                    <th class="px-5 py-4 text-center lg:px-6">Tsunami</th>
+                    <th class="px-5 py-4 text-left lg:px-6">Dirasakan</th>
                 </tr>
             </thead>
-            <tbody id="dmg-tbody" class="divide-y divide-zinc-700/50">
+            <tbody id="dmg-tbody" class="divide-y divide-zinc-800/50">
                 <tr>
-                    <td colspan="6" class="px-4 py-12 text-center text-zinc-500">
+                    <td colspan="6" class="px-5 py-12 text-center">
                         {% include 'web/component/loading.html' with container_id='dmg-loading' %}
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
+    <div class="border-t border-zinc-700/50 bg-zinc-800/20 px-6 py-3 sm:px-7 lg:px-8">
+        <p class="text-xs font-medium text-zinc-400">💡 Data gempa merusak tersimpan untuk referensi historis dan analisis pola seismik</p>
+    </div>
 </div>
+{% endblock %}
+
+{% block modals %}
+{% include 'web/component/detail_modal.html' %}
+{% include 'web/component/img_lightbox.html' %}
+{% include 'web/component/narasi_modal.html' %}
 {% endblock %}
 
 {% block extra_js %}
