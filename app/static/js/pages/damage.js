@@ -78,7 +78,7 @@ function render() {
     quakeMarker(ev, { popup: false, scale: 0.6 }).on("click", () => showDamaging(ev)).addTo(layer);
   });
   if (!state.fitted && rows.length) {
-    fitIndonesia(map, rows, 5);
+    fitIndonesia(map);
     state.fitted = true;
   }
 }

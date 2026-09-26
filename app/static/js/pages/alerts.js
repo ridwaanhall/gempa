@@ -51,7 +51,7 @@ function render() {
     markers.set(eq.event_id, marker);
   });
   if (!state.fitted && rows.length) {
-    fitIndonesia(map, rows);
+    fitIndonesia(map);
     state.fitted = true;
   }
   document.dispatchEvent(new Event("gempa:rendered"));
