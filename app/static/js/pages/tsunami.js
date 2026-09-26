@@ -6,7 +6,8 @@ import {
   fmtClock, fmtCoords, fmtDateTime, fmtDepth, fmtLong, fmtMeters, fmtNumber, fmtRelative,
 } from "../lib/format.js";
 import { initialData } from "../lib/initial.js";
-import { empty, errorNote, facts, gallery, levelPill, magBadge, pill } from "../lib/ui.js";
+import { empty, errorNote, facts, levelPill, magBadge, pill } from "../lib/ui.js";
+import { mediaViewer } from "../lib/viewer.js";
 
 const LEVELS = [
   ["AWAS", "--lv-awas"],
@@ -147,13 +148,16 @@ function eventCard(ev, index) {
           ? h("details", { class: "disclosure", open: index === 0 }, h("summary", {}, `Pengamatan tsunami · ${fmtNumber(obsBulletin.observations.length)} lokasi`), observationsTable(obsBulletin.observations))
           : null,
         (() => {
-          const grid = gallery([
-            ["Zona peringatan", m.warning_zones],
-            ["Waktu tiba", m.travel_time],
-            ["Tinggi muka laut", m.sea_height],
-            ["Peta guncangan", m.shakemap],
-          ]);
-          return grid ? h("div", { class: "mt-5" }, grid) : null;
+          const viewer = mediaViewer(
+            [
+              { label: "Zona peringatan", caption: "Status peringatan per wilayah", src: m.warning_zones },
+              { label: "Waktu tiba", caption: "Perkiraan waktu tiba gelombang", src: m.travel_time },
+              { label: "Tinggi muka laut", caption: "Perkiraan tinggi muka laut maksimum", src: m.sea_height },
+              { label: "Peta guncangan", caption: "Estimasi intensitas guncangan", src: m.shakemap },
+            ],
+            { title: "Peta BMKG" },
+          );
+          return viewer ? h("div", { class: "mt-5" }, viewer) : null;
         })(),
         ev.instructions.length
           ? h("details", { class: "disclosure" }, h("summary", {}, "Arahan BMKG"), h("ul", { class: "prose small", style: { padding: "0 var(--s-2) 0 var(--s-6)" } }, ev.instructions.map((t) => h("li", {}, t))))

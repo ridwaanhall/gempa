@@ -4,8 +4,9 @@ import { every, getJSON } from "../lib/api.js";
 import { showEarthquake, showRealtime } from "../lib/detail.js";
 import { $, h, replace } from "../lib/dom.js";
 import { fmtCoords, fmtDepth, fmtLong, fmtMag, fmtNumber, fmtRelative, parseFelt } from "../lib/format.js";
+import { renderWeeklyChart } from "../lib/chart.js";
 import { initialData } from "../lib/initial.js";
-import { createMap, latestMarker, quakeMarker } from "../lib/map.js";
+import { createMap, latestMarker, quakeMarker, selection } from "../lib/map.js";
 import { dial, errorNote, eventItem, facts } from "../lib/ui.js";
 
 const L = window.L;
@@ -13,6 +14,19 @@ const DAY = 86400000;
 const map = createMap($("#latest-map"), { scrollWheelZoom: false });
 const recentLayer = L.layerGroup().addTo(map);
 let epicenter = null;
+const pick = selection(map);
+
+/** Highlight a detection on the home map and open its detail. */
+function openRealtime(ev) {
+  pick.show(ev, { zoom: 5 });
+  showRealtime(ev, { onPick: openRealtime });
+}
+
+const openFelt = (eq) => {
+  pick.clear();
+  map.flyTo([eq.latitude, eq.longitude], Math.max(map.getZoom(), 6), { duration: 0.8 });
+  showEarthquake(eq, { onPick: openRealtime });
+};
 let shownEventId = null;
 
 /* ---------- Latest felt earthquake ---------- */
@@ -35,13 +49,13 @@ function renderLatest(eq) {
 
   replace(
     $("#latest-actions"),
-    h("button", { class: "btn btn--accent", type: "button", onclick: () => showEarthquake(eq) }, "Detail & peta guncangan"),
+    h("button", { class: "btn btn--accent", type: "button", onclick: () => openFelt(eq) }, "Detail & peta guncangan"),
     h("a", { class: "btn", href: "/felt/" }, "Gempa dirasakan lainnya"),
   );
 
   if (shownEventId !== eq.event_id) {
     epicenter?.remove();
-    epicenter = latestMarker(eq, { onClick: () => showEarthquake(eq) }).addTo(map);
+    epicenter = latestMarker(eq, { onClick: () => openFelt(eq) }).addTo(map);
     map.setView([eq.latitude, eq.longitude], 6, { animate: false });
     shownEventId = eq.event_id;
   }
@@ -79,7 +93,7 @@ function renderSummary(realtime, significant, tsunami) {
 function renderRecent(realtime) {
   replace(
     $("#recent-list"),
-    realtime.slice(0, 8).map((ev) => eventItem(ev, { flag: ev.magnitude >= 5 ? "M5+" : "", onClick: () => showRealtime(ev) })),
+    realtime.slice(0, 8).map((ev) => eventItem(ev, { flag: ev.magnitude >= 5 ? "M5+" : "", onClick: () => openRealtime(ev) })),
   );
   recentLayer.clearLayers();
   realtime
@@ -123,4 +137,17 @@ if (initial) {
   loadLatest();
 }
 loadRealtime();
+
+async function loadChart() {
+  try {
+    const { data } = await getJSON("/api/v1/earthquakes/archive/3m");
+    const stats = renderWeeklyChart($("#weekly-chart"), data);
+    if (stats) {
+      $("#chart-hint").textContent = `${fmtNumber(stats.total)} gempa M4,5+ · rata-rata ${fmtNumber(Math.round(stats.average))} per minggu`;
+    }
+  } catch (err) {
+    replace($("#weekly-chart"), errorNote(err.message));
+  }
+}
+loadChart();
 every(60000, () => Promise.all([loadLatest(), loadRealtime()]));

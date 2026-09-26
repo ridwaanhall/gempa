@@ -5,13 +5,19 @@ import { showDamaging } from "../lib/detail.js";
 import { $, debounce, h, matches, replace } from "../lib/dom.js";
 import { fmtDepth, fmtMag, fmtNumber, fmtUtcDate } from "../lib/format.js";
 import { icon } from "../lib/icons.js";
-import { createMap, fitIndonesia, latestMarker, quakeMarker } from "../lib/map.js";
-import { empty, errorNote, magBadge, pill, sortable } from "../lib/ui.js";
+import { createMap, fitIndonesia, latestMarker, quakeMarker, selection } from "../lib/map.js";
+import { empty, errorNote, linkedId, magBadge, pill, sortable } from "../lib/ui.js";
 
 const L = window.L;
 const PAGE_SIZE = 25;
 const map = createMap($("#map"), { scrollWheelZoom: false });
 const layer = L.layerGroup().addTo(map);
+const pick = selection(map);
+
+function open(ev) {
+  pick.show(ev, { zoom: 6 });
+  showDamaging(ev);
+}
 let latest = null;
 const newest = (list) => list.reduce((a, b) => (!a || b.origin_time > a.origin_time ? b : a), null);
 const state = { events: [], query: "", period: "", tsunami: false, page: 0, fitted: false };
@@ -64,8 +70,8 @@ function render() {
       ? page.map((ev) =>
           h(
             "tr",
-            { "data-id": ev.event_id, tabindex: "0", onclick: () => showDamaging(ev),
-              onkeydown: (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); showDamaging(ev); } } },
+            { "data-id": ev.event_id, tabindex: "0", onclick: () => open(ev),
+              onkeydown: (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(ev); } } },
             h("td", { class: "num" }, magBadge(ev.magnitude, "sm")),
             h("td", { class: "nowrap mono" }, fmtUtcDate(ev.origin_time)),
             h("td", {}, h("strong", {}, ev.province), h("div", { class: "xsmall muted" }, ev.epicenter), ev.tsunami ? h("div", { class: "mt-2" }, pill("Tsunami", "signal")) : null),
@@ -78,11 +84,11 @@ function render() {
 
   layer.clearLayers();
   [...rows].sort((a, b) => a.magnitude - b.magnitude).forEach((ev) => {
-    quakeMarker(ev, { popup: false, scale: 0.6 }).on("click", () => showDamaging(ev)).addTo(layer);
+    quakeMarker(ev, { popup: false, scale: 0.6 }).on("click", () => open(ev)).addTo(layer);
   });
   latest?.remove();
   const last = newest(rows);
-  if (last) latest = latestMarker(last, { onClick: () => showDamaging(last) }).addTo(map);
+  if (last) latest = latestMarker(last, { onClick: () => open(last) }).addTo(map);
   if (!state.fitted && rows.length) {
     fitIndonesia(map);
     state.fitted = true;
@@ -115,6 +121,8 @@ try {
   state.events = data;
   if (data.length) renderSummary(data);
   render();
+  const linked = linkedId() && data.find((e) => e.event_id === linkedId());
+  if (linked) open(linked);
 } catch (err) {
   replace($("#rows"), h("tr", {}, h("td", { colspan: 5 }, errorNote(err.message))));
 }

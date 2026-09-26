@@ -5,13 +5,14 @@ import { showRealtime } from "../lib/detail.js";
 import { $, $$, debounce, h, matches, replace } from "../lib/dom.js";
 import { fmtDateTime, fmtDepth, fmtNumber, fmtRelative } from "../lib/format.js";
 import { initialData } from "../lib/initial.js";
-import { createMap, latestMarker, quakeMarker } from "../lib/map.js";
-import { empty, errorNote, magBadge, sortable } from "../lib/ui.js";
+import { createMap, latestMarker, quakeMarker, selection } from "../lib/map.js";
+import { empty, errorNote, linkedId, magBadge, sortable } from "../lib/ui.js";
 
 const L = window.L;
 const map = createMap($("#map"));
 const layer = L.layerGroup().addTo(map);
 const markers = new Map();
+const pick = selection(map);
 let latest = null;
 const newest = (list) => list.reduce((a, b) => (!a || b.origin_time > a.origin_time ? b : a), null);
 
@@ -25,12 +26,9 @@ function visible() {
 function select(ev, { open = true } = {}) {
   state.selected = ev.event_id;
   $$("#rows tr[aria-selected]").forEach((tr) => tr.setAttribute("aria-selected", String(tr.dataset.id === ev.event_id)));
-  const marker = markers.get(ev.event_id);
-  if (marker) {
-    map.setView(marker.getLatLng(), Math.max(map.getZoom(), 6));
-    marker.openPopup();
-  }
-  if (open) showRealtime(ev);
+  pick.show(ev);
+  state.centered = true;
+  if (open) showRealtime(ev, { onPick: (other) => select(other) });
 }
 
 function render() {
@@ -59,8 +57,8 @@ function render() {
   markers.clear();
   // Draw small first so bigger events stay on top.
   [...rows].sort((a, b) => a.magnitude - b.magnitude).forEach((ev) => {
-    const marker = quakeMarker(ev).addTo(layer);
-    marker.on("click", () => select(ev, { open: false }));
+    const marker = quakeMarker(ev, { popup: false }).addTo(layer);
+    marker.on("click", () => select(ev));
     markers.set(ev.event_id, marker);
   });
   // The most recent detection gets a pulsing, labelled marker; centre on it on first load.
@@ -94,6 +92,17 @@ function setEvents(data) {
     oldest ? h("span", { class: "chip" }, `sejak ${fmtDateTime(oldest.origin_time)}`) : null,
   );
   render();
+  openLinked();
+}
+
+/** Open the event named in the URL (#e=<id>) once, e.g. from a shared link. */
+let linkHandled = false;
+function openLinked() {
+  if (linkHandled) return;
+  linkHandled = true;
+  const id = linkedId();
+  const ev = id && state.events.find((e) => e.event_id === id);
+  if (ev) select(ev);
 }
 
 async function load() {

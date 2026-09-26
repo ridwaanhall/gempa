@@ -1,28 +1,33 @@
 /** Felt / M5+ pages: announced earthquakes as a list linked to the map. */
 
 import { every, getJSON } from "../lib/api.js";
-import { showEarthquake } from "../lib/detail.js";
+import { showEarthquake, showRealtime } from "../lib/detail.js";
 import { $, $$, debounce, h, matches, replace } from "../lib/dom.js";
 import { fmtDateTime, fmtNumber } from "../lib/format.js";
 import { initialData } from "../lib/initial.js";
-import { createMap, fitIndonesia, latestMarker, quakeMarker } from "../lib/map.js";
-import { empty, errorNote, eventItem } from "../lib/ui.js";
+import { createMap, fitIndonesia, latestMarker, quakeMarker, selection } from "../lib/map.js";
+import { empty, errorNote, eventItem, linkedId } from "../lib/ui.js";
 
 const L = window.L;
 const feed = $("#alerts").dataset.feed; // "felt" | "significant"
 const map = createMap($("#map"));
 const layer = L.layerGroup().addTo(map);
 const markers = new Map();
+const pick = selection(map);
 let latest = null;
 const newest = (list) => list.reduce((a, b) => (!a || b.origin_time > a.origin_time ? b : a), null);
 const state = { events: [], query: "", selected: null, fitted: false };
 
+function openNearby(ev) {
+  pick.show(ev, { zoom: 5 });
+  showRealtime(ev, { onPick: openNearby });
+}
+
 function open(eq) {
   state.selected = eq.event_id;
   $$("#list .event").forEach((b) => b.setAttribute("aria-current", String(b.dataset.id === eq.event_id)));
-  const marker = markers.get(eq.event_id);
-  if (marker) map.setView(marker.getLatLng(), Math.max(map.getZoom(), 6));
-  showEarthquake(eq);
+  pick.show(eq);
+  showEarthquake(eq, { onPick: openNearby });
 }
 
 const note = (eq) => (feed === "felt" ? (eq.felt ? `Dirasakan ${eq.felt}` : "") : eq.potential);
@@ -71,7 +76,14 @@ function setEvents(data) {
     oldest ? h("span", { class: "chip" }, `sejak ${fmtDateTime(oldest.origin_time)}`) : null,
   );
   render();
+  if (!linkHandled) {
+    linkHandled = true;
+    const id = linkedId();
+    const eq = id && state.events.find((e) => e.event_id === id);
+    if (eq) open(eq);
+  }
 }
+let linkHandled = false;
 
 $("#search").addEventListener("input", debounce((e) => { state.query = e.target.value.trim(); render(); }, 150));
 

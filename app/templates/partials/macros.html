@@ -2,7 +2,7 @@
     (lib/ui.js, pages/*.js): the client re-renders the same structure on hydration. -#}
 
 {% macro mag_badge(m, size="") -%}
-<span class="mag{{ ' mag--' ~ size if size }}" data-m="{{ m | mag_bucket }}" title="Magnitudo {{ m | mag }}">{{ m | mag }}</span>
+<span class="mag{{ ' mag--' ~ size if size }}" data-m="{{ m | mag_bucket }}" style="--v: {{ m }}" title="Magnitudo {{ m | mag }}"><span class="mag__num">{{ m | mag }}</span></span>
 {%- endmacro %}
 
 {% macro rel_time(value) -%}

@@ -1,13 +1,37 @@
 <dialog class="sheet" id="detail" aria-labelledby="detail-title">
   <div class="sheet__head">
     <span id="detail-badge"></span>
-    <div>
+    <div class="sheet__heading">
       <h2 class="sheet__title" id="detail-title" tabindex="-1"></h2>
       <p class="sheet__sub" id="detail-sub"></p>
     </div>
-    <button class="icon-btn sheet__close" type="button" data-close aria-label="Tutup">
-      {{ icon("close") }}
-    </button>
+    <div class="sheet__actions">
+      <button class="icon-btn" type="button" id="detail-share" aria-label="Bagikan tautan kejadian ini" hidden>{{ icon("share") }}</button>
+      <button class="icon-btn" type="button" data-close aria-label="Tutup">{{ icon("close") }}</button>
+    </div>
   </div>
   <div class="sheet__body" id="detail-body"></div>
 </dialog>
+
+<dialog class="lightbox" id="lightbox" aria-labelledby="lb-title">
+  <div class="lightbox__bar">
+    <div class="lightbox__heading">
+      <h2 class="lightbox__title" id="lb-title"></h2>
+      <span class="lightbox__count" id="lb-count"></span>
+    </div>
+    <div class="lightbox__tools">
+      <button class="icon-btn" type="button" id="lb-zoom-out" aria-label="Perkecil">{{ icon("zoom-out") }}</button>
+      <button class="icon-btn" type="button" id="lb-zoom-in" aria-label="Perbesar">{{ icon("zoom-in") }}</button>
+      <a class="icon-btn" id="lb-open" href="#" target="_blank" rel="noopener" aria-label="Buka gambar asli">{{ icon("external") }}</a>
+      <button class="icon-btn" type="button" data-lb-close aria-label="Tutup">{{ icon("close") }}</button>
+    </div>
+  </div>
+  <div class="lightbox__stage" id="lb-stage">
+    <img id="lb-img" alt="" draggable="false">
+    <button class="lightbox__nav lightbox__nav--prev icon-btn" type="button" id="lb-prev" aria-label="Gambar sebelumnya">{{ icon("chevron-left") }}</button>
+    <button class="lightbox__nav lightbox__nav--next icon-btn" type="button" id="lb-next" aria-label="Gambar berikutnya">{{ icon("chevron-right") }}</button>
+  </div>
+  <p class="lightbox__hint">Gulir atau cubit untuk memperbesar · seret untuk menggeser · klik dua kali untuk reset</p>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
