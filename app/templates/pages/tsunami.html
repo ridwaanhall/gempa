@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block main %}
+<div class="container page">
+  {% with eyebrow = "InaTEWS · Sistem Peringatan Dini Tsunami Indonesia" %}{% include "partials/page_head.html" %}{% endwith %}
+
+  <ul class="panel level-legend" aria-label="Arti status peringatan">
+    <li><span class="pill pill--awas">AWAS</span><span>Perkiraan tinggi &gt; 3 m — evakuasi menyeluruh</span></li>
+    <li><span class="pill pill--siaga">SIAGA</span><span>0,5–3 m — evakuasi</span></li>
+    <li><span class="pill pill--waspada">WASPADA</span><span>&lt; 0,5 m — jauhi pantai dan tepi sungai</span></li>
+  </ul>
+
+  <div class="mt-6" id="events" aria-live="polite">
+    <div class="skeleton skeleton--block" style="height:320px"></div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script type="module" src="/static/js/pages/tsunami.js?v={{ asset_version }}" data-cfasync="false"></script>{% endblock %}

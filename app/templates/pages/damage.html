@@ -1,0 +1,44 @@
+{% extends "layouts/map.html" %}
+{% block main %}
+<div class="container container--wide page">
+  {% with eyebrow = "Katalog historis" %}{% include "partials/page_head.html" %}{% endwith %}
+
+  <div class="stats" id="summary">
+    {% for label in ["Kejadian", "Memicu tsunami", "Magnitudo terbesar", "Rentang tahun"] %}
+    <div class="stat"><p class="stat__label">{{ label }}</p><p class="stat__value"><span class="skeleton skeleton--line" style="display:block;width:3ch"></span></p><p class="stat__note">&nbsp;</p></div>
+    {% endfor %}
+  </div>
+
+  <div class="map mt-5" id="map" role="region" aria-label="Peta gempa merusak"></div>
+  {% include "partials/mag_legend.html" %}
+
+  <div class="toolbar mt-6">
+    {% with search_label = "Cari provinsi atau lokasi", search_placeholder = "Cari provinsi atau lokasi…" %}{% include "partials/search.html" %}{% endwith %}
+    <label class="field" style="width:auto">
+      <span class="visually-hidden">Periode</span>
+      <select id="period"><option value="">Semua periode</option></select>
+    </label>
+    <label class="check"><input type="checkbox" id="only-tsunami"> Memicu tsunami</label>
+    <span class="toolbar__spacer"></span>
+    <span class="toolbar__count" id="count" aria-live="polite"></span>
+  </div>
+
+  <div class="table-wrap">
+    <table class="table" id="table">
+      <caption class="visually-hidden">Katalog gempa merusak</caption>
+      <thead>
+        <tr>
+          <th scope="col" data-key="magnitude" class="num"><button class="sort-btn" type="button">Mag</button></th>
+          <th scope="col" data-key="origin_time" aria-sort="descending"><button class="sort-btn" type="button">Tanggal</button></th>
+          <th scope="col" data-key="province"><button class="sort-btn" type="button">Lokasi</button></th>
+          <th scope="col">Dampak</th>
+          <th scope="col" data-key="depth_km" class="num"><button class="sort-btn" type="button">Kedalaman</button></th>
+        </tr>
+      </thead>
+      <tbody id="rows"><tr><td colspan="5"><span class="skeleton skeleton--line"></span><span class="skeleton skeleton--line"></span></td></tr></tbody>
+    </table>
+  </div>
+  <div class="pager" id="pager"></div>
+</div>
+{% endblock %}
+{% block scripts %}<script type="module" src="/static/js/pages/damage.js?v={{ asset_version }}" data-cfasync="false"></script>{% endblock %}

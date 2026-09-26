@@ -1,0 +1,49 @@
+{% extends "layouts/map.html" %}
+{% block main %}
+<div class="container page">
+  <h1 class="visually-hidden">{{ page.title }}</h1>
+
+  <div class="split">
+    <section class="hero" aria-labelledby="latest-heading" id="latest">
+      <p class="page-head__eyebrow" id="latest-heading">Gempa dirasakan terakhir</p>
+      <div class="hero__top">
+        <span class="hero__scale" id="latest-scale" aria-hidden="true"></span>
+        <div class="hero__mag"><small>Magnitudo</small><span id="latest-mag">–</span></div>
+      </div>
+      <div>
+        <h2 class="hero__title" id="latest-region"><span class="skeleton skeleton--line" style="display:block;width:80%"></span></h2>
+        <p class="hero__time" id="latest-time"><span class="skeleton skeleton--line" style="display:block;width:50%"></span></p>
+      </div>
+      <dl class="facts" id="latest-facts"></dl>
+      <div id="latest-felt"></div>
+      <div class="row" id="latest-actions"></div>
+    </section>
+
+    <section aria-label="Peta episentrum">
+      <div class="map map--tall" id="latest-map" role="region" aria-label="Peta lokasi gempa terakhir"></div>
+      {% include "partials/mag_legend.html" %}
+    </section>
+  </div>
+
+  <section class="section" aria-labelledby="summary-heading">
+    <div class="section-head">
+      <h2 id="summary-heading">Ringkasan deteksi realtime</h2>
+      <span class="hint" id="summary-hint"></span>
+    </div>
+    <div class="stats" id="summary">
+      {% for label in ["Gempa 24 jam", "Terkuat 24 jam", "M5+ 7 hari", "Tsunami"] %}
+      <div class="stat"><p class="stat__label">{{ label }}</p><p class="stat__value"><span class="skeleton skeleton--line" style="display:block;width:3ch"></span></p><p class="stat__note">&nbsp;</p></div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="recent-heading">
+    <div class="section-head">
+      <h2 id="recent-heading">Deteksi terbaru</h2>
+      <a href="/realtime/">Lihat semua →</a>
+    </div>
+    <ul class="event-list" id="recent-list" aria-live="polite"></ul>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}<script type="module" src="/static/js/pages/home.js?v={{ asset_version }}" data-cfasync="false"></script>{% endblock %}

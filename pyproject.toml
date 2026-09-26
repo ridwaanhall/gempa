@@ -1,0 +1,44 @@
+[project]
+name = "gempa"
+version = "2.0.0"
+description = "Indonesian earthquake monitor — FastAPI proxy and web UI for BMKG data."
+readme = "README.md"
+license = "CC0-1.0"
+authors = [{ name = "Ridwan Halim", email = "hi@ridwaanhall.com" }]
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.141.1",
+    "httpx>=0.28.1",
+    "jinja2>=3.1.6",
+    "nh3>=0.3.7",
+    "pydantic>=2.13.5",
+    "pydantic-settings>=2.15.0",
+]
+
+[dependency-groups]
+dev = [
+    "httpx2>=2.13.1",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "respx>=0.23.1",
+    "ruff>=0.16.9",
+    "uvicorn[standard]>=0.54.0",
+]
+
+# Vercel: the FastAPI instance `app` lives in app/main.py (a default entrypoint).
+# Promote /static to the CDN even though the app has top-level middleware;
+# static assets don't need the security-header middleware (vercel.json sets them).
+[tool.vercel.fastapi.static]
+cdn = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "ASYNC", "RUF"]
