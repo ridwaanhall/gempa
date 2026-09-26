@@ -22,7 +22,8 @@ uv sync                                   # install (creates .venv)
 uv run uvicorn app.main:app --reload      # dev server → http://localhost:8000
 uv run pytest                             # tests; upstream is mocked with respx
 uv run ruff check . && uv run ruff format --check .
-uv run --with pillow python scripts/make_og.py   # regenerate static/img/og.png
+uv run --with pillow python scripts/make_og.py      # regenerate static/img/og.png
+uv run --with pillow python scripts/make_icons.py   # regenerate favicons from the header mark
 ```
 
 Always run tests and Ruff before finishing a change, and syntax-check edited JS with
@@ -44,17 +45,19 @@ app/
   web/pages.py       Page registry → routes, nav, SEO, sitemap
   web/routes.py      Page rendering: per-page data LOADERS, SEO (title, OG, JSON-LD), robots, sitemap
   web/format.py      Jinja filters mirroring static/js/lib/format.js (WIB, magnitude, depth…)
+  web/icons.py       SVG icon set for templates: {{ icon("name") }} (mirrors static/js/lib/icons.js)
   templates/
     base.html        Head/SEO, header, footer, detail <dialog>, initial-data JSON
     layouts/map.html Adds Leaflet
     partials/        macros.html (mag_badge, event_item, realtime_row, facts, dial), page_head…
     pages/           One template per page
   static/css/app.css The whole design system (tokens → base → components → pages)
-  static/js/         app.js (global), lib/* (api, dom, format, map, ui, detail, initial), pages/*
-  static/img/        Favicons + og.png
+  static/js/         app.js (global), lib/* (api, dom, format, icons, map, ui, detail, initial), pages/*
+  static/img/        favicon.svg/.ico/PNGs (generated, same mark as the header brand) + og.png
   static/vendor/     Leaflet 1.9.4 (vendored; SRI-verified)
 docs/design-brief.md Design system spec ("Seismic Clay")
 scripts/make_og.py   Generates the Open Graph image
+scripts/make_icons.py Generates all favicons from the header seismograph mark
 tests/               pytest; fixtures/ holds trimmed real upstream payloads
 ```
 
@@ -95,6 +98,22 @@ Read `docs/design-brief.md` before UI work. The essentials:
   Sentence-case headings; no uppercase letter-spaced "eyebrow" labels.
 - **Images:** shakemaps sit in `.figure` (max-height `min(62vh, 720px)`); thumbnails in
   `.gallery` (4:3, capped width). Keep images lazy and aspect-ratio'd.
+- **Icons are SVG only.** Never use text glyphs (arrows, ×, +/−, ↑↓) as icons. Use
+  `{{ icon("name") }}` in Jinja, `icon()`/`iconHTML()` from `lib/icons.js` in JS, or the
+  `--i-*` CSS mask tokens (chevron, sort, check, close) for pseudo-elements. Add new icons
+  to both `web/icons.py` and `lib/icons.js`.
+- **Forms:** every control is styled — `.field` inputs (custom search clear icon),
+  `.field--select` (chevron; `appearance: base-select` styles the open list in Chromium),
+  `.check` (custom checkbox), `.segmented`. Don't ship a native-looking control.
+- **Maps:** `createMap()` adds SVG zoom buttons and the custom basemap switcher
+  (`BasemapControl`) — don't use `L.control.layers`. Every map marks the most recent event
+  with `latestMarker()` (pulsing epicentre + "Terbaru" label).
+- **Theme:** light is the default; dark only when chosen with the toggle (stored in
+  `localStorage`). Theme changes cross-fade via the `theme-transition` class.
+- **Motion:** all animation lives in the "Motion system" block under
+  `prefers-reduced-motion: no-preference` — entrance rise/stagger, list fade (until
+  `:root.settled`), dial/meter fills via `@starting-style`, dialog/select/menu open-close
+  transitions, `details` height transitions. Use `--dur`/`--dur-slow` and `--ease`.
 - **Scrollbars:** thin 6px global style in the "Scrollbar" section — don't override per
   component.
 - **Responsive:** check 375, 768, 1024, 1440 and 1920+ in light and dark, with no
