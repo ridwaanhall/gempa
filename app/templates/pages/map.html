@@ -1,0 +1,36 @@
+{% extends "layouts/map.html" %}
+{% block main %}
+<h1 class="visually-hidden">{{ page.title }}</h1>
+<div class="map map--full" id="map" role="region" aria-label="Peta seismisitas">
+  <details class="map-panel" id="layers" open>
+    <summary>{{ icon("layers") }}<span>Lapisan</span><span class="map-panel__active" id="active-count" aria-label="lapisan aktif">2</span></summary>
+    <div class="map-panel__body">
+      <fieldset>
+        <legend>Gempa</legend>
+        <label class="check"><span>Realtime</span><span class="count" data-count="realtime"></span><input type="checkbox" data-layer="realtime" checked></label>
+        <label class="check"><span>3 bulan (M4,5+)</span><span class="count" data-count="archive3m"></span><input type="checkbox" data-layer="archive3m"></label>
+        <label class="check"><span>5 tahun (M5+)</span><span class="count" data-count="archive5y"></span><input type="checkbox" data-layer="archive5y"></label>
+      </fieldset>
+      <fieldset>
+        <legend>Referensi</legend>
+        <label class="check"><span>Sesar Indonesia</span><span class="count" data-count="faultsIndonesia"></span><input type="checkbox" data-layer="faultsIndonesia" checked></label>
+        <label class="check"><span>Sesar &amp; lempeng global</span><span class="count" data-count="faultsGlobal"></span><input type="checkbox" data-layer="faultsGlobal"></label>
+        <label class="check"><span>Stasiun BMKG</span><span class="count" data-count="stationsIndonesia"></span><input type="checkbox" data-layer="stationsIndonesia"></label>
+        <label class="check"><span>Stasiun global</span><span class="count" data-count="stationsGlobal"></span><input type="checkbox" data-layer="stationsGlobal"></label>
+      </fieldset>
+      <div class="legend" style="margin:0">
+        <span class="legend__item"><span class="legend__swatch" style="--c: var(--m-3)"></span>3</span>
+        <span class="legend__item"><span class="legend__swatch" style="--c: var(--m-4)"></span>4</span>
+        <span class="legend__item"><span class="legend__swatch" style="--c: var(--m-5)"></span>5</span>
+        <span class="legend__item"><span class="legend__swatch" style="--c: var(--m-6)"></span>6</span>
+        <span class="legend__item"><span class="legend__swatch" style="--c: var(--m-7)"></span>7+</span>
+        <span class="legend__item"><span class="legend__line" style="--c: var(--accent)"></span>Sesar</span>
+        <span class="legend__item"><span class="legend__swatch" style="--c: var(--ink-2)"></span>Stasiun</span>
+      </div>
+      <p class="xsmall muted" id="layer-status" aria-live="polite"></p>
+    </div>
+  </details>
+</div>
+{% endblock %}
+{% block footer %}{% endblock %}
+{% block scripts %}<script type="module" src="/static/js/pages/map.js?v={{ asset_version }}" data-cfasync="false"></script>{% endblock %}

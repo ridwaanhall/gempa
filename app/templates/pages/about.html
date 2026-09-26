@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block main %}
+<div class="container page">
+  {% include "partials/page_head.html" %}
+
+  <div class="split split--list">
+    <article class="card prose">
+      <h2>Sumber data</h2>
+      <p>Semua data berasal dari <strong>BMKG</strong> (Badan Meteorologi, Klimatologi, dan Geofisika) melalui sistem InaTEWS. Situs ini tidak resmi: kami hanya menata ulang data agar mudah dibaca. Untuk keadaan darurat, ikuti arahan BMKG, BNPB, dan BPBD setempat.</p>
+
+      <h2>Jenis data</h2>
+      <ul>
+        <li><strong>Realtime</strong> — deteksi otomatis jaringan seismik, muncul beberapa menit setelah gempa. Belum ditinjau analis, sehingga magnitudo dan lokasi bisa berubah. Waktu asli dalam UTC.</li>
+        <li><strong>Dirasakan</strong> dan <strong>M5+</strong> — info gempa yang sudah diumumkan BMKG, lengkap dengan peta guncangan (shakemap) dan laporan intensitas. Waktu dalam WIB.</li>
+        <li><strong>Tsunami</strong> — buletin peringatan dini: PD-1 (peringatan awal), PD-2 (pemutakhiran), PD-3.x (pengamatan tsunami), dan PD-4 (peringatan berakhir).</li>
+        <li><strong>Merusak</strong> — katalog historis gempa yang menimbulkan korban atau kerusakan.</li>
+      </ul>
+
+      <h2>Zona waktu</h2>
+      <p>Seluruh waktu di situs ini ditampilkan dalam <strong>WIB (UTC+7)</strong>. Untuk wilayah WITA tambahkan 1 jam, untuk WIT tambahkan 2 jam.</p>
+
+      <h2>Magnitudo</h2>
+      <p>Magnitudo mengukur energi yang dilepaskan di sumber gempa. Setiap kenaikan 1 angka berarti energi sekitar 32 kali lebih besar. Warna yang sama dipakai di seluruh situs:</p>
+      <table class="table scale-table">
+        <tbody>
+          <tr><td><span class="mag mag--sm" data-m="0" style="--v: 2.5"><span class="mag__num">&lt;3</span></span></td><td>Mikro — umumnya tidak terasa.</td></tr>
+          <tr><td><span class="mag mag--sm" data-m="3" style="--v: 3.5"><span class="mag__num">3</span></span></td><td>Minor — terasa di dekat pusat gempa.</td></tr>
+          <tr><td><span class="mag mag--sm" data-m="4" style="--v: 4.5"><span class="mag__num">4</span></span></td><td>Ringan — terasa luas, jarang merusak.</td></tr>
+          <tr><td><span class="mag mag--sm" data-m="5" style="--v: 5.5"><span class="mag__num">5</span></span></td><td>Sedang — dapat merusak bangunan lemah.</td></tr>
+          <tr><td><span class="mag mag--sm" data-m="6" style="--v: 6.5"><span class="mag__num">6</span></span></td><td>Kuat — berpotensi merusak di area berpenduduk.</td></tr>
+          <tr><td><span class="mag mag--sm" data-m="7" style="--v: 7.5"><span class="mag__num">7+</span></span></td><td>Besar — kerusakan luas; di laut dapat memicu tsunami.</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Intensitas (MMI)</h2>
+      <p>Skala Modified Mercalli Intensity (angka Romawi) menggambarkan guncangan yang dirasakan di suatu tempat, bukan kekuatan gempa. Satu gempa punya banyak nilai MMI, makin jauh makin kecil.</p>
+      <table class="table">
+        <tbody>
+          <tr><td class="mono">I–II</td><td>Dirasakan sedikit orang, benda ringan bergoyang.</td></tr>
+          <tr><td class="mono">III–IV</td><td>Terasa di dalam rumah, seperti truk lewat; jendela berderik.</td></tr>
+          <tr><td class="mono">V–VI</td><td>Dirasakan hampir semua orang; barang jatuh, plester retak.</td></tr>
+          <tr><td class="mono">VII–VIII</td><td>Kerusakan ringan hingga sedang pada bangunan biasa.</td></tr>
+          <tr><td class="mono">IX+</td><td>Kerusakan berat; bangunan dapat runtuh.</td></tr>
+        </tbody>
+      </table>
+    </article>
+
+    <aside class="split__sticky">
+      <section class="card" aria-labelledby="api-heading">
+          <p class="hero__kicker">API JSON terbuka</p>
+          <h2 class="mt-2" id="api-heading" style="font-size:var(--fs-lg)">Pakai data yang sama di aplikasimu</h2>
+          <p class="small muted mt-2">Respons dinormalisasi: kunci berbahasa Inggris, angka bertipe numerik, koordinat desimal bertanda, dan waktu ISO 8601 dengan zona.</p>
+          <div class="endpoints mt-5">
+            {% for path, desc in [
+              ("/api/v1/earthquakes/latest", "Gempa dirasakan terakhir"),
+              ("/api/v1/earthquakes/realtime", "Deteksi realtime (?min_magnitude, ?limit)"),
+              ("/api/v1/earthquakes/realtime/{id}/history", "Riwayat pemutakhiran"),
+              ("/api/v1/earthquakes/felt", "30 gempa dirasakan"),
+              ("/api/v1/earthquakes/significant", "30 gempa M5+"),
+              ("/api/v1/earthquakes/damaging", "Katalog gempa merusak (?year)"),
+              ("/api/v1/earthquakes/archive/{3m|5y}", "Katalog 3 bulan / 5 tahun"),
+              ("/api/v1/earthquakes/{id}/narrative", "Narasi BMKG"),
+              ("/api/v1/tsunami", "Peringatan tsunami per kejadian"),
+              ("/api/v1/stations/{indonesia|global}", "Stasiun seismik"),
+              ("/api/v1/faults/{indonesia|global}", "Jalur sesar (GeoJSON)"),
+            ] %}
+            <div class="endpoint"><code><span class="method">GET</span>{{ path }}</code><span>{{ desc }}</span></div>
+            {% endfor %}
+          </div>
+          <div class="row mt-5">
+            <a class="btn btn--accent" href="/docs">Dokumentasi interaktif</a>
+            <a class="btn" href="/redoc">ReDoc</a>
+          </div>
+      </section>
+    </aside>
+  </div>
+</div>
+{% endblock %}

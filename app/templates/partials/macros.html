@@ -1,0 +1,52 @@
+{#- Server-rendered markup. Keep in sync with the matching builders in static/js
+    (lib/ui.js, pages/*.js): the client re-renders the same structure on hydration. -#}
+
+{% macro mag_badge(m, size="") -%}
+<span class="mag{{ ' mag--' ~ size if size }}" data-m="{{ m | mag_bucket }}" style="--v: {{ m }}" title="Magnitudo {{ m | mag }}"><span class="mag__num">{{ m | mag }}</span></span>
+{%- endmacro %}
+
+{% macro rel_time(value) -%}
+<time datetime="{{ value | iso }}" data-rel-time="{{ value }}">{{ value | wib }}</time>
+{%- endmacro %}
+
+{% macro event_item(eq, note="", flag="") -%}
+<li>
+  <button class="event" type="button" data-id="{{ eq.event_id }}" data-m="{{ eq.magnitude | mag_bucket }}">
+    {{ mag_badge(eq.magnitude) }}
+    <span class="event__body">
+      <span class="event__title">{{ eq.region }}</span>
+      <span class="event__meta"><span>{{ eq.origin_time | wib }}</span><span>{{ eq.depth_km | depth }}</span></span>
+      {% if note %}<span class="event__note">{{ note }}</span>{% endif %}
+    </span>
+    <span class="event__side">
+      {{ rel_time(eq.origin_time) }}
+      {% if flag %}<span class="pill pill--signal">{{ flag }}</span>{% endif %}
+    </span>
+  </button>
+</li>
+{%- endmacro %}
+
+{% macro realtime_row(ev) -%}
+<tr data-id="{{ ev.event_id }}" tabindex="0">
+  <td class="num">{{ mag_badge(ev.magnitude, "sm") }}</td>
+  <td class="nowrap"><span class="mono">{{ (ev.origin_time | wib)[:-4] }}</span><div class="xsmall muted">{{ rel_time(ev.origin_time) }}</div></td>
+  <td class="wrap">{{ ev.region }}</td>
+  <td class="num mono">{{ ev.depth_km | depth }}</td>
+</tr>
+{%- endmacro %}
+
+{% macro facts(rows, extra="") -%}
+<dl class="facts {{ extra }}">
+  {% for label, value in rows %}<div><dt>{{ label }}</dt><dd>{{ value }}</dd></div>{% endfor %}
+</dl>
+{%- endmacro %}
+
+{% macro dial(m) -%}
+<div class="dial" data-m="{{ m | mag_bucket }}" role="img" aria-label="Magnitudo {{ m | mag }}">
+  <svg viewBox="0 0 100 100" aria-hidden="true">
+    <circle class="dial__track" cx="50" cy="50" r="46" pathLength="100"/>
+    <circle class="dial__arc" cx="50" cy="50" r="46" pathLength="100" style="stroke-dasharray: {{ '%.1f' | format([m / 9 * 75, 75] | min) }} 100"/>
+  </svg>
+  <span class="dial__value"><span class="dial__num">{{ m | mag }}</span><span class="dial__label">{{ m | mag_category }}</span></span>
+</div>
+{%- endmacro %}

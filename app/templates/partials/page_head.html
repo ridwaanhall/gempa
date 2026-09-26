@@ -1,0 +1,5 @@
+<header class="page-head">
+  <h1>{{ page.title }}</h1>
+  <p>{{ page.description }}</p>
+  <div class="page-head__meta" id="page-meta">{% for item in meta or [] %}<span class="chip">{{ item }}</span>{% endfor %}</div>
+</header>

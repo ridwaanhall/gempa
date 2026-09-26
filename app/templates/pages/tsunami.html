@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import mag_badge, facts, rel_time %}
+{% block main %}
+{% set events = data.events if data else [] %}
+<div class="container page">
+  {% with meta = [events | length ~ " kejadian terakhir", "InaTEWS BMKG"] if events else [] %}{% include "partials/page_head.html" %}{% endwith %}
+
+  <section class="card" aria-labelledby="levels-heading">
+    <h2 class="visually-hidden" id="levels-heading">Arti status peringatan</h2>
+    <ul class="level-legend">
+      <li><span class="pill pill--awas">AWAS</span><span>Perkiraan tinggi &gt; 3 m — evakuasi menyeluruh</span></li>
+      <li><span class="pill pill--siaga">SIAGA</span><span>0,5–3 m — evakuasi</span></li>
+      <li><span class="pill pill--waspada">WASPADA</span><span>&lt; 0,5 m — jauhi pantai dan tepi sungai</span></li>
+    </ul>
+  </section>
+
+  <div class="mt-6" id="events" aria-live="polite">
+    {% for ev in events %}
+    <article class="card tsunami-event" aria-labelledby="ts-{{ loop.index0 }}">
+      <header class="tsunami-event__head">
+        <div class="tsunami-event__title-row">
+          {{ mag_badge(ev.magnitude, "lg") }}
+          <div>
+            <h2 class="tsunami-event__title" id="ts-{{ loop.index0 }}">{{ ev.region }}</h2>
+            <p class="small muted">{{ ev.origin_time | wib_long }}</p>
+            <div class="row mt-3">
+              <span class="pill{{ '' if ev.ended else ' pill--signal' }}">{{ "Peringatan berakhir" if ev.ended else "Peringatan aktif" }}</span>
+              {% if ev.max_level %}<span class="pill pill--{{ ev.max_level | lower }}">{{ ev.max_level }}</span>{% endif %}
+            </div>
+          </div>
+        </div>
+        {{ facts([
+          ("Tinggi teramati maks.", (ev.max_wave_height_m | decimal(2) ~ " m") if ev.max_wave_height_m is not none else "–"),
+          ("Kedalaman", ev.depth_km | depth),
+          ("Koordinat", coords(ev.latitude, ev.longitude)),
+          ("Buletin", ev.bulletins | length),
+        ], "facts--4") }}
+      </header>
+    </article>
+    {% else %}
+    <div class="skeleton skeleton--block" style="height:320px"></div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script type="module" src="/static/js/pages/tsunami.js?v={{ asset_version }}" data-cfasync="false"></script>{% endblock %}

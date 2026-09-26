@@ -1,0 +1,40 @@
+{% extends "layouts/map.html" %}
+{% from "partials/macros.html" import event_item %}
+{% block main %}
+{% set events = data.events if data else [] %}
+<div class="container container--wide page" id="alerts" data-feed="{{ page.key }}">
+  {% with meta = [events | length ~ " kejadian terakhir", "sejak " ~ (events[-1].origin_time | wib)] if events else [] %}{% include "partials/page_head.html" %}{% endwith %}
+
+  <div class="toolbar">
+    {% include "partials/search.html" %}
+    <span class="toolbar__spacer"></span>
+    <span class="toolbar__count" id="count" aria-live="polite">{% if events %}{{ events | length }} kejadian{% endif %}</span>
+  </div>
+
+  <div class="split split--list">
+    <section class="card" aria-label="Daftar gempa">
+      <ul class="event-list" id="list" aria-live="polite">
+        {% for eq in events %}
+        {% if page.key == "felt" %}{% set note = ("Dirasakan " ~ eq.felt) if eq.felt else "" %}{% else %}{% set note = eq.potential %}{% endif %}
+        {{ event_item(eq, note=note, flag="Tsunami" if eq.tsunami_potential else "") }}
+        {% else %}
+        {% for _ in range(6) %}
+        <li class="event" aria-hidden="true">
+          <span class="skeleton" style="width:3rem;height:2.5rem"></span>
+          <span><span class="skeleton skeleton--line" style="width:70%"></span><span class="skeleton skeleton--line" style="width:40%"></span></span>
+          <span></span>
+        </li>
+        {% endfor %}
+        {% endfor %}
+      </ul>
+    </section>
+    <div class="split__sticky">
+      <section class="card map-card" aria-label="Peta">
+        <div class="map map--tall" id="map" role="region" aria-label="Peta gempa"></div>
+        {% include "partials/mag_legend.html" %}
+      </section>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script type="module" src="/static/js/pages/alerts.js?v={{ asset_version }}" data-cfasync="false"></script>{% endblock %}

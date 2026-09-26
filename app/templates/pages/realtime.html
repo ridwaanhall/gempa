@@ -1,0 +1,51 @@
+{% extends "layouts/map.html" %}
+{% from "partials/macros.html" import realtime_row %}
+{% block main %}
+{% set events = data.events if data else [] %}
+<div class="container container--wide page">
+  {% with meta = [events | length ~ " deteksi", "sejak " ~ (events[-1].origin_time | wib)] if events else [] %}{% include "partials/page_head.html" %}{% endwith %}
+
+  <div class="toolbar" role="group" aria-label="Saring data">
+    <div class="segmented" id="mag-filter" role="group" aria-label="Magnitudo minimum">
+      <button type="button" data-min="0" aria-pressed="true">Semua</button>
+      <button type="button" data-min="3" aria-pressed="false">M3+</button>
+      <button type="button" data-min="4" aria-pressed="false">M4+</button>
+      <button type="button" data-min="5" aria-pressed="false">M5+</button>
+    </div>
+    {% include "partials/search.html" %}
+    <span class="toolbar__spacer"></span>
+    <span class="toolbar__count" id="count" aria-live="polite">{% if events %}{{ events | length }} kejadian{% endif %}</span>
+  </div>
+
+  <div class="split split--list">
+    <div>
+      <div class="table-wrap table-wrap--scroll">
+        <table class="table" id="table">
+          <caption class="visually-hidden">Deteksi gempa real-time, terbaru di atas</caption>
+          <thead>
+            <tr>
+              <th scope="col" data-key="magnitude" class="num"><button class="sort-btn" type="button">Mag</button></th>
+              <th scope="col" data-key="origin_time" aria-sort="descending"><button class="sort-btn" type="button">Waktu (WIB)</button></th>
+              <th scope="col" data-key="region"><button class="sort-btn" type="button">Wilayah</button></th>
+              <th scope="col" data-key="depth_km" class="num"><button class="sort-btn" type="button">Kedalaman</button></th>
+            </tr>
+          </thead>
+          <tbody id="rows">
+            {% for ev in events %}{{ realtime_row(ev) }}{% else %}
+            <tr><td colspan="4"><span class="skeleton skeleton--line"></span><span class="skeleton skeleton--line"></span><span class="skeleton skeleton--line"></span></td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <p class="xsmall muted mt-4">Deteksi otomatis, belum ditinjau analis: magnitudo dan lokasi dapat berubah. Pilih baris untuk melihat riwayat pemutakhiran.</p>
+    </div>
+    <div class="split__sticky">
+      <section class="card map-card" aria-label="Peta deteksi">
+        <div class="map map--tall" id="map" role="region" aria-label="Peta deteksi realtime"></div>
+        {% include "partials/mag_legend.html" %}
+      </section>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script type="module" src="/static/js/pages/realtime.js?v={{ asset_version }}" data-cfasync="false"></script>{% endblock %}

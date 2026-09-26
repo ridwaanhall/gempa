@@ -1,0 +1,97 @@
+{% extends "layouts/map.html" %}
+{% from "partials/macros.html" import dial, event_item, facts, rel_time %}
+{% block main %}
+{% set eq = data.latest if data else none %}
+<div class="container page">
+  <header class="page-head">
+    <h1>Gempa bumi terkini di Indonesia</h1>
+    <p>Gempa terakhir yang dirasakan dan deteksi real-time dari jaringan seismik BMKG, diperbarui setiap menit.</p>
+  </header>
+
+  <div class="bento">
+    <article class="card hero bento__hero" id="latest" aria-labelledby="latest-title">
+      <div class="hero__top">
+        <div id="latest-dial">
+          {% if eq %}{{ dial(eq.magnitude) }}{% else %}<div class="dial"><span class="dial__value"><span class="dial__num">–</span><span class="dial__label">Magnitudo</span></span></div>{% endif %}
+        </div>
+        <div class="hero__intro">
+          <p class="hero__kicker">Gempa dirasakan terakhir</p>
+          <h2 class="hero__title" id="latest-title">{% if eq %}{{ eq.region }}{% else %}<span class="skeleton skeleton--line" style="width:14rem"></span>{% endif %}</h2>
+          <p class="hero__time" id="latest-time">{% if eq %}{{ eq.origin_time | wib_long }}{% else %}<span class="skeleton skeleton--line" style="width:10rem"></span>{% endif %}</p>
+        </div>
+      </div>
+      <div id="latest-facts">
+        {% if eq %}{{ facts([
+          ("Kedalaman", eq.depth_km | depth),
+          ("Koordinat", coords(eq.latitude, eq.longitude)),
+          ("Potensi tsunami", "Berpotensi tsunami" if eq.tsunami_potential else "Tidak berpotensi"),
+          ("Dirasakan", eq.felt or "–"),
+        ]) }}{% endif %}
+      </div>
+      <div class="hero__actions" id="latest-actions">
+        <a class="btn btn--accent" href="/felt/">Detail &amp; peta guncangan</a>
+        <a class="btn" href="/felt/">Gempa dirasakan lainnya</a>
+      </div>
+    </article>
+
+    <section class="card map-card bento__map" aria-label="Peta episentrum">
+      <div class="map map--tall" id="latest-map" role="region" aria-label="Peta lokasi gempa terakhir dan deteksi 48 jam"></div>
+      {% include "partials/mag_legend.html" %}
+    </section>
+
+    <section class="bento__stats" aria-labelledby="summary-heading">
+      <h2 class="visually-hidden" id="summary-heading">Ringkasan</h2>
+      <div class="stats" id="summary">
+        {% for label in ["Gempa 24 jam", "Terkuat 24 jam", "M5+ 7 hari", "Status tsunami"] %}
+        <div class="stat"><p class="stat__label">{{ label }}</p><p class="stat__value"><span class="skeleton skeleton--line" style="width:3ch"></span></p><p class="stat__note">&nbsp;</p></div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="card bento__chart" aria-labelledby="chart-heading">
+      <div class="card__head">
+        <h2 id="chart-heading">Aktivitas 3 bulan terakhir</h2>
+        <span class="hint" id="chart-hint">Gempa M4,5+ per minggu, katalog BMKG</span>
+      </div>
+      <div class="chart" id="weekly-chart"><div class="skeleton skeleton--block" style="min-height:180px"></div></div>
+    </section>
+
+    <section class="card bento__recent" aria-labelledby="recent-heading">
+      <div class="card__head">
+        <h2 id="recent-heading">Deteksi terbaru</h2>
+        <a class="link-arrow" href="/realtime/">Semua deteksi {{ icon("arrow-right") }}</a>
+      </div>
+      <ul class="event-list" id="recent-list" aria-live="polite">
+        {% if data %}{% for ev in data.realtime[:8] %}{{ event_item(ev, flag="M5+" if ev.magnitude >= 5 else "") }}{% endfor %}{% endif %}
+      </ul>
+    </section>
+
+    <nav class="card bento__links" aria-labelledby="links-heading">
+      <div class="card__head"><h2 id="links-heading">Jelajahi</h2></div>
+      <div class="links">
+        <a class="tile" href="/tsunami/">
+          <span class="tile__icon">{{ icon("wave") }}</span>
+          <span><strong>Peringatan tsunami</strong><span>Kronologi buletin &amp; zona</span></span>
+          <span class="tile__arrow">{{ icon("arrow-right") }}</span>
+        </a>
+        <a class="tile" href="/m5/">
+          <span class="tile__icon">{{ icon("pulse") }}</span>
+          <span><strong>Gempa M5+</strong><span>Dengan analisis BMKG</span></span>
+          <span class="tile__arrow">{{ icon("arrow-right") }}</span>
+        </a>
+        <a class="tile" href="/map/">
+          <span class="tile__icon">{{ icon("layers") }}</span>
+          <span><strong>Peta seismisitas</strong><span>Sesar, stasiun, katalog</span></span>
+          <span class="tile__arrow">{{ icon("arrow-right") }}</span>
+        </a>
+        <a class="tile" href="/about/">
+          <span class="tile__icon">{{ icon("code") }}</span>
+          <span><strong>Data &amp; API</strong><span>Skala, zona waktu, JSON</span></span>
+          <span class="tile__arrow">{{ icon("arrow-right") }}</span>
+        </a>
+      </div>
+    </nav>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script type="module" src="/static/js/pages/home.js?v={{ asset_version }}" data-cfasync="false"></script>{% endblock %}

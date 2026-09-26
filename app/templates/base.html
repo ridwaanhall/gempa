@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{{ (title ~ " · " ~ site_name) if page else ("Halaman tidak ditemukan · " ~ site_name) }}</title>
+  {% if page %}
+  <meta name="description" content="{{ description }}">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="{{ canonical }}">
+  <link rel="alternate" hreflang="id" href="{{ canonical }}">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="id_ID">
+  <meta property="og:site_name" content="{{ site_name }}">
+  <meta property="og:title" content="{{ title }}">
+  <meta property="og:description" content="{{ description }}">
+  <meta property="og:url" content="{{ canonical }}">
+  <meta property="og:image" content="{{ og_image }}">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Gempa — monitor gempa bumi Indonesia dari data BMKG">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ title }}">
+  <meta name="twitter:description" content="{{ description }}">
+  <meta name="twitter:image" content="{{ og_image }}">
+  <script type="application/ld+json">{{ jsonld | safe }}</script>
+  {% if data %}<script type="application/json" id="initial-data">{{ data | tojson }}</script>{% endif %}
+  {% else %}
+  <meta name="robots" content="noindex">
+  {% endif %}
+  <meta name="theme-color" content="#e7e1d8">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="/static/img/favicon.ico?v={{ asset_version }}" sizes="48x48">
+  <link rel="icon" type="image/svg+xml" href="/static/img/favicon.svg?v={{ asset_version }}">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/img/favicon-32x32.png?v={{ asset_version }}">
+  <link rel="apple-touch-icon" href="/static/img/apple-touch-icon.png?v={{ asset_version }}">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <script src="/static/js/theme-init.js?v={{ asset_version }}" data-cfasync="false"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+  {% block head_css %}{% endblock %}
+  <link rel="stylesheet" href="/static/css/app.css?v={{ asset_version }}">
+</head>
+<body data-page="{{ page.key if page else '404' }}">
+  <a class="skip-link" href="#main">Lewati ke konten</a>
+
+  <div class="alert-banner" id="tsunami-banner" hidden role="alert"></div>
+
+  <header class="site-header">
+    <div class="container {% block header_container %}{% endblock %}">
+      <div class="site-header__bar">
+        <a class="brand" href="/" aria-label="{{ site_name }} — beranda">
+          <svg viewBox="0 0 28 18" fill="none" aria-hidden="true"><path d="M1 9h6l2-5 3 12 3-15 3 11 2-3h7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          {{ site_name }}
+        </a>
+        <div class="nav-wrap">
+          <nav class="nav" aria-label="Navigasi utama">
+            {% for item in nav_pages %}
+            <a href="{{ item.path }}"{% if page and page.key == item.key %} aria-current="page"{% endif %}>{{ item.nav_label }}</a>
+            {% endfor %}
+          </nav>
+        </div>
+        <div class="header-tools">
+          <span class="live" id="live-status" data-state="ok" aria-live="polite">
+            <span class="live__dot" aria-hidden="true"></span>
+            <span class="live__label" id="live-label">Memuat…</span>
+          </span>
+          <button class="icon-btn" type="button" id="theme-toggle" aria-label="Ganti tema terang/gelap">
+            {{ icon("moon", "icon theme-icon-light") }}
+            {{ icon("sun", "icon theme-icon-dark") }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    {% block main %}{% endblock %}
+  </main>
+
+  {% block footer %}
+  <footer class="site-footer">
+    <div class="container">
+      <div class="site-footer__inner">
+        <div>
+          <p>Data gempa bumi dan tsunami: <strong>BMKG</strong> (Badan Meteorologi, Klimatologi, dan Geofisika).</p>
+          <p>Situs tidak resmi. Untuk keadaan darurat, ikuti arahan BMKG, BNPB, dan BPBD setempat.</p>
+        </div>
+        <nav aria-label="Tautan kaki">
+          <a href="/about/">Tentang data</a>
+          <a href="/docs">Dokumentasi API</a>
+          <a href="https://github.com/ridwaanhall/gempa" rel="noopener">Kode sumber</a>
+        </nav>
+      </div>
+    </div>
+  </footer>
+  {% endblock %}
+
+  {% include "partials/dialog.html" %}
+
+  {% block scripts_vendor %}{% endblock %}
+  <script type="module" src="/static/js/app.js?v={{ asset_version }}" data-cfasync="false"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
