@@ -31,18 +31,20 @@
   {% endif %}
   <meta name="theme-color" content="#e7e1d8">
   <meta name="color-scheme" content="light dark">
-  <link rel="icon" href="/static/img/favicon.ico?v={{ asset_version }}" sizes="48x48">
-  <link rel="icon" type="image/svg+xml" href="/static/img/favicon.svg?v={{ asset_version }}">
-  <link rel="icon" type="image/png" sizes="32x32" href="/static/img/favicon-32x32.png?v={{ asset_version }}">
-  <link rel="apple-touch-icon" href="/static/img/apple-touch-icon.png?v={{ asset_version }}">
+  <link rel="icon" href="{{ static_url('img/favicon.ico') }}" sizes="48x48">
+  <link rel="icon" type="image/svg+xml" href="{{ static_url('img/favicon.svg') }}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ static_url('img/favicon-32x32.png') }}">
+  <link rel="apple-touch-icon" href="{{ static_url('img/apple-touch-icon.png') }}">
   <link rel="manifest" href="/site.webmanifest">
 
-  <script src="/static/js/theme-init.js?v={{ asset_version }}" data-cfasync="false"></script>
+  <script src="{{ static_url('js/theme-init.js') }}" data-cfasync="false"></script>
+  {# Must precede every module script: maps ./lib/*.js imports to content-hashed URLs. #}
+  <script type="importmap" data-cfasync="false">{{ import_map() | safe }}</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
   {% block head_css %}{% endblock %}
-  <link rel="stylesheet" href="/static/css/app.css?v={{ asset_version }}">
+  <link rel="stylesheet" href="{{ static_url('css/app.css') }}">
 </head>
 <body data-page="{{ page.key if page else '404' }}">
   <a class="skip-link" href="#main">Lewati ke konten</a>
@@ -102,7 +104,7 @@
   {% include "partials/dialog.html" %}
 
   {% block scripts_vendor %}{% endblock %}
-  <script type="module" src="/static/js/app.js?v={{ asset_version }}" data-cfasync="false"></script>
+  <script type="module" src="{{ static_url('js/app.js') }}" data-cfasync="false"></script>
   {% block scripts %}{% endblock %}
 </body>
 </html>

@@ -94,4 +94,4 @@
   </div>
 </div>
 {% endblock %}
-{% block scripts %}<script type="module" src="/static/js/pages/home.js?v={{ asset_version }}" data-cfasync="false"></script>{% endblock %}
+{% block scripts %}<script type="module" src="{{ static_url('js/pages/home.js') }}" data-cfasync="false"></script>{% endblock %}

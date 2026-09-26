@@ -9,7 +9,6 @@ client fetches on its own.
 import asyncio
 import json
 import logging
-import os
 from collections.abc import Awaitable, Callable
 from datetime import UTC, datetime
 from pathlib import Path
@@ -19,8 +18,8 @@ from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
 
-from app import __version__
 from app.bmkg.client import BmkgClient, UpstreamError
+from app.core.assets import import_map, static_url
 from app.core.config import get_settings
 from app.web import format as fmt
 from app.web.icons import icon
@@ -35,8 +34,8 @@ templates.env.globals.update(fmt.GLOBALS, icon=icon)
 templates.env.globals.update(
     site_name=SITE_NAME,
     nav_pages=[p for p in PAGES if p.in_nav],
-    # Cache-busting token for /static URLs: the deployed commit, else the app version.
-    asset_version=(os.environ.get("VERCEL_GIT_COMMIT_SHA") or __version__)[:8],
+    static_url=static_url,
+    import_map=import_map,
 )
 
 router = APIRouter(include_in_schema=False)
@@ -279,4 +278,4 @@ async def manifest() -> Response:
 
 @router.get("/favicon.ico")
 async def favicon() -> RedirectResponse:
-    return RedirectResponse(f"/static/img/favicon.ico?v={__version__}", status_code=308)
+    return RedirectResponse(static_url("img/favicon.ico"), status_code=308)

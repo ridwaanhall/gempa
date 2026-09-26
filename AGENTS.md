@@ -38,6 +38,7 @@ app/
   schemas.py         Public API contract (Pydantic). Change deliberately — it's what clients consume.
   core/config.py     Settings from env (.env locally). BMKG_API is a SecretStr.
   core/cache.py      In-process TTL cache with stale-on-error
+  core/assets.py     Content-hashed static URLs + the ES-module import map (and its CSP hash)
   core/security.py   Security headers + CSP (pure ASGI middleware)
   bmkg/client.py     Async upstream client: feed names, TTLs, media kinds, narrative sanitising
   bmkg/parsers.py    Pure functions: raw BMKG payload → schemas (no I/O; unit-test here)
@@ -142,8 +143,12 @@ Read `docs/design-brief.md` before UI work. The essentials:
   offsets, lists wrapped in `Envelope` (`data` + `meta`). Set `Cache-Control` per route.
 - UI copy is **Indonesian**. Times are displayed in **WIB** (`lib/format.js` in the browser,
   `web/format.py` on the server).
-- Static URLs in templates are plain paths with `?v={{ asset_version }}` — don't use
-  `url_for` (it builds absolute URLs that break behind proxies).
+- Static URLs in templates use `{{ static_url('css/app.css') }}` → `/static/...?v=<content
+  hash>` — never hand-write `?v=` or use `url_for` (absolute URLs break behind proxies).
+  JS modules import each other with plain relative paths (`./lib/api.js`); the inline
+  `<script type="importmap">` in `base.html` maps each one to its hashed URL, so imports
+  are versioned too. It's generated from `static/js/**` and allowed by a CSP hash — no
+  manual step when adding a module (`tests/test_assets.py` checks every import is mapped).
 - Pages read embedded data via `initialData()` (`lib/initial.js`), render immediately, then
   refresh with `every(ms, task)` from `lib/api.js`.
 
@@ -180,5 +185,6 @@ Read `docs/design-brief.md` before UI work. The essentials:
 
 Vercel detects `app` in `app/main.py`. `pyproject.toml` sets
 `[tool.vercel.fastapi.static] cdn = true` so `/static` is served from the CDN.
-`vercel.json` holds function limits, bundle excludes, and static cache headers (app
-assets 10 min — module imports aren't versioned; vendor files immutable).
+`vercel.json` holds function limits, bundle excludes, and static cache headers:
+`/static/*?v=…` (content-hashed) and vendor files are immutable for a year; unversioned
+app assets get 10 min.

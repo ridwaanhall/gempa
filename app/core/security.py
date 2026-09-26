@@ -3,6 +3,8 @@
 from starlette.datastructures import MutableHeaders
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
+from app.core.assets import import_map_csp_hash
+
 _TILE_HOSTS = "https://tile.openstreetmap.org https://server.arcgisonline.com"
 # Cloudflare (in front of gempa.rone.dev) may inject its analytics beacon.
 _CF = "https://static.cloudflareinsights.com"
@@ -10,7 +12,8 @@ _CF = "https://static.cloudflareinsights.com"
 CONTENT_SECURITY_POLICY = "; ".join(
     [
         "default-src 'self'",
-        f"script-src 'self' {_CF}",
+        # The hash admits only the inline import map (see core/assets.py).
+        f"script-src 'self' {import_map_csp_hash()} {_CF}",
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
         "font-src 'self' https://fonts.gstatic.com",
         f"img-src 'self' data: {_TILE_HOSTS}",

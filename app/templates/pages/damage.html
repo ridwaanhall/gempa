@@ -57,4 +57,4 @@
   <div class="pager" id="pager"></div>
 </div>
 {% endblock %}
-{% block scripts %}<script type="module" src="/static/js/pages/damage.js?v={{ asset_version }}" data-cfasync="false"></script>{% endblock %}
+{% block scripts %}<script type="module" src="{{ static_url('js/pages/damage.js') }}" data-cfasync="false"></script>{% endblock %}

@@ -37,4 +37,4 @@
   </div>
 </div>
 {% endblock %}
-{% block scripts %}<script type="module" src="/static/js/pages/alerts.js?v={{ asset_version }}" data-cfasync="false"></script>{% endblock %}
+{% block scripts %}<script type="module" src="{{ static_url('js/pages/alerts.js') }}" data-cfasync="false"></script>{% endblock %}

@@ -33,4 +33,4 @@
 </div>
 {% endblock %}
 {% block footer %}{% endblock %}
-{% block scripts %}<script type="module" src="/static/js/pages/map.js?v={{ asset_version }}" data-cfasync="false"></script>{% endblock %}
+{% block scripts %}<script type="module" src="{{ static_url('js/pages/map.js') }}" data-cfasync="false"></script>{% endblock %}
