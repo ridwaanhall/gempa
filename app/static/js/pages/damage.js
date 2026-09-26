@@ -4,13 +4,16 @@ import { getJSON } from "../lib/api.js";
 import { showDamaging } from "../lib/detail.js";
 import { $, debounce, h, matches, replace } from "../lib/dom.js";
 import { fmtDepth, fmtMag, fmtNumber, fmtUtcDate } from "../lib/format.js";
-import { createMap, fitIndonesia, quakeMarker } from "../lib/map.js";
+import { icon } from "../lib/icons.js";
+import { createMap, fitIndonesia, latestMarker, quakeMarker } from "../lib/map.js";
 import { empty, errorNote, magBadge, pill, sortable } from "../lib/ui.js";
 
 const L = window.L;
 const PAGE_SIZE = 25;
 const map = createMap($("#map"), { scrollWheelZoom: false });
 const layer = L.layerGroup().addTo(map);
+let latest = null;
+const newest = (list) => list.reduce((a, b) => (!a || b.origin_time > a.origin_time ? b : a), null);
 const state = { events: [], query: "", period: "", tsunami: false, page: 0, fitted: false };
 const table = sortable($("#table"), { key: "origin_time", dir: "desc", onChange: () => { state.page = 0; render(); } });
 
@@ -42,8 +45,8 @@ function renderPager(total) {
       ? h(
           "span",
           { class: "pager__btns" },
-          h("button", { class: "btn btn--sm", type: "button", disabled: state.page === 0, onclick: () => go(state.page - 1) }, "← Sebelumnya"),
-          h("button", { class: "btn btn--sm", type: "button", disabled: state.page >= pages - 1, onclick: () => go(state.page + 1) }, "Berikutnya →"),
+          h("button", { class: "btn btn--sm", type: "button", disabled: state.page === 0, onclick: () => go(state.page - 1) }, icon("arrow-left"), "Sebelumnya"),
+          h("button", { class: "btn btn--sm", type: "button", disabled: state.page >= pages - 1, onclick: () => go(state.page + 1) }, "Berikutnya", icon("arrow-right")),
         )
       : null,
   );
@@ -77,6 +80,9 @@ function render() {
   [...rows].sort((a, b) => a.magnitude - b.magnitude).forEach((ev) => {
     quakeMarker(ev, { popup: false, scale: 0.6 }).on("click", () => showDamaging(ev)).addTo(layer);
   });
+  latest?.remove();
+  const last = newest(rows);
+  if (last) latest = latestMarker(last, { onClick: () => showDamaging(last) }).addTo(map);
   if (!state.fitted && rows.length) {
     fitIndonesia(map);
     state.fitted = true;

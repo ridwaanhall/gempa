@@ -1,5 +1,5 @@
 <label class="field field--search">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+  {{ icon("search") }}
   <span class="visually-hidden">{{ search_label | default("Cari wilayah") }}</span>
   <input type="search" id="search" placeholder="{{ search_placeholder | default('Cari wilayah…') }}" autocomplete="off">
 </label>

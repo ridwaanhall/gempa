@@ -5,7 +5,7 @@ import { showEarthquake, showRealtime } from "../lib/detail.js";
 import { $, h, replace } from "../lib/dom.js";
 import { fmtCoords, fmtDepth, fmtLong, fmtMag, fmtNumber, fmtRelative, parseFelt } from "../lib/format.js";
 import { initialData } from "../lib/initial.js";
-import { createMap, epicenterMarker, quakeMarker } from "../lib/map.js";
+import { createMap, latestMarker, quakeMarker } from "../lib/map.js";
 import { dial, errorNote, eventItem, facts } from "../lib/ui.js";
 
 const L = window.L;
@@ -41,7 +41,7 @@ function renderLatest(eq) {
 
   if (shownEventId !== eq.event_id) {
     epicenter?.remove();
-    epicenter = epicenterMarker(eq.latitude, eq.longitude, eq.magnitude).addTo(map);
+    epicenter = latestMarker(eq, { onClick: () => showEarthquake(eq) }).addTo(map);
     map.setView([eq.latitude, eq.longitude], 6, { animate: false });
     shownEventId = eq.event_id;
   }

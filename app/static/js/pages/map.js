@@ -3,10 +3,11 @@
 import { getJSON } from "../lib/api.js";
 import { $, $$ } from "../lib/dom.js";
 import { fmtNumber } from "../lib/format.js";
-import { createMap, faultLayer, quakeMarker, stationLayer } from "../lib/map.js";
+import { createMap, faultLayer, fitIndonesia, latestMarker, quakeMarker, stationLayer } from "../lib/map.js";
 
 const L = window.L;
 const map = createMap($("#map"), { zoomPosition: "bottomright" });
+fitIndonesia(map);
 
 // Keep map gestures from leaking into the panel on touch devices.
 L.DomEvent.disableClickPropagation($("#layers"));
@@ -22,7 +23,9 @@ const quakes = (events, faint, scale = 1) => {
 const LAYERS = {
   realtime: async () => {
     const { data } = await getJSON("/api/v1/earthquakes/realtime?limit=500");
-    return [quakes(data), data.length];
+    const group = quakes(data);
+    if (data[0]) latestMarker(data[0]).addTo(group); // feed is sorted newest first
+    return [group, data.length];
   },
   archive3m: async () => {
     const { data } = await getJSON("/api/v1/earthquakes/archive/3m");
@@ -82,7 +85,14 @@ async function toggle(name, on) {
     .forEach((k) => loaded.get(k).remove().addTo(map));
 }
 
+const countActive = () => {
+  $("#active-count").textContent = $$("[data-layer]").filter((i) => i.checked).length;
+};
+
 $$("[data-layer]").forEach((input) => {
-  input.addEventListener("change", () => toggle(input.dataset.layer, input.checked));
+  input.addEventListener("change", () => {
+    countActive();
+    toggle(input.dataset.layer, input.checked);
+  });
   if (input.checked) toggle(input.dataset.layer, true);
 });

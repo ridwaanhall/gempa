@@ -5,7 +5,7 @@ import { showEarthquake } from "../lib/detail.js";
 import { $, $$, debounce, h, matches, replace } from "../lib/dom.js";
 import { fmtDateTime, fmtNumber } from "../lib/format.js";
 import { initialData } from "../lib/initial.js";
-import { createMap, fitIndonesia, quakeMarker } from "../lib/map.js";
+import { createMap, fitIndonesia, latestMarker, quakeMarker } from "../lib/map.js";
 import { empty, errorNote, eventItem } from "../lib/ui.js";
 
 const L = window.L;
@@ -13,6 +13,8 @@ const feed = $("#alerts").dataset.feed; // "felt" | "significant"
 const map = createMap($("#map"));
 const layer = L.layerGroup().addTo(map);
 const markers = new Map();
+let latest = null;
+const newest = (list) => list.reduce((a, b) => (!a || b.origin_time > a.origin_time ? b : a), null);
 const state = { events: [], query: "", selected: null, fitted: false };
 
 function open(eq) {
@@ -50,6 +52,9 @@ function render() {
     marker.on("click", () => open(eq));
     markers.set(eq.event_id, marker);
   });
+  latest?.remove();
+  const last = newest(rows);
+  if (last) latest = latestMarker(last, { onClick: () => open(last) }).addTo(map);
   if (!state.fitted && rows.length) {
     fitIndonesia(map);
     state.fitted = true;

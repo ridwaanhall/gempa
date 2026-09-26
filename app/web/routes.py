@@ -23,6 +23,7 @@ from app import __version__
 from app.bmkg.client import BmkgClient, UpstreamError
 from app.core.config import get_settings
 from app.web import format as fmt
+from app.web.icons import icon
 from app.web.pages import PAGES, PAGES_BY_KEY, SITE_DESCRIPTION, SITE_NAME, Page
 
 logger = logging.getLogger(__name__)
@@ -30,7 +31,7 @@ logger = logging.getLogger(__name__)
 TEMPLATES_DIR = Path(__file__).resolve().parent.parent / "templates"
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
 templates.env.filters.update(fmt.FILTERS)
-templates.env.globals.update(fmt.GLOBALS)
+templates.env.globals.update(fmt.GLOBALS, icon=icon)
 templates.env.globals.update(
     site_name=SITE_NAME,
     nav_pages=[p for p in PAGES if p.in_nav],

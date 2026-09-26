@@ -51,7 +51,7 @@
     <section class="card bento__recent" aria-labelledby="recent-heading">
       <div class="card__head">
         <h2 id="recent-heading">Deteksi terbaru</h2>
-        <a href="/realtime/">Semua deteksi →</a>
+        <a class="link-arrow" href="/realtime/">Semua deteksi {{ icon("arrow-right") }}</a>
       </div>
       <ul class="event-list" id="recent-list" aria-live="polite">
         {% if data %}{% for ev in data.realtime[:8] %}{{ event_item(ev, flag="M5+" if ev.magnitude >= 5 else "") }}{% endfor %}{% endif %}
@@ -62,24 +62,24 @@
       <div class="card__head"><h2 id="links-heading">Jelajahi</h2></div>
       <div class="links">
         <a class="tile" href="/tsunami/">
-          <span class="tile__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 16c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2 2-2 4-2M2 20c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2 2-2 4-2M6 11c0-3.5 3-6 6.5-6 1.5 0 3 .5 4 1.5"/></svg></span>
+          <span class="tile__icon">{{ icon("wave") }}</span>
           <span><strong>Peringatan tsunami</strong><span>Kronologi buletin &amp; zona</span></span>
-          <span class="tile__arrow" aria-hidden="true">→</span>
+          <span class="tile__arrow">{{ icon("arrow-right") }}</span>
         </a>
         <a class="tile" href="/m5/">
-          <span class="tile__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 12h4l2-6 4 12 3-9 2 3h5"/></svg></span>
+          <span class="tile__icon">{{ icon("pulse") }}</span>
           <span><strong>Gempa M5+</strong><span>Dengan analisis BMKG</span></span>
-          <span class="tile__arrow" aria-hidden="true">→</span>
+          <span class="tile__arrow">{{ icon("arrow-right") }}</span>
         </a>
         <a class="tile" href="/map/">
-          <span class="tile__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/></svg></span>
+          <span class="tile__icon">{{ icon("layers") }}</span>
           <span><strong>Peta seismisitas</strong><span>Sesar, stasiun, katalog</span></span>
-          <span class="tile__arrow" aria-hidden="true">→</span>
+          <span class="tile__arrow">{{ icon("arrow-right") }}</span>
         </a>
         <a class="tile" href="/about/">
-          <span class="tile__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m8 7-5 5 5 5M16 7l5 5-5 5"/></svg></span>
+          <span class="tile__icon">{{ icon("code") }}</span>
           <span><strong>Data &amp; API</strong><span>Skala, zona waktu, JSON</span></span>
-          <span class="tile__arrow" aria-hidden="true">→</span>
+          <span class="tile__arrow">{{ icon("arrow-right") }}</span>
         </a>
       </div>
     </nav>

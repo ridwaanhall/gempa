@@ -2,6 +2,7 @@
 
 import { getJSON } from "./lib/api.js";
 import { $, $$, h, replace } from "./lib/dom.js";
+import { icon } from "./lib/icons.js";
 import { fmtClock, fmtMag, fmtRelative } from "./lib/format.js";
 
 /* ---------- Theme ---------- */
@@ -9,7 +10,11 @@ import { fmtClock, fmtMag, fmtRelative } from "./lib/format.js";
 const root = document.documentElement;
 
 function setTheme(theme, persist) {
+  // Cross-fade colours instead of snapping (skipped for reduced motion via CSS).
+  root.classList.add("theme-transition");
+  setTimeout(() => root.classList.remove("theme-transition"), 450);
   root.dataset.theme = theme;
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", theme === "dark" ? "#23201c" : "#e7e1d8");
   if (persist) {
     try { localStorage.setItem("theme", theme); } catch {}
   }
@@ -18,11 +23,9 @@ function setTheme(theme, persist) {
 
 $("#theme-toggle")?.addEventListener("click", () => setTheme(root.dataset.theme === "dark" ? "light" : "dark", true));
 
-window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
-  let stored = null;
-  try { stored = localStorage.getItem("theme"); } catch {}
-  if (!stored) setTheme(e.matches ? "dark" : "light", false);
-});
+
+// Entrance animations for lists/rows only run on first paint, not on every data refresh.
+setTimeout(() => root.classList.add("settled"), 1200);
 
 /* ---------- Live indicator ---------- */
 
@@ -82,7 +85,7 @@ async function checkTsunami() {
         { class: "container" },
         h("strong", {}, "Peringatan dini tsunami aktif"),
         h("span", {}, `M ${fmtMag(active.magnitude)} · ${active.region} · status tertinggi ${active.max_level || "-"}`),
-        document.body.dataset.page === "tsunami" ? null : h("a", { href: "/tsunami/" }, "Lihat detail →"),
+        document.body.dataset.page === "tsunami" ? null : h("a", { class: "link-arrow", href: "/tsunami/" }, "Lihat detail", icon("arrow-right")),
       ),
     );
     banner.hidden = false;

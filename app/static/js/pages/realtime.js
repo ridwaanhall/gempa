@@ -5,15 +5,17 @@ import { showRealtime } from "../lib/detail.js";
 import { $, $$, debounce, h, matches, replace } from "../lib/dom.js";
 import { fmtDateTime, fmtDepth, fmtNumber, fmtRelative } from "../lib/format.js";
 import { initialData } from "../lib/initial.js";
-import { createMap, quakeMarker } from "../lib/map.js";
+import { createMap, latestMarker, quakeMarker } from "../lib/map.js";
 import { empty, errorNote, magBadge, sortable } from "../lib/ui.js";
 
 const L = window.L;
 const map = createMap($("#map"));
 const layer = L.layerGroup().addTo(map);
 const markers = new Map();
+let latest = null;
+const newest = (list) => list.reduce((a, b) => (!a || b.origin_time > a.origin_time ? b : a), null);
 
-const state = { events: [], min: 0, query: "", selected: null };
+const state = { events: [], min: 0, query: "", selected: null, centered: false };
 const table = sortable($("#table"), { key: "origin_time", dir: "desc", onChange: render });
 
 function visible() {
@@ -61,6 +63,16 @@ function render() {
     marker.on("click", () => select(ev, { open: false }));
     markers.set(ev.event_id, marker);
   });
+  // The most recent detection gets a pulsing, labelled marker; centre on it on first load.
+  latest?.remove();
+  const last = newest(rows);
+  if (last) {
+    latest = latestMarker(last, { onClick: () => select(last) }).addTo(map);
+    if (!state.centered) {
+      map.setView([last.latitude, last.longitude], 5, { animate: false });
+      state.centered = true;
+    }
+  }
   document.dispatchEvent(new Event("gempa:rendered"));
 }
 

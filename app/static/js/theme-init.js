@@ -1,10 +1,9 @@
-// Runs before first paint (blocking, in <head>) so the page never flashes the wrong theme.
+// Runs before first paint (blocking, in <head>). Light is the default; dark only when the
+// visitor chose it with the theme button.
 (function () {
   var theme = "light";
   try {
-    var stored = localStorage.getItem("theme");
-    if (stored === "light" || stored === "dark") theme = stored;
-    else if (window.matchMedia("(prefers-color-scheme: dark)").matches) theme = "dark";
+    if (localStorage.getItem("theme") === "dark") theme = "dark";
   } catch (e) {}
   document.documentElement.setAttribute("data-theme", theme);
 })();
