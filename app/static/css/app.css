@@ -192,13 +192,15 @@ a:hover { text-decoration-thickness: 2px; }
   clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
 }
 
-/* ---------- Scrollbar (thin, everywhere) ---------- */
-* { scrollbar-width: thin; scrollbar-color: var(--scroll-thumb) transparent; }
+/* ---------- Scrollbar (thin, hidden until hover/scroll) ---------- */
+* { scrollbar-width: thin; scrollbar-color: transparent transparent; }
+:where(body *):hover { scrollbar-color: var(--scroll-thumb) transparent; }
+html.show-scroll { scrollbar-color: var(--scroll-thumb) transparent; }
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: var(--r-pill); }
+::-webkit-scrollbar-track, ::-webkit-scrollbar-corner { background: transparent; }
+::-webkit-scrollbar-thumb { background: transparent; border-radius: var(--r-pill); }
+:where(body *):hover::-webkit-scrollbar-thumb, html.show-scroll::-webkit-scrollbar-thumb { background: var(--scroll-thumb); }
 ::-webkit-scrollbar-thumb:hover { background: var(--scroll-thumb-hover); }
-::-webkit-scrollbar-corner { background: transparent; }
 
 /* ---------- Layout ---------- */
 .container { width: 100%; max-width: var(--container); margin-inline: auto; padding-inline: var(--gutter); }
@@ -431,7 +433,8 @@ main { flex: 1; }
 .hero__actions { display: flex; flex-wrap: wrap; gap: var(--s-3); }
 .hero__actions .btn { flex: 1 1 auto; }
 
-.map-card { display: grid; gap: var(--s-3); padding: var(--s-3); }
+.map-card { display: flex; flex-direction: column; gap: var(--s-3); padding: var(--s-3); }
+.map-card > .map { flex: 1 1 auto; }
 .map-card .legend { padding: 0 var(--s-3) var(--s-1); margin: 0; }
 
 .links { display: grid; gap: var(--s-3); }
@@ -1037,9 +1040,11 @@ a.icon-btn { text-decoration: none; }
   }
   details[open]::details-content { block-size: auto; opacity: 1; }
 
-  /* Theme switch cross-fades colours. */
-  :root.theme-transition, :root.theme-transition * {
-    transition: background-color 400ms var(--ease), color 400ms var(--ease), box-shadow 400ms var(--ease), border-color 400ms var(--ease) !important;
+  /* Theme switch: one snapshot cross-fade of the whole page (app.js uses
+     document.startViewTransition), so every surface changes at the same instant. */
+  ::view-transition-old(root), ::view-transition-new(root) {
+    animation-duration: 380ms;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 

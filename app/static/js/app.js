@@ -9,19 +9,41 @@ import { fmtClock, fmtMag, fmtRelative } from "./lib/format.js";
 
 const root = document.documentElement;
 
-function setTheme(theme, persist) {
-  // Cross-fade colours instead of snapping (skipped for reduced motion via CSS).
-  root.classList.add("theme-transition");
-  setTimeout(() => root.classList.remove("theme-transition"), 450);
+/**
+ * Apply a theme. Listeners of "gempa:theme" may push promises into `detail.waits`
+ * (e.g. maps waiting for re-themed tiles) so the transition captures a finished page.
+ */
+async function applyTheme(theme) {
   root.dataset.theme = theme;
   document.querySelector('meta[name="theme-color"]')?.setAttribute("content", theme === "dark" ? "#23201c" : "#e7e1d8");
-  if (persist) {
-    try { localStorage.setItem("theme", theme); } catch {}
-  }
-  document.dispatchEvent(new CustomEvent("gempa:theme", { detail: { theme } }));
+  const waits = [];
+  document.dispatchEvent(new CustomEvent("gempa:theme", { detail: { theme, waits } }));
+  await Promise.race([Promise.all(waits), new Promise((r) => setTimeout(r, 450))]);
 }
 
-$("#theme-toggle")?.addEventListener("click", () => setTheme(root.dataset.theme === "dark" ? "light" : "dark", true));
+function setTheme(theme) {
+  try { localStorage.setItem("theme", theme); } catch {}
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // One snapshot cross-fade of the whole page: every surface changes together, and
+  // nothing re-animates element by element (which lagged and looked staggered).
+  if (document.startViewTransition && !reduce) document.startViewTransition(() => applyTheme(theme));
+  else applyTheme(theme);
+}
+
+$("#theme-toggle")?.addEventListener("click", () => setTheme(root.dataset.theme === "dark" ? "light" : "dark"));
+
+/* ---------- Page scrollbar: visible only while scrolling or near the right edge ---------- */
+
+let scrollTimer;
+const showScroll = (ms = 900) => {
+  root.classList.add("show-scroll");
+  clearTimeout(scrollTimer);
+  scrollTimer = setTimeout(() => root.classList.remove("show-scroll"), ms);
+};
+window.addEventListener("scroll", () => showScroll(), { passive: true });
+window.addEventListener("pointermove", (e) => {
+  if (e.pointerType === "mouse" && window.innerWidth - e.clientX < 24) showScroll(1500);
+}, { passive: true });
 
 
 // Entrance animations for lists/rows only run on first paint, not on every data refresh.

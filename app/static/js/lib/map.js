@@ -115,7 +115,9 @@ export function createMap(element, { center = INDONESIA.center, zoom, scrollWhee
   map.attributionControl.setPrefix(false);
 
   // Keep the neutral basemap in sync with the site theme.
-  document.addEventListener("gempa:theme", () => {
+  document.addEventListener("gempa:theme", (e) => {
+    // Let the theme transition wait for the re-themed tiles (bounded in app.js).
+    if (map.hasLayer(canvasBase)) e.detail?.waits?.push(new Promise((r) => canvasBase.once("load", r)));
     canvasBase.setUrl(canvasUrl(isDark(), "Base"));
     element.querySelector('[data-base="neutral"] img')?.setAttribute("src", base[0].thumb());
     canvasLabels.setUrl(canvasUrl(isDark(), "Reference"));

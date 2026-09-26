@@ -120,13 +120,15 @@ Read `docs/design-brief.md` before UI work. The essentials:
   (`BasemapControl`) — don't use `L.control.layers`. Every map marks the most recent event
   with `latestMarker()` (pulsing epicentre + "Terbaru" label).
 - **Theme:** light is the default; dark only when chosen with the toggle (stored in
-  `localStorage`). Theme changes cross-fade via the `theme-transition` class.
+  `localStorage`). Switching uses `document.startViewTransition` (one whole-page
+  cross-fade); never add per-element colour/shadow transitions for theming. Listeners of
+  `gempa:theme` can push promises into `detail.waits` (maps wait for re-themed tiles).
 - **Motion:** all animation lives in the "Motion system" block under
   `prefers-reduced-motion: no-preference` — entrance rise/stagger, list fade (until
   `:root.settled`), dial/meter fills via `@starting-style`, dialog/select/menu open-close
   transitions, `details` height transitions. Use `--dur`/`--dur-slow` and `--ease`.
-- **Scrollbars:** thin 6px global style in the "Scrollbar" section — don't override per
-  component.
+- **Scrollbars:** thin 6px, hidden at rest. Inner scrollers reveal on hover; the page
+  scrollbar reveals while scrolling or near the right edge (`html.show-scroll`, app.js).
 - **Responsive:** check 375, 768, 1024, 1440 and 1920+ in light and dark, with no
   horizontal scroll. Grid children need `minmax(0, 1fr)`; prefer container queries for
   component-level layout (see `.hero`).
