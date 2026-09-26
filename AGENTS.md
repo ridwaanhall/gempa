@@ -52,7 +52,8 @@ app/
     partials/        macros.html (mag_badge, event_item, realtime_row, facts, dial), page_head…
     pages/           One template per page
   static/css/app.css The whole design system (tokens → base → components → pages)
-  static/js/         app.js (global), lib/* (api, dom, format, icons, map, ui, detail, initial), pages/*
+  static/js/         app.js (global), lib/* (api, dom, format, icons, map, ui, detail, viewer,
+                     chart, initial), pages/*
   static/img/        favicon.svg/.ico/PNGs (generated, same mark as the header brand) + og.png
   static/vendor/     Leaflet 1.9.4 (vendored; SRI-verified)
 docs/design-brief.md Design system spec ("Seismic Clay")
@@ -96,8 +97,6 @@ Read `docs/design-brief.md` before UI work. The essentials:
   pre-checked). Every interactive state needs a non-shadow cue; focus uses the accent ring.
 - **Type:** Plus Jakarta Sans (UI) + JetBrains Mono (`.mono`/`.num`, all numbers).
   Sentence-case headings; no uppercase letter-spaced "eyebrow" labels.
-- **Images:** shakemaps sit in `.figure` (max-height `min(62vh, 720px)`); thumbnails in
-  `.gallery` (4:3, capped width). Keep images lazy and aspect-ratio'd.
 - **Icons are SVG only.** Never use text glyphs (arrows, ×, +/−, ↑↓) as icons. Use
   `{{ icon("name") }}` in Jinja, `icon()`/`iconHTML()` from `lib/icons.js` in JS, or the
   `--i-*` CSS mask tokens (chevron, sort, check, close) for pseudo-elements. Add new icons
@@ -105,6 +104,18 @@ Read `docs/design-brief.md` before UI work. The essentials:
 - **Forms:** every control is styled — `.field` inputs (custom search clear icon),
   `.field--select` (chevron; `appearance: base-select` styles the open list in Chromium),
   `.check` (custom checkbox), `.segmented`. Don't ship a native-looking control.
+- **Magnitude badge = mini dial.** `.mag` is a circular gauge (conic ring filled to
+  magnitude / 9 over 270°, needs `--v` set to the magnitude). Use `magBadge()` /
+  `mag_badge` — never hand-roll one. No vertical accent bars on rows, notes or timelines.
+- **Images:** never link images out to a new tab as the primary interaction. Use
+  `mediaViewer(items)` (in-place stage + thumbnail tabs; drops images BMKG lacks) which
+  opens `openLightbox()` (zoom via wheel/pinch/buttons/double-click, drag to pan, ←/→).
+- **Selection on maps:** when a list item is picked, call `selection(map).show(event)` —
+  it flies to the event and marks it with a ring + label. Pages keep one controller.
+- **Deep links:** `openSheet({ id })` sets `#e=<id>` (share button copies/shares it);
+  pages reopen `linkedId()` after their data renders.
+- **Charts:** follow the dataviz rules — single hue `--chart-bar` (validated for both
+  themes), hover/focus tooltip per mark, direct label on the peak only, hidden table.
 - **Maps:** `createMap()` adds SVG zoom buttons and the custom basemap switcher
   (`BasemapControl`) — don't use `L.control.layers`. Every map marks the most recent event
   with `latestMarker()` (pulsing epicentre + "Terbaru" label).
