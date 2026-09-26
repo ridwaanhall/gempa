@@ -679,7 +679,6 @@ th[aria-sort="descending"] .sort-btn::after { --i-sort: var(--i-sort-down); opac
 .popup__meta { color: var(--ink-3); font-size: var(--fs-xs); }
 .popup__link { display: inline-block; margin-top: var(--s-2); font-size: var(--fs-xs); font-weight: 700; }
 
-.epicenter { position: relative; }
 .epicenter__core { position: absolute; inset: 0; margin: auto; width: 16px; height: 16px; border-radius: 50%; background: var(--c); border: 3px solid var(--clay); box-shadow: 0 2px 6px rgb(0 0 0 / 0.35); }
 .epicenter__ring { position: absolute; inset: 0; margin: auto; width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--c); animation: ring 2.4s var(--ease) infinite; }
 .epicenter__ring:nth-child(2) { animation-delay: 0.8s; }
@@ -904,7 +903,6 @@ a.icon-btn { text-decoration: none; }
 .nearby__km { font-size: var(--fs-xs); color: var(--ink-2); }
 
 /* ---------- Picked event on a map ---------- */
-.picked { position: relative; }
 .picked__ring { position: absolute; inset: 0; border-radius: 50%; border: 3px solid var(--accent); box-shadow: 0 0 0 3px var(--clay), 0 4px 12px rgb(0 0 0 / 0.25); }
 .picked__dot { position: absolute; inset: 0; margin: auto; width: 14px; height: 14px; border-radius: 50%; background: var(--c, var(--accent)); border: 2px solid var(--clay); }
 .picked.is-new .picked__ring { animation: land 600ms var(--ease); }
