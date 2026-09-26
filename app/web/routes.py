@@ -134,8 +134,8 @@ async def manifest() -> Response:
         "short_name": SITE_NAME,
         "start_url": "/",
         "display": "standalone",
-        "background_color": "#f4f3ef",
-        "theme_color": "#f4f3ef",
+        "background_color": "#e7e1d8",
+        "theme_color": "#e7e1d8",
         "icons": [
             {"src": "/static/img/android-chrome-192x192.png", "sizes": "192x192",
              "type": "image/png"},

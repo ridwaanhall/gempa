@@ -20,8 +20,8 @@
   {% else %}
   <meta name="robots" content="noindex">
   {% endif %}
-  <meta name="theme-color" content="#f4f3ef" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#121210" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#e7e1d8" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#23201c" media="(prefers-color-scheme: dark)">
   <link rel="icon" href="/static/img/favicon.ico?v={{ asset_version }}" sizes="48x48">
   <link rel="icon" type="image/png" sizes="32x32" href="/static/img/favicon-32x32.png?v={{ asset_version }}">
   <link rel="apple-touch-icon" href="/static/img/apple-touch-icon.png?v={{ asset_version }}">
@@ -30,7 +30,7 @@
   <script src="/static/js/theme-init.js?v={{ asset_version }}" data-cfasync="false"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
   {% block head_css %}{% endblock %}
   <link rel="stylesheet" href="/static/css/app.css?v={{ asset_version }}">
 </head>
@@ -74,15 +74,17 @@
   {% block footer %}
   <footer class="site-footer">
     <div class="container">
-      <div>
-        <p>Data gempa bumi dan tsunami: <strong>BMKG</strong> (Badan Meteorologi, Klimatologi, dan Geofisika).</p>
-        <p>Situs tidak resmi. Untuk keadaan darurat, ikuti arahan BMKG, BNPB, dan BPBD setempat.</p>
+      <div class="site-footer__inner">
+        <div>
+          <p>Data gempa bumi dan tsunami: <strong>BMKG</strong> (Badan Meteorologi, Klimatologi, dan Geofisika).</p>
+          <p>Situs tidak resmi. Untuk keadaan darurat, ikuti arahan BMKG, BNPB, dan BPBD setempat.</p>
+        </div>
+        <nav aria-label="Tautan kaki">
+          <a href="/about/">Tentang data</a>
+          <a href="/docs">Dokumentasi API</a>
+          <a href="https://github.com/ridwaanhall/gempa" rel="noopener">Kode sumber</a>
+        </nav>
       </div>
-      <nav aria-label="Tautan kaki">
-        <a href="/about/">Tentang data</a>
-        <a href="/docs">API</a>
-        <a href="https://github.com/ridwaanhall/gempa" rel="noopener">Kode sumber</a>
-      </nav>
     </div>
   </footer>
   {% endblock %}
