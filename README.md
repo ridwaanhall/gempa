@@ -17,7 +17,7 @@ web UI on top of them. Live at [gempa.rone.dev](https://gempa.rone.dev).
 | Layer | Choice |
 | --- | --- |
 | Backend | Python 3.13, FastAPI, httpx (async), Pydantic v2, Jinja2 |
-| Frontend | Hand-written CSS (design tokens, no framework), vanilla ES modules, Leaflet 1.9 (vendored) |
+| Frontend | Server-rendered Jinja2 + hand-written CSS ("Seismic Clay" neumorphic design system, no framework), vanilla ES modules, Leaflet 1.9 (vendored) |
 | Tooling | uv, Ruff, pytest + respx |
 | Hosting | Vercel (Python runtime, Fluid compute); static assets served from the CDN |
 
@@ -38,6 +38,14 @@ uv run pytest          # tests (upstream is mocked; no network needed)
 uv run ruff check .    # lint
 uv run ruff format .   # format
 ```
+
+## Design
+
+The UI uses **Seismic Clay**, a restrained neumorphic system: one warm clay
+material, depth from paired shadows, and colour reserved for meaning (the
+earthquake magnitude ramp, tsunami levels, live status). The spec is in
+[`docs/design-brief.md`](docs/design-brief.md). Pages server-render their content
+for SEO and fast first paint, then refresh live from the API.
 
 ## Configuration
 
