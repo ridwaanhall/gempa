@@ -1,20 +1,24 @@
 {% extends "layouts/map.html" %}
+{% from "partials/macros.html" import mag_badge %}
 {% block main %}
+{% set preview = data.preview if data else [] %}
 <div class="container container--wide page">
-  {% with eyebrow = "Katalog historis" %}{% include "partials/page_head.html" %}{% endwith %}
+  {% include "partials/page_head.html" %}
 
   <div class="stats" id="summary">
     {% for label in ["Kejadian", "Memicu tsunami", "Magnitudo terbesar", "Rentang tahun"] %}
-    <div class="stat"><p class="stat__label">{{ label }}</p><p class="stat__value"><span class="skeleton skeleton--line" style="display:block;width:3ch"></span></p><p class="stat__note">&nbsp;</p></div>
+    <div class="stat"><p class="stat__label">{{ label }}</p><p class="stat__value"><span class="skeleton skeleton--line" style="width:3ch"></span></p><p class="stat__note">&nbsp;</p></div>
     {% endfor %}
   </div>
 
-  <div class="map mt-5" id="map" role="region" aria-label="Peta gempa merusak"></div>
-  {% include "partials/mag_legend.html" %}
+  <section class="card map-card mt-6" aria-label="Peta gempa merusak">
+    <div class="map" id="map" role="region" aria-label="Peta gempa merusak"></div>
+    {% include "partials/mag_legend.html" %}
+  </section>
 
   <div class="toolbar mt-6">
-    {% with search_label = "Cari provinsi atau lokasi", search_placeholder = "Cari provinsi atau lokasi…" %}{% include "partials/search.html" %}{% endwith %}
-    <label class="field" style="width:auto">
+    {% with search_label = "Cari provinsi atau lokasi", search_placeholder = "Cari provinsi, lokasi, dampak…" %}{% include "partials/search.html" %}{% endwith %}
+    <label class="field">
       <span class="visually-hidden">Periode</span>
       <select id="period"><option value="">Semua periode</option></select>
     </label>
@@ -35,7 +39,19 @@
           <th scope="col" data-key="depth_km" class="num"><button class="sort-btn" type="button">Kedalaman</button></th>
         </tr>
       </thead>
-      <tbody id="rows"><tr><td colspan="5"><span class="skeleton skeleton--line"></span><span class="skeleton skeleton--line"></span></td></tr></tbody>
+      <tbody id="rows">
+        {% for ev in preview %}
+        <tr data-id="{{ ev.event_id }}" tabindex="0">
+          <td class="num">{{ mag_badge(ev.magnitude, "sm") }}</td>
+          <td class="nowrap mono">{{ ev.origin_time | utc_date }}</td>
+          <td><strong>{{ ev.province }}</strong><div class="xsmall muted">{{ ev.epicenter }}</div></td>
+          <td class="wrap small">{{ ev.impact or "–" }}</td>
+          <td class="num mono">{{ ev.depth_km | depth }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5"><span class="skeleton skeleton--line"></span><span class="skeleton skeleton--line"></span></td></tr>
+        {% endfor %}
+      </tbody>
     </table>
   </div>
   <div class="pager" id="pager"></div>

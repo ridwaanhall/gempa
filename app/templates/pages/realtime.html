@@ -1,7 +1,9 @@
 {% extends "layouts/map.html" %}
+{% from "partials/macros.html" import realtime_row %}
 {% block main %}
+{% set events = data.events if data else [] %}
 <div class="container container--wide page">
-  {% with eyebrow = "Jaringan seismik BMKG" %}{% include "partials/page_head.html" %}{% endwith %}
+  {% with meta = [events | length ~ " deteksi", "sejak " ~ (events[-1].origin_time | wib)] if events else [] %}{% include "partials/page_head.html" %}{% endwith %}
 
   <div class="toolbar" role="group" aria-label="Saring data">
     <div class="segmented" id="mag-filter" role="group" aria-label="Magnitudo minimum">
@@ -12,7 +14,7 @@
     </div>
     {% include "partials/search.html" %}
     <span class="toolbar__spacer"></span>
-    <span class="toolbar__count" id="count" aria-live="polite"></span>
+    <span class="toolbar__count" id="count" aria-live="polite">{% if events %}{{ events | length }} kejadian{% endif %}</span>
   </div>
 
   <div class="split split--list">
@@ -28,14 +30,20 @@
               <th scope="col" data-key="depth_km" class="num"><button class="sort-btn" type="button">Kedalaman</button></th>
             </tr>
           </thead>
-          <tbody id="rows"><tr><td colspan="4"><span class="skeleton skeleton--line"></span><span class="skeleton skeleton--line"></span><span class="skeleton skeleton--line"></span></td></tr></tbody>
+          <tbody id="rows">
+            {% for ev in events %}{{ realtime_row(ev) }}{% else %}
+            <tr><td colspan="4"><span class="skeleton skeleton--line"></span><span class="skeleton skeleton--line"></span><span class="skeleton skeleton--line"></span></td></tr>
+            {% endfor %}
+          </tbody>
         </table>
       </div>
-      <p class="xsmall muted mt-3">Deteksi otomatis, belum ditinjau analis: magnitudo dan lokasi dapat berubah. Pilih baris untuk melihat riwayat pemutakhiran.</p>
+      <p class="xsmall muted mt-4">Deteksi otomatis, belum ditinjau analis: magnitudo dan lokasi dapat berubah. Pilih baris untuk melihat riwayat pemutakhiran.</p>
     </div>
     <div class="split__sticky">
-      <div class="map map--tall" id="map" role="region" aria-label="Peta deteksi realtime"></div>
-      {% include "partials/mag_legend.html" %}
+      <section class="card map-card" aria-label="Peta deteksi">
+        <div class="map map--tall" id="map" role="region" aria-label="Peta deteksi realtime"></div>
+        {% include "partials/mag_legend.html" %}
+      </section>
     </div>
   </div>
 </div>

@@ -636,7 +636,7 @@ th[aria-sort="descending"] .sort-btn::after { content: "↓"; opacity: 1; color:
   display: inline-flex; align-items: center; gap: var(--s-2); padding: 4px var(--s-3) 4px 4px;
   border-radius: var(--r-pill); background: var(--clay); box-shadow: var(--raise-xs); font-size: var(--fs-sm); font-weight: 500;
 }
-.mmi b { font-family: var(--font-mono); font-size: var(--fs-xs); font-weight: 700; padding: 2px 8px; border-radius: var(--r-pill); background: var(--well); box-shadow: var(--inset-sm); }
+.mmi b { white-space: nowrap; font-family: var(--font-mono); font-size: var(--fs-xs); font-weight: 700; padding: 2px 8px; border-radius: var(--r-pill); background: var(--well); box-shadow: var(--inset-sm); }
 
 /* ---------- Tsunami ---------- */
 .level-legend { list-style: none; display: grid; gap: var(--s-3); }

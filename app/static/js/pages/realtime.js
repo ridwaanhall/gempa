@@ -4,6 +4,7 @@ import { every, getJSON } from "../lib/api.js";
 import { showRealtime } from "../lib/detail.js";
 import { $, $$, debounce, h, matches, replace } from "../lib/dom.js";
 import { fmtDateTime, fmtDepth, fmtNumber, fmtRelative } from "../lib/format.js";
+import { initialData } from "../lib/initial.js";
 import { createMap, quakeMarker } from "../lib/map.js";
 import { empty, errorNote, magBadge, sortable } from "../lib/ui.js";
 
@@ -44,7 +45,7 @@ function render() {
               onclick: () => select(ev),
               onkeydown: (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); select(ev); } } },
             h("td", { class: "num" }, magBadge(ev.magnitude, "sm")),
-            h("td", { class: "nowrap" }, h("span", { class: "mono" }, fmtDateTime(ev.origin_time).replace(" WIB", "")), h("div", { class: "xsmall muted", "data-rel-time": ev.origin_time }, fmtRelative(ev.origin_time))),
+            h("td", { class: "nowrap" }, h("span", { class: "mono" }, fmtDateTime(ev.origin_time).replace(" WIB", "")), h("div", { class: "xsmall muted" }, h("time", { datetime: ev.origin_time, "data-rel-time": ev.origin_time }, fmtRelative(ev.origin_time)))),
             h("td", { class: "wrap" }, ev.region),
             h("td", { class: "num mono" }, fmtDepth(ev.depth_km)),
           ),
@@ -72,17 +73,27 @@ $$("#mag-filter button").forEach((btn) =>
 );
 $("#search").addEventListener("input", debounce((e) => { state.query = e.target.value.trim(); render(); }, 150));
 
+function setEvents(data) {
+  state.events = data;
+  const oldest = data.at(-1);
+  replace(
+    $("#page-meta"),
+    h("span", { class: "chip" }, `${fmtNumber(data.length)} deteksi`),
+    oldest ? h("span", { class: "chip" }, `sejak ${fmtDateTime(oldest.origin_time)}`) : null,
+  );
+  render();
+}
+
 async function load() {
   try {
-    const { data, meta } = await getJSON("/api/v1/earthquakes/realtime?limit=500");
-    state.events = data;
-    const oldest = data.at(-1);
-    replace($("#page-meta"), h("span", {}, `${fmtNumber(meta.count)} deteksi`), oldest ? h("span", {}, `sejak ${fmtDateTime(oldest.origin_time)}`) : null);
-    render();
+    const { data } = await getJSON("/api/v1/earthquakes/realtime?limit=500");
+    setEvents(data);
   } catch (err) {
-    replace($("#rows"), h("tr", {}, h("td", { colspan: 4 }, errorNote(err.message))));
+    if (!state.events.length) replace($("#rows"), h("tr", {}, h("td", { colspan: 4 }, errorNote(err.message))));
   }
 }
 
-load();
+const initial = initialData();
+if (initial) setEvents(initial.events);
+else load();
 every(60000, load);

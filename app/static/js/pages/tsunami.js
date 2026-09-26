@@ -3,8 +3,9 @@
 import { every, getJSON } from "../lib/api.js";
 import { $, h, replace } from "../lib/dom.js";
 import {
-  cssVar, fmtClock, fmtCoords, fmtDateTime, fmtDepth, fmtLong, fmtMeters, fmtNumber, fmtRelative,
+  fmtClock, fmtCoords, fmtDateTime, fmtDepth, fmtLong, fmtMeters, fmtNumber, fmtRelative,
 } from "../lib/format.js";
+import { initialData } from "../lib/initial.js";
 import { empty, errorNote, facts, gallery, levelPill, magBadge, pill } from "../lib/ui.js";
 
 const LEVELS = [
@@ -30,7 +31,7 @@ function levelBars(zones) {
         "div",
         { class: "level-bar" },
         levelPill(level),
-        h("span", { class: "level-bar__track" }, h("span", { class: "level-bar__fill", style: { width: `${(n / total) * 100}%`, "--c": cssVar(color) } })),
+        h("span", { class: "level-bar__track" }, h("span", { class: "level-bar__fill", style: { width: `${(n / total) * 100}%`, "--c": `var(${color})` } })),
         h("span", { class: "mono small", style: { textAlign: "right" } }, fmtNumber(n)),
       );
     }),
@@ -83,21 +84,25 @@ function eventCard(ev, index) {
 
   return h(
     "article",
-    { class: "tsunami-event", "aria-labelledby": `ts-${index}` },
+    { class: "card tsunami-event", "aria-labelledby": `ts-${index}` },
     h(
       "header",
       { class: "tsunami-event__head" },
-      magBadge(ev.magnitude, "lg"),
       h(
         "div",
-        { style: { flex: "1", minWidth: "14rem" } },
-        h("h2", { class: "tsunami-event__title", id: `ts-${index}` }, ev.region),
-        h("p", { class: "small muted" }, fmtLong(ev.origin_time), " · ", h("span", { "data-rel-time": ev.origin_time }, fmtRelative(ev.origin_time))),
+        { class: "tsunami-event__title-row" },
+        magBadge(ev.magnitude, "lg"),
         h(
           "div",
-          { class: "row mt-3" },
-          ev.ended ? pill("Peringatan berakhir", "", false) : pill("Peringatan aktif", "signal"),
-          ev.max_level ? h("span", { class: "row small" }, "Status tertinggi", levelPill(ev.max_level)) : null,
+          {},
+          h("h2", { class: "tsunami-event__title", id: `ts-${index}` }, ev.region),
+          h("p", { class: "small muted" }, fmtLong(ev.origin_time), " · ", h("span", { "data-rel-time": ev.origin_time }, fmtRelative(ev.origin_time))),
+          h(
+            "div",
+            { class: "row mt-3" },
+            ev.ended ? pill("Peringatan berakhir") : pill("Peringatan aktif", "signal"),
+            ev.max_level ? h("span", { class: "row small muted" }, "Status tertinggi", levelPill(ev.max_level)) : null,
+          ),
         ),
       ),
       facts([
@@ -113,7 +118,7 @@ function eventCard(ev, index) {
       h(
         "section",
         { "aria-label": "Kronologi buletin" },
-        h("h3", { class: "page-head__eyebrow", style: { marginBottom: "var(--s-4)" } }, "Kronologi buletin"),
+        h("h3", {}, "Kronologi buletin"),
         h(
           "ol",
           { class: "timeline" },
@@ -133,7 +138,7 @@ function eventCard(ev, index) {
         {},
         zones.length
           ? [
-              h("h3", { class: "page-head__eyebrow", style: { marginBottom: "var(--s-4)" } }, `Zona peringatan · ${fmtNumber(zones.length)} wilayah`),
+              h("h3", {}, `Zona peringatan · ${fmtNumber(zones.length)} wilayah`),
               levelBars(zones),
               h("details", { class: "disclosure" }, h("summary", {}, "Daftar wilayah"), zonesTable(zones)),
             ]
@@ -151,23 +156,29 @@ function eventCard(ev, index) {
           return grid ? h("div", { class: "mt-5" }, grid) : null;
         })(),
         ev.instructions.length
-          ? h("details", { class: "disclosure" }, h("summary", {}, "Arahan BMKG"), h("ul", { class: "prose small", style: { paddingBottom: "var(--s-3)" } }, ev.instructions.map((t) => h("li", {}, t))))
+          ? h("details", { class: "disclosure" }, h("summary", {}, "Arahan BMKG"), h("ul", { class: "prose small", style: { padding: "0 var(--s-2) 0 var(--s-6)" } }, ev.instructions.map((t) => h("li", {}, t))))
           : null,
       ),
     ),
   );
 }
 
+function render(data) {
+  replace($("#page-meta"), h("span", { class: "chip" }, `${fmtNumber(data.length)} kejadian terakhir`), h("span", { class: "chip" }, "InaTEWS BMKG"));
+  replace($("#events"), data.length ? data.map(eventCard) : empty("Belum ada peringatan tsunami", "BMKG tidak mengeluarkan peringatan tsunami baru-baru ini."));
+  document.dispatchEvent(new Event("gempa:rendered"));
+}
+
 async function load() {
   try {
     const { data } = await getJSON("/api/v1/tsunami");
-    replace($("#page-meta"), h("span", {}, `${fmtNumber(data.length)} kejadian terakhir`));
-    replace($("#events"), data.length ? data.map(eventCard) : empty("Belum ada peringatan tsunami", "BMKG tidak mengeluarkan peringatan tsunami baru-baru ini."));
-    document.dispatchEvent(new Event("gempa:rendered"));
+    render(data);
   } catch (err) {
-    replace($("#events"), errorNote(err.message));
+    if (!$("#events .tsunami-event")) replace($("#events"), errorNote(err.message));
   }
 }
 
-load();
+const initial = initialData();
+if (initial) render(initial.events);
+else load();
 every(60000, load);

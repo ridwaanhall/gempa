@@ -4,7 +4,7 @@ import { getJSON } from "../lib/api.js";
 import { showDamaging } from "../lib/detail.js";
 import { $, debounce, h, matches, replace } from "../lib/dom.js";
 import { fmtDepth, fmtMag, fmtNumber, fmtUtcDate } from "../lib/format.js";
-import { createMap, fitTo, quakeMarker } from "../lib/map.js";
+import { createMap, fitIndonesia, quakeMarker } from "../lib/map.js";
 import { empty, errorNote, magBadge, pill, sortable } from "../lib/ui.js";
 
 const L = window.L;
@@ -42,8 +42,8 @@ function renderPager(total) {
       ? h(
           "span",
           { class: "pager__btns" },
-          h("button", { class: "btn", type: "button", disabled: state.page === 0, onclick: () => go(state.page - 1) }, "← Sebelumnya"),
-          h("button", { class: "btn", type: "button", disabled: state.page >= pages - 1, onclick: () => go(state.page + 1) }, "Berikutnya →"),
+          h("button", { class: "btn btn--sm", type: "button", disabled: state.page === 0, onclick: () => go(state.page - 1) }, "← Sebelumnya"),
+          h("button", { class: "btn btn--sm", type: "button", disabled: state.page >= pages - 1, onclick: () => go(state.page + 1) }, "Berikutnya →"),
         )
       : null,
   );
@@ -65,7 +65,7 @@ function render() {
               onkeydown: (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); showDamaging(ev); } } },
             h("td", { class: "num" }, magBadge(ev.magnitude, "sm")),
             h("td", { class: "nowrap mono" }, fmtUtcDate(ev.origin_time)),
-            h("td", {}, h("strong", { style: { fontWeight: 500 } }, ev.province), h("div", { class: "xsmall muted" }, ev.epicenter), ev.tsunami ? h("div", { class: "mt-2" }, pill("Tsunami", "signal")) : null),
+            h("td", {}, h("strong", {}, ev.province), h("div", { class: "xsmall muted" }, ev.epicenter), ev.tsunami ? h("div", { class: "mt-2" }, pill("Tsunami", "signal")) : null),
             h("td", { class: "wrap small" }, ev.impact ? (ev.impact.length > 140 ? `${ev.impact.slice(0, 140)}…` : ev.impact) : h("span", { class: "muted" }, "–")),
             h("td", { class: "num mono" }, fmtDepth(ev.depth_km)),
           ),
@@ -78,7 +78,7 @@ function render() {
     quakeMarker(ev, { popup: false, scale: 0.6 }).on("click", () => showDamaging(ev)).addTo(layer);
   });
   if (!state.fitted && rows.length) {
-    fitTo(map, rows.map((e) => [e.latitude, e.longitude]), 5);
+    fitIndonesia(map, rows, 5);
     state.fitted = true;
   }
 }

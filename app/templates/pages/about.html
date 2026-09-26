@@ -1,14 +1,10 @@
 {% extends "base.html" %}
 {% block main %}
 <div class="container page">
-  <header class="page-head">
-    <p class="page-head__eyebrow">Panduan</p>
-    <h1>{{ page.title }}</h1>
-    <p>{{ page.description }}</p>
-  </header>
+  {% include "partials/page_head.html" %}
 
-  <div class="split">
-    <div class="prose">
+  <div class="split split--list">
+    <article class="card prose">
       <h2>Sumber data</h2>
       <p>Semua data berasal dari <strong>BMKG</strong> (Badan Meteorologi, Klimatologi, dan Geofisika) melalui sistem InaTEWS. Situs ini tidak resmi: kami hanya menata ulang data agar mudah dibaca. Untuk keadaan darurat, ikuti arahan BMKG, BNPB, dan BPBD setempat.</p>
 
@@ -25,7 +21,7 @@
 
       <h2>Magnitudo</h2>
       <p>Magnitudo mengukur energi yang dilepaskan di sumber gempa. Setiap kenaikan 1 angka berarti energi sekitar 32 kali lebih besar. Warna yang sama dipakai di seluruh situs:</p>
-      <table class="table scale-table mt-3">
+      <table class="table scale-table">
         <tbody>
           <tr><td><span class="mag mag--sm" data-m="0">&lt;3</span></td><td>Mikro — umumnya tidak terasa.</td></tr>
           <tr><td><span class="mag mag--sm" data-m="3">3</span></td><td>Minor — terasa di dekat pusat gempa.</td></tr>
@@ -38,7 +34,7 @@
 
       <h2>Intensitas (MMI)</h2>
       <p>Skala Modified Mercalli Intensity (angka Romawi) menggambarkan guncangan yang dirasakan di suatu tempat, bukan kekuatan gempa. Satu gempa punya banyak nilai MMI, makin jauh makin kecil.</p>
-      <table class="table mt-3">
+      <table class="table">
         <tbody>
           <tr><td class="mono">I–II</td><td>Dirasakan sedikit orang, benda ringan bergoyang.</td></tr>
           <tr><td class="mono">III–IV</td><td>Terasa di dalam rumah, seperti truk lewat; jendela berderik.</td></tr>
@@ -47,15 +43,14 @@
           <tr><td class="mono">IX+</td><td>Kerusakan berat; bangunan dapat runtuh.</td></tr>
         </tbody>
       </table>
-    </div>
+    </article>
 
-    <aside>
-      <div class="panel">
-        <div class="panel__body">
-          <p class="page-head__eyebrow">API JSON terbuka</p>
-          <h2 class="mt-2" style="font-size:var(--fs-md)">Pakai data yang sama di aplikasimu</h2>
+    <aside class="split__sticky">
+      <section class="card" aria-labelledby="api-heading">
+          <p class="hero__kicker">API JSON terbuka</p>
+          <h2 class="mt-2" id="api-heading" style="font-size:var(--fs-lg)">Pakai data yang sama di aplikasimu</h2>
           <p class="small muted mt-2">Respons dinormalisasi: kunci berbahasa Inggris, angka bertipe numerik, koordinat desimal bertanda, dan waktu ISO 8601 dengan zona.</p>
-          <div class="mt-4">
+          <div class="endpoints mt-5">
             {% for path, desc in [
               ("/api/v1/earthquakes/latest", "Gempa dirasakan terakhir"),
               ("/api/v1/earthquakes/realtime", "Deteksi realtime (?min_magnitude, ?limit)"),
@@ -73,11 +68,10 @@
             {% endfor %}
           </div>
           <div class="row mt-5">
-            <a class="btn btn--primary" href="/docs">Dokumentasi interaktif</a>
+            <a class="btn btn--accent" href="/docs">Dokumentasi interaktif</a>
             <a class="btn" href="/redoc">ReDoc</a>
           </div>
-        </div>
-      </div>
+      </section>
     </aside>
   </div>
 </div>

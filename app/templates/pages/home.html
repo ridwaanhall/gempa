@@ -1,49 +1,89 @@
 {% extends "layouts/map.html" %}
+{% from "partials/macros.html" import dial, event_item, facts, rel_time %}
 {% block main %}
+{% set eq = data.latest if data else none %}
 <div class="container page">
-  <h1 class="visually-hidden">{{ page.title }}</h1>
+  <header class="page-head">
+    <h1>Gempa bumi terkini di Indonesia</h1>
+    <p>Gempa terakhir yang dirasakan dan deteksi real-time dari jaringan seismik BMKG, diperbarui setiap menit.</p>
+  </header>
 
-  <div class="split">
-    <section class="hero" aria-labelledby="latest-heading" id="latest">
-      <p class="page-head__eyebrow" id="latest-heading">Gempa dirasakan terakhir</p>
+  <div class="bento">
+    <article class="card hero bento__hero" id="latest" aria-labelledby="latest-title">
       <div class="hero__top">
-        <span class="hero__scale" id="latest-scale" aria-hidden="true"></span>
-        <div class="hero__mag"><small>Magnitudo</small><span id="latest-mag">–</span></div>
+        <div id="latest-dial">
+          {% if eq %}{{ dial(eq.magnitude) }}{% else %}<div class="dial"><span class="dial__value"><span class="dial__num">–</span><span class="dial__label">Magnitudo</span></span></div>{% endif %}
+        </div>
+        <div class="hero__intro">
+          <p class="hero__kicker">Gempa dirasakan terakhir</p>
+          <h2 class="hero__title" id="latest-title">{% if eq %}{{ eq.region }}{% else %}<span class="skeleton skeleton--line" style="width:14rem"></span>{% endif %}</h2>
+          <p class="hero__time" id="latest-time">{% if eq %}{{ eq.origin_time | wib_long }}{% else %}<span class="skeleton skeleton--line" style="width:10rem"></span>{% endif %}</p>
+        </div>
       </div>
-      <div>
-        <h2 class="hero__title" id="latest-region"><span class="skeleton skeleton--line" style="display:block;width:80%"></span></h2>
-        <p class="hero__time" id="latest-time"><span class="skeleton skeleton--line" style="display:block;width:50%"></span></p>
+      <div id="latest-facts">
+        {% if eq %}{{ facts([
+          ("Kedalaman", eq.depth_km | depth),
+          ("Koordinat", coords(eq.latitude, eq.longitude)),
+          ("Potensi tsunami", "Berpotensi tsunami" if eq.tsunami_potential else "Tidak berpotensi"),
+          ("Dirasakan", eq.felt or "–"),
+        ]) }}{% endif %}
       </div>
-      <dl class="facts" id="latest-facts"></dl>
-      <div id="latest-felt"></div>
-      <div class="row" id="latest-actions"></div>
-    </section>
+      <div class="hero__actions" id="latest-actions">
+        <a class="btn btn--accent" href="/felt/">Detail &amp; peta guncangan</a>
+        <a class="btn" href="/felt/">Gempa dirasakan lainnya</a>
+      </div>
+    </article>
 
-    <section aria-label="Peta episentrum">
-      <div class="map map--tall" id="latest-map" role="region" aria-label="Peta lokasi gempa terakhir"></div>
+    <section class="card map-card bento__map" aria-label="Peta episentrum">
+      <div class="map map--tall" id="latest-map" role="region" aria-label="Peta lokasi gempa terakhir dan deteksi 48 jam"></div>
       {% include "partials/mag_legend.html" %}
     </section>
+
+    <section class="bento__stats" aria-labelledby="summary-heading">
+      <h2 class="visually-hidden" id="summary-heading">Ringkasan</h2>
+      <div class="stats" id="summary">
+        {% for label in ["Gempa 24 jam", "Terkuat 24 jam", "M5+ 7 hari", "Status tsunami"] %}
+        <div class="stat"><p class="stat__label">{{ label }}</p><p class="stat__value"><span class="skeleton skeleton--line" style="width:3ch"></span></p><p class="stat__note">&nbsp;</p></div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="card bento__recent" aria-labelledby="recent-heading">
+      <div class="card__head">
+        <h2 id="recent-heading">Deteksi terbaru</h2>
+        <a href="/realtime/">Semua deteksi →</a>
+      </div>
+      <ul class="event-list" id="recent-list" aria-live="polite">
+        {% if data %}{% for ev in data.realtime[:8] %}{{ event_item(ev, flag="M5+" if ev.magnitude >= 5 else "") }}{% endfor %}{% endif %}
+      </ul>
+    </section>
+
+    <nav class="card bento__links" aria-labelledby="links-heading">
+      <div class="card__head"><h2 id="links-heading">Jelajahi</h2></div>
+      <div class="links">
+        <a class="tile" href="/tsunami/">
+          <span class="tile__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 16c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2 2-2 4-2M2 20c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2 2-2 4-2M6 11c0-3.5 3-6 6.5-6 1.5 0 3 .5 4 1.5"/></svg></span>
+          <span><strong>Peringatan tsunami</strong><span>Kronologi buletin &amp; zona</span></span>
+          <span class="tile__arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="tile" href="/m5/">
+          <span class="tile__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 12h4l2-6 4 12 3-9 2 3h5"/></svg></span>
+          <span><strong>Gempa M5+</strong><span>Dengan analisis BMKG</span></span>
+          <span class="tile__arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="tile" href="/map/">
+          <span class="tile__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/></svg></span>
+          <span><strong>Peta seismisitas</strong><span>Sesar, stasiun, katalog</span></span>
+          <span class="tile__arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="tile" href="/about/">
+          <span class="tile__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m8 7-5 5 5 5M16 7l5 5-5 5"/></svg></span>
+          <span><strong>Data &amp; API</strong><span>Skala, zona waktu, JSON</span></span>
+          <span class="tile__arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </nav>
   </div>
-
-  <section class="section" aria-labelledby="summary-heading">
-    <div class="section-head">
-      <h2 id="summary-heading">Ringkasan deteksi realtime</h2>
-      <span class="hint" id="summary-hint"></span>
-    </div>
-    <div class="stats" id="summary">
-      {% for label in ["Gempa 24 jam", "Terkuat 24 jam", "M5+ 7 hari", "Tsunami"] %}
-      <div class="stat"><p class="stat__label">{{ label }}</p><p class="stat__value"><span class="skeleton skeleton--line" style="display:block;width:3ch"></span></p><p class="stat__note">&nbsp;</p></div>
-      {% endfor %}
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="recent-heading">
-    <div class="section-head">
-      <h2 id="recent-heading">Deteksi terbaru</h2>
-      <a href="/realtime/">Lihat semua →</a>
-    </div>
-    <ul class="event-list" id="recent-list" aria-live="polite"></ul>
-  </section>
 </div>
 {% endblock %}
 {% block scripts %}<script type="module" src="/static/js/pages/home.js?v={{ asset_version }}" data-cfasync="false"></script>{% endblock %}
